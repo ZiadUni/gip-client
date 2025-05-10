@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
+import { apiFetch } from '../utils/api';
 
 const NotificationPopup = () => {
   const [notifications, setNotifications] = useState([]);
@@ -21,7 +22,7 @@ const NotificationPopup = () => {
 
     const fetchNotifications = async () => {
       try {
-        const res = await fetch('/api/notification', {
+        const res = await apiFetch('notification', {
           headers: { Authorization: `Bearer ${token}` }
         });
 

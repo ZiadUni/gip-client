@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Button, Badge, Alert } from 'react-bootstrap';
+import { apiFetch } from '../utils/api';
 
 const LiveBooking = () => {
   const [seats, setSeats] = useState([]);
@@ -24,8 +25,8 @@ const LiveBooking = () => {
 
       try {
         const [resAvail, resMyBookings] = await Promise.all([
-          fetch(`/api/availability/event/${selectedEvent.id}`),
-          fetch('/api/bookings', {
+          apiFetch(`/availability/event/${selectedEvent.id}`),
+          apiFetch('/bookings', {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -75,7 +76,7 @@ const LiveBooking = () => {
   }
 
   try {
-    const res = await fetch('/api/bookings', {
+    const res = await apiFetch('/bookings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -111,7 +112,7 @@ const handleNotify = async (seat) => {
   setNotifyMsg('');
 
   try {
-    const res = await fetch('/api/notification', {
+    const res = await apiFetch('/notification', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
