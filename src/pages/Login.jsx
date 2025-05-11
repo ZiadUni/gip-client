@@ -36,6 +36,7 @@ const Login = () => {
       });
 
       const data = await res.json();
+        console.log('Login response:', res.status, data);
       if (!res.ok) return setError(data.error || 'Login failed.');
 
       localStorage.setItem('token', data.token);
@@ -44,6 +45,7 @@ const Login = () => {
       setSuccess('Login successful!');
       setTimeout(() => navigate('/'), 1500);
     } catch (err) {
+       console.error('Login catch:', err);
       setError('Something went wrong.');
     }
   };
