@@ -22,8 +22,8 @@ const Metrics = () => {
       const token = localStorage.getItem('token');
 
       try {
-        const res = await fetch(
-          `/api/metrics-data?range=${timeRange}&type=${typeFilter}`, {
+        const res = await apiFetch(
+          `/metrics-data?range=${timeRange}&type=${typeFilter}`, {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
