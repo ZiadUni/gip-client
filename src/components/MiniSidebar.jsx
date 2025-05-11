@@ -1,20 +1,36 @@
 // MiniSidebar.jsx
-// This sidebar appears after scrolling 150px down and provides quick navigation links
+// Scroll-triggered sidebar — hidden on mobile screens
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const MiniSidebar = () => {
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if screen is mobile-sized on load
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
     const toggleVisibility = () => {
       setVisible(window.scrollY > 150);
     };
 
     window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+      window.removeEventListener('scroll', toggleVisibility);
+    };
   }, []);
+
+  // Don't render on small/mobile screens
+  if (isMobile) return null;
 
   return (
     <div
