@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert, ProgressBar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../utils/api';
 
 const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });

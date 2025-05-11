@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Container, Card, Row, Col, Alert, Button, Form } from 'react-bootstrap';
+import { apiFetch } from '../utils/api';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);

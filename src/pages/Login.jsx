@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../utils/api';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
