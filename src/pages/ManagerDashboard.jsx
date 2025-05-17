@@ -1,9 +1,11 @@
 // ManagerDashboard.jsx
-// Park staff portal for managing users, venues, and bookings
-// Only accessible by users with the 'staff' role
+// Park staff portal for managing users and venues
+// Includes adding, viewing, editing, and deleting venues
 
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Table, Button, Alert, Form, Row, Col } from 'react-bootstrap';
+import {
+  Container, Card, Table, Button, Alert, Form, Row, Col, Image
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/api';
 
@@ -11,8 +13,10 @@ const ManagerDashboard = () => {
   const [users, setUsers] = useState([]);
   const [venues, setVenues] = useState([]);
   const [newVenue, setNewVenue] = useState({
-    name: '', date: '', capacity: '', availability: '', price: '', image: ''
+    name: '', date: '', capacity: '', availability: 'Available', price: '', image: ''
   });
+  const [editVenueId, setEditVenueId] = useState(null);
+  const [editVenueData, setEditVenueData] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -77,6 +81,11 @@ const ManagerDashboard = () => {
   };
 
   const handleAddVenue = async () => {
+    const formattedVenue = {
+      ...newVenue,
+      price: newVenue.price.startsWith('$') ? newVenue.price : `$${newVenue.price}`
+    };
+
     try {
       const res = await apiFetch('/venues', {
         method: 'POST',
@@ -84,12 +93,14 @@ const ManagerDashboard = () => {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newVenue)
+        body: JSON.stringify(formattedVenue)
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setSuccess('Venue added');
-      setNewVenue({ name: '', date: '', capacity: '', availability: '', price: '', image: '' });
+      setNewVenue({
+        name: '', date: '', capacity: '', availability: 'Available', price: '', image: ''
+      });
       fetchVenues();
     } catch (err) {
       setError(err.message);
@@ -106,6 +117,44 @@ const ManagerDashboard = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setSuccess('Venue deleted');
+      fetchVenues();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleEditVenue = (venue) => {
+    setEditVenueId(venue._id);
+    setEditVenueData({ ...venue });
+  };
+
+  const handleCancelEdit = () => {
+    setEditVenueId(null);
+    setEditVenueData({});
+  };
+
+  const handleSaveEdit = async () => {
+    const formatted = {
+      ...editVenueData,
+      price: editVenueData.price.startsWith('$') ? editVenueData.price : `$${editVenueData.price}`
+    };
+
+    try {
+      const res = await apiFetch(`/venues/${editVenueId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formatted)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('Venue updated');
+      setEditVenueId(null);
+      setEditVenueData({});
       fetchVenues();
     } catch (err) {
       setError(err.message);
@@ -132,9 +181,7 @@ const ManagerDashboard = () => {
           </thead>
           <tbody>
             {users.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="text-center">No users found.</td>
-              </tr>
+              <tr><td colSpan="5" className="text-center">No users found.</td></tr>
             ) : (
               users.map(u => (
                 <tr key={u._id}>
@@ -162,16 +209,54 @@ const ManagerDashboard = () => {
 
       <Card className="p-4 shadow-sm mb-4">
         <Row className="g-2">
-          {['name', 'date', 'capacity', 'availability', 'price', 'image'].map(field => (
-            <Col md={4} key={field}>
-              <Form.Control
-                type="text"
-                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                value={newVenue[field]}
-                onChange={e => setNewVenue({ ...newVenue, [field]: e.target.value })}
-              />
-            </Col>
-          ))}
+          <Col md={4}>
+            <Form.Control
+              type="text"
+              placeholder="Name"
+              value={newVenue.name}
+              onChange={e => setNewVenue({ ...newVenue, name: e.target.value })}
+            />
+          </Col>
+          <Col md={4}>
+            <Form.Control
+              type="date"
+              value={newVenue.date}
+              onChange={e => setNewVenue({ ...newVenue, date: e.target.value })}
+            />
+          </Col>
+          <Col md={4}>
+            <Form.Control
+              type="number"
+              placeholder="Capacity"
+              value={newVenue.capacity}
+              onChange={e => setNewVenue({ ...newVenue, capacity: e.target.value })}
+            />
+          </Col>
+          <Col md={4}>
+            <Form.Select
+              value={newVenue.availability}
+              onChange={e => setNewVenue({ ...newVenue, availability: e.target.value })}
+            >
+              <option value="Available">Available</option>
+              <option value="Unavailable">Unavailable</option>
+            </Form.Select>
+          </Col>
+          <Col md={4}>
+            <Form.Control
+              type="text"
+              placeholder="Price"
+              value={newVenue.price}
+              onChange={e => setNewVenue({ ...newVenue, price: e.target.value })}
+            />
+          </Col>
+          <Col md={4}>
+            <Form.Control
+              type="text"
+              placeholder="Image Link"
+              value={newVenue.image}
+              onChange={e => setNewVenue({ ...newVenue, image: e.target.value })}
+            />
+          </Col>
           <Col md={12}>
             <Button onClick={handleAddVenue} className="bg-brown w-100 mt-2">
               Add Venue
@@ -184,27 +269,49 @@ const ManagerDashboard = () => {
         <Table responsive bordered hover>
           <thead>
             <tr>
+              <th>Image</th>
               <th>Name</th>
               <th>Date</th>
               <th>Time</th>
               <th>Capacity</th>
               <th>Price</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {venues.map(v => (
-              <tr key={v._id}>
-                <td>{v.name}</td>
-                <td>{v.date}</td>
-                <td>{v.availability}</td>
-                <td>{v.capacity}</td>
-                <td>{v.price}</td>
+            {venues.map(venue => (
+              <tr key={venue._id}>
                 <td>
-                  <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(v._id)}>
-                    Delete
-                  </Button>
+                  {venue.image && <Image src={venue.image} alt="venue" width="60" height="40" rounded />}
                 </td>
+                {editVenueId === venue._id ? (
+                  <>
+                    <td><Form.Control value={editVenueData.name} onChange={e => setEditVenueData({ ...editVenueData, name: e.target.value })} /></td>
+                    <td><Form.Control type="date" value={editVenueData.date} onChange={e => setEditVenueData({ ...editVenueData, date: e.target.value })} /></td>
+                    <td><Form.Control value={editVenueData.availability} onChange={e => setEditVenueData({ ...editVenueData, availability: e.target.value })} /></td>
+                    <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
+                    <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
+                    <td><Form.Control value={editVenueData.status} onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })} /></td>
+                    <td>
+                      <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
+                      <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{venue.name}</td>
+                    <td>{venue.date}</td>
+                    <td>{venue.availability}</td>
+                    <td>{venue.capacity}</td>
+                    <td>{venue.price}</td>
+                    <td>{venue.status}</td>
+                    <td>
+                      <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>Edit</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(venue._id)}>Delete</Button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
