@@ -315,13 +315,13 @@ const handleSaveEdit = async () => {
           <thead>
             <tr>
               <th>Image</th>
+              <th>Image URL</th>
               <th>Name</th>
               <th>Date</th>
               <th>Time</th>
               <th>Capacity</th>
               <th>Price</th>
               <th>Status</th>
-              <th>Image URL</th>
               <th>Actions</th>
             </tr>
           </thead>
