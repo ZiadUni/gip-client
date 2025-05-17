@@ -21,8 +21,8 @@ const MyBookings = () => {
     const token = localStorage.getItem('token');
 
     try {
-const res = await apiFetch(`/bookings/${id}`, {
-          headers: {
+      const res = await apiFetch('/bookings', {
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
@@ -43,8 +43,8 @@ const res = await apiFetch(`/bookings/${id}`, {
     if (!confirm) return;
 
     try {
-  const res = await apiFetch('/bookings', {
-          method: 'DELETE',
+      const res = await apiFetch(`/bookings/${id}`, {
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
         }
