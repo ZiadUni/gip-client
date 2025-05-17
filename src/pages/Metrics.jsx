@@ -26,6 +26,8 @@ const Metrics = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [boxFade, setBoxFade] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(Date.now());
+  const [refreshTimer, setRefreshTimer] = useState(0);
   const pageRef = useRef();
 
   const fetchData = async () => {
@@ -37,6 +39,7 @@ const Metrics = () => {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Failed to fetch metrics');
       setData(json.data);
+      setLastRefreshed(Date.now());
     } catch (err) {
       setError(err.message);
     }
@@ -46,7 +49,7 @@ const Metrics = () => {
     fetchData();
     let interval;
     if (autoRefresh) {
-      interval = setInterval(fetchData, 60000);
+      interval = setInterval(fetchData, 20000);
     }
     return () => clearInterval(interval);
   }, [startDate, endDate, typeFilter, statusFilter, autoRefresh, selectedVenue]);
@@ -56,6 +59,13 @@ const Metrics = () => {
     const timeout = setTimeout(() => setBoxFade(true), 100);
     return () => clearTimeout(timeout);
   }, [data]);
+
+  useEffect(() => {
+    const tick = setInterval(() => {
+      setRefreshTimer(Date.now());
+    }, 1000);
+    return () => clearInterval(tick);
+  }, []);
 
   const exportToCSV = (dataArray, filename) => {
     if (!dataArray || !dataArray.length) return;
@@ -75,13 +85,19 @@ const Metrics = () => {
   };
 
   const exportPDF = () => {
-    html2canvas(pageRef.current).then(canvas => {
+    const container = pageRef.current;
+    container.style.boxShadow = 'none';
+    container.style.backgroundColor = '#fff';
+
+    html2canvas(container, { backgroundColor: '#ffffff' }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const width = pdf.internal.pageSize.getWidth();
       const height = (canvas.height * width) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, width, height);
       pdf.save('metrics-dashboard.pdf');
+
+      container.style.boxShadow = '';
     });
   };
 
@@ -95,17 +111,22 @@ const Metrics = () => {
 
         {/* Filter Section */}
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ marginRight: '15px' }}>
+          <div className="mb-2">
+            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
                 checked={autoRefresh}
                 onChange={e => setAutoRefresh(e.target.checked)}
-                style={{ marginRight: '8px' }}
               />
-              Auto-refresh every 60s
+              Auto-refresh every 20s
             </label>
           </div>
+
+          {lastRefreshed && (
+            <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
+              Last refreshed: {Math.floor((Date.now() - lastRefreshed) / 1000)} seconds ago
+            </p>
+          )}
 
           <div className="mb-3">
             <h5>🕒 Time Range Filter</h5>
@@ -116,7 +137,6 @@ const Metrics = () => {
               onChange={e => setStartDate(e.target.value)}
               style={filterStyle}
             />
-
             <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
             <input
               type="date"
@@ -168,15 +188,13 @@ const Metrics = () => {
 
         {data && (
           <>
-            {/* Summary Boxes */}
             <div style={{ ...grid, opacity: boxFade ? 1 : 0, transition: 'opacity 0.5s ease' }}>
               <MetricBox title="Tickets Sold" value={data.ticketsSold} />
               <MetricBox title="Total Revenue" value={`EGP ${data?.totalRevenue?.toLocaleString?.() ?? '—'}`} />
               <MetricBox title="Top Venue" value={data.topVenue || '—'} />
             </div>
 
-            {/* Charts */}
-            <h3 style={sectionHeader}>📍 Venue Usage</h3>
+            <h3 style={sectionHeader}>Venue Usage</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={data.venueUsage}
@@ -192,7 +210,7 @@ const Metrics = () => {
               </BarChart>
             </ResponsiveContainer>
 
-            <h3 style={sectionHeader}>📈 Revenue Trend</h3>
+            <h3 style={sectionHeader}>Revenue Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data.revenueTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -203,7 +221,7 @@ const Metrics = () => {
               </LineChart>
             </ResponsiveContainer>
 
-            <h3 style={sectionHeader}>🥧 Ticket Types</h3>
+            <h3 style={sectionHeader}>Ticket Types</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie data={data.ticketType} dataKey="value" nameKey="type" outerRadius={100} label>
