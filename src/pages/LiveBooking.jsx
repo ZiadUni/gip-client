@@ -148,11 +148,11 @@ const LiveBooking = () => {
 
       const getColor = (status, isSelected, id) => {
         if (mySeat === id) return '#198754';
-        if (isSelected) return '#f0ad4e'; 
+        if (isSelected) return '#0d6efd';
         if (status === 'booked') return '#dc3545';
         if (status === 'pending') return '#0dcaf0';
         return '#adb5bd';
-};
+      };
 
   return (
     <div className="fade-in">
@@ -210,20 +210,23 @@ const LiveBooking = () => {
           ))}
         </div>
 
-        <div className="text-center mt-4">
-          <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Selected
-          </span>
-          <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
-          </span>
-          <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
-          </span>
-          <span>
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
-          </span>
-        </div>
+      <div className="text-center mt-4">
+        <span className="me-3">
+          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Your Booking
+        </span>
+        <span className="me-3">
+          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0d6efd', marginRight: 5 }} /> Selected
+        </span>
+        <span className="me-3">
+          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
+        </span>
+        <span className="me-3">
+          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
+        </span>
+        <span>
+          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
+        </span>
+      </div>
 
         {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
         {success && <Alert variant="success" className="mt-4">{success}</Alert>}
