@@ -20,7 +20,13 @@ const VenueBooking = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const res = await apiFetch('/venues');
+        const token = localStorage.getItem('token');
+        const res = await apiFetch('/venues', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
         const data = await res.json();
         if (res.ok) {
           setVenues(data);
