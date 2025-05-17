@@ -13,8 +13,13 @@ const TicketBooking = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await apiFetch('/bookings');
-        const data = await res.json();
+        const token = localStorage.getItem('token');
+        const res = await apiFetch('/bookings', {
+          headers: {
+          Authorization: `Bearer ${token}`
+            }
+        });
+          const data = await res.json();
         if (res.ok) {
           const venueBookings = data.filter(b => 
             b.type === 'venue' && 

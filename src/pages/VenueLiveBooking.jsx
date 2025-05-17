@@ -83,7 +83,7 @@ const VenueLiveBooking = () => {
         },
         body: JSON.stringify({
           type: 'venue',
-          itemId: `${selectedVenue.name}__${selectedVenue.date}`,
+          itemId: selectedVenue._id,
           details: {
             name: selectedVenue.name,
             date: selectedVenue.date,
