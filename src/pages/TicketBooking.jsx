@@ -16,15 +16,17 @@ const TicketBooking = () => {
         const token = localStorage.getItem('token');
         const res = await apiFetch('/bookings', {
           headers: {
-          Authorization: `Bearer ${token}`
-            }
+            Authorization: `Bearer ${token}`
+          }
         });
-          const data = await res.json();
+        const data = await res.json();
         if (res.ok) {
-          const venueBookings = data.filter(b => 
-            b.type === 'venue' && 
-            b.status === 'confirmed' && 
-            b.details?.event
+          const venueBookings = data.filter(b =>
+            b.type === 'venue' &&
+            b.status === 'confirmed' &&
+            b.details?.event &&
+            b.details?.date &&
+            b.details?.name
           );
           setEventBookings(venueBookings);
         }
@@ -59,7 +61,7 @@ const TicketBooking = () => {
             <div key={eventName} className="mb-5">
               <h4 className="text-center mb-3">{eventName}</h4>
               <Row className="g-4">
-                {eventBookings
+                {bookings
                   .sort((a, b) => new Date(a.details.date) - new Date(b.details.date))
                   .map((b, idx) => (
                     <Col md={6} lg={4} key={b._id || idx}>
@@ -82,7 +84,6 @@ const TicketBooking = () => {
                     </Col>
                   ))}
               </Row>
-
             </div>
           ))
         )}
