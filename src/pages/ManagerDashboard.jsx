@@ -24,6 +24,23 @@ const ManagerDashboard = () => {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  const isValidImageUrl = (url) =>
+  url && /\.(jpg|jpeg|png|webp|gif)$/i.test(url.trim());
+
+const isValidDate = (dateStr) => {
+  const today = new Date();
+  const inputDate = new Date(dateStr);
+  const futureLimit = new Date();
+  futureLimit.setFullYear(today.getFullYear() + 1);
+  return inputDate >= today && inputDate <= futureLimit;
+};
+
+const formatDate = (rawDate) => {
+  const date = new Date(rawDate);
+  return date.toLocaleDateString('en-GB');
+};
+
+
   useEffect(() => {
     if (user.role !== 'staff') {
       navigate('/');
@@ -133,11 +150,25 @@ const ManagerDashboard = () => {
     setEditVenueData({});
   };
 
-  const handleSaveEdit = async () => {
-    const formatted = {
-      ...editVenueData,
-      price: editVenueData.price.startsWith('$') ? editVenueData.price : `$${editVenueData.price}`
-    };
+const handleSaveEdit = async () => {
+  const { image, date } = editVenueData;
+
+  if (!isValidImageUrl(image)) {
+    setError('Invalid image link. Must end in .jpg, .png, .webp, etc.');
+    return;
+  }
+
+  if (!isValidDate(date)) {
+    setError('Invalid date. Must not be in the past or more than 1 year ahead.');
+    return;
+  }
+
+  const formatted = {
+    ...editVenueData,
+    price: editVenueData.price.startsWith('$')
+      ? editVenueData.price
+      : `$${editVenueData.price}`
+  };
 
     try {
       const res = await apiFetch(`/venues/${editVenueId}`, {
@@ -301,7 +332,7 @@ const ManagerDashboard = () => {
                 ) : (
                   <>
                     <td>{venue.name}</td>
-                    <td>{venue.date}</td>
+                    <td>{formatDate(venue.date)}</td>
                     <td>{venue.availability}</td>
                     <td>{venue.capacity}</td>
                     <td>{venue.price}</td>
