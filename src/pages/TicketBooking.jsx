@@ -59,27 +59,30 @@ const TicketBooking = () => {
             <div key={eventName} className="mb-5">
               <h4 className="text-center mb-3">{eventName}</h4>
               <Row className="g-4">
-                {bookings.map((b, idx) => (
-                  <Col md={6} lg={4} key={b._id || idx}>
-                    <Card className="h-100 shadow-sm">
-                      <Card.Body>
-                        <Card.Title>{b.details.event}</Card.Title>
-                        <Card.Text><strong>Date:</strong> {b.details.date}</Card.Text>
-                        <Card.Text><strong>Time:</strong> {b.details.time}</Card.Text>
-                        <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
-                      </Card.Body>
-                      <Card.Footer>
-                        <Button
-                          className="w-100 bg-brown border-0"
-                          onClick={() => handleBook(b.details)}
-                        >
-                          Book Now
-                        </Button>
-                      </Card.Footer>
-                    </Card>
-                  </Col>
-                ))}
+                {eventBookings
+                  .sort((a, b) => new Date(a.details.date) - new Date(b.details.date))
+                  .map((b, idx) => (
+                    <Col md={6} lg={4} key={b._id || idx}>
+                      <Card className="h-100 shadow-sm">
+                        <Card.Body>
+                          <Card.Title>{b.details.event}</Card.Title>
+                          <Card.Text><strong>Date:</strong> {b.details.date}</Card.Text>
+                          <Card.Text><strong>Time:</strong> {b.details.time}</Card.Text>
+                          <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
+                        </Card.Body>
+                        <Card.Footer>
+                          <Button
+                            className="w-100 bg-brown border-0"
+                            onClick={() => navigate('/live-booking', { state: { event: b.details } })}
+                          >
+                            Book Now
+                          </Button>
+                        </Card.Footer>
+                      </Card>
+                    </Col>
+                  ))}
               </Row>
+
             </div>
           ))
         )}

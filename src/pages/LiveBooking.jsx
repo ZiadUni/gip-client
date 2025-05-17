@@ -149,38 +149,46 @@ const LiveBooking = () => {
         <p><strong>Time:</strong> {event?.time}</p>
         <p><strong>Venue:</strong> {event?.venue || event?.name}</p>
 
-        <Row className="g-4 justify-content-center">
-          {seats.map(seat => (
-            <Col sm={6} md={4} key={seat.id}>
-              <Card
-                style={{
-                  backgroundColor: getColor(seat.status, selectedSeat === seat.id, seat.id),
-                  color: '#fff',
-                  cursor: seat.status === 'available' ? 'pointer' : 'not-allowed'
-                }}
-                onClick={() => handleClick(seat)}
-              >
-                <Card.Body>
-                  <Card.Title>Seat: {seat.id}</Card.Title>
-                  <Card.Text>Status: {seat.status}</Card.Text>
-                  {seat.status !== 'available' && (
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="mt-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleNotify(seat);
-                      }}
-                    >
-                      Notify Me
-                    </Button>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+    <div className="d-flex flex-wrap justify-content-center gap-2 mt-4">
+      {seats.map(seat => (
+        <div
+          key={seat.id}
+          onClick={() => handleClick(seat)}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 4,
+            backgroundColor: getColor(seat.status, selectedSeat === seat.id, seat.id),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: '0.8rem',
+            cursor: seat.status === 'available' ? 'pointer' : 'not-allowed',
+            border: mySeat === seat.id ? '2px solid white' : 'none'
+          }}
+          title={`Seat ${seat.id}`}
+        >
+          {seat.id}
+        </div>
+      ))}
+    </div>
+
+    <div className="text-center mt-4">
+  <span className="me-3">
+    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Selected
+  </span>
+  <span className="me-3">
+    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
+  </span>
+  <span className="me-3">
+    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
+  </span>
+  <span>
+    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
+  </span>
+</div>
+
 
         {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
         {success && <Alert variant="success" className="mt-4">{success}</Alert>}

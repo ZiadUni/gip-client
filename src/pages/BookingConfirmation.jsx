@@ -29,7 +29,7 @@ const BookingConfirmation = () => {
             {booking.map((item, idx) => (
               <li key={idx} className="mb-2">
                 {type === 'event' ? (
-                  `Seat #${item.id}`
+                  `Seat #${item.seat}`
                 ) : (
                   <>
                     <strong>{item.name}</strong><br />

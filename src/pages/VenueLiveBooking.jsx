@@ -71,7 +71,10 @@ const VenueLiveBooking = () => {
   const handleProceed = async () => {
     const token = localStorage.getItem('token');
     const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
-
+    
+    if (!eventName.trim()) {
+      return setError('Please enter an event name.');
+    }
     if (!selectedSlots.length || !selectedVenue) {
       return setError('Please select at least one slot.');
     }

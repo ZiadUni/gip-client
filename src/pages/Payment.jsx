@@ -47,7 +47,7 @@ const Payment = () => {
             {booking.map((item, idx) => (
               <li key={idx}>
                 {type === 'event' ? (
-                  `Seat #${item.id}`
+                  `Seat #${item.seat}`
                 ) : (
                   <>
                     <strong>{item.name}</strong><br />
