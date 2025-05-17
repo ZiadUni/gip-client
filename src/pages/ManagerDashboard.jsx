@@ -328,9 +328,6 @@ const handleSaveEdit = async () => {
           <tbody>
             {venues.map(venue => (
               <tr key={venue._id}>
-                <td>
-                  {venue.image && <Image src={venue.image} alt="venue" width="60" height="40" rounded />}
-                </td>
                 {editVenueId === venue._id ? (
                     <>
                     <td><Form.Control value={editVenueData.name} onChange={e => setEditVenueData({ ...editVenueData, name: e.target.value })} /></td>
