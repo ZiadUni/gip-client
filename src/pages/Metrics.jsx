@@ -20,32 +20,35 @@ const Metrics = () => {
   const [endDate, setEndDate] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('current');
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [selectedVenue, setSelectedVenue] = useState(null);
   const [boxFade, setBoxFade] = useState(false);
   const pageRef = useRef();
 
+  const fetchData = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      let url = `/metrics-data?from=${startDate}&to=${endDate}&type=${typeFilter}&status=${statusFilter}`;
+      if (selectedVenue) url += `&venue=${encodeURIComponent(selectedVenue)}`;
+      const res = await apiFetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to fetch metrics');
+      setData(json.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-
-      try {
-        const res = await apiFetch(
-          `/metrics-data?from=${startDate}&to=${endDate}&type=${typeFilter}&status=${statusFilter}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || 'Failed to fetch metrics');
-        setData(json.data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
     if (startDate && endDate) {
       fetchData();
+      let interval;
+      if (autoRefresh) {
+        interval = setInterval(fetchData, 60000);
+      }
+      return () => clearInterval(interval);
     }
-  }, [startDate, endDate, typeFilter, statusFilter]);
+  }, [startDate, endDate, typeFilter, statusFilter, autoRefresh, selectedVenue]);
 
   useEffect(() => {
     setBoxFade(false);
@@ -55,16 +58,13 @@ const Metrics = () => {
 
   const exportToCSV = (dataArray, filename) => {
     if (!dataArray || !dataArray.length) return;
-
     const keys = Object.keys(dataArray[0]);
     const csvContent = [
       keys.join(','),
       ...dataArray.map(row => keys.map(k => `"${row[k] ?? ''}"`).join(','))
     ].join('\n');
-
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `${filename}.csv`);
@@ -94,6 +94,18 @@ const Metrics = () => {
 
         {/* Filters */}
         <div style={{ textAlign: 'center', margin: '20px 0' }}>
+          <div className="mb-3">
+            <label style={{ marginRight: '15px' }}>
+              <input
+                type="checkbox"
+                checked={autoRefresh}
+                onChange={e => setAutoRefresh(e.target.checked)}
+                style={{ marginRight: '8px' }}
+              />
+              🔁 Auto-refresh every 60s
+            </label>
+          </div>
+
           <label><strong>Start Date:</strong></label>
           <input
             type="date"
@@ -136,53 +148,36 @@ const Metrics = () => {
         {/* Export Buttons */}
         {data && (
           <div className="text-center mb-4">
-            <Button
-              className="me-3"
-              onClick={() =>
-                exportToCSV([
-                  { Metric: 'Tickets Sold', Value: data.ticketsSold },
-                  { Metric: 'Total Revenue', Value: data.totalRevenue },
-                  { Metric: 'Top Venue', Value: data.topVenue }
-                ], 'metric-summary')
-              }
-            >
-              Export Summary CSV
-            </Button>
-            <Button
-              className="me-3"
-              onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}
-            >
-              Export Venue Usage CSV
-            </Button>
-            <Button
-              className="me-3"
-              onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}
-            >
-              Export Revenue Trend CSV
-            </Button>
-            <Button
-              className="me-3"
-              onClick={() => exportToCSV(data.ticketType, 'ticket-types')}
-            >
-              Export Ticket Types CSV
-            </Button>
+            <Button className="me-3" onClick={() =>
+              exportToCSV([
+                { Metric: 'Tickets Sold', Value: data.ticketsSold },
+                { Metric: 'Total Revenue', Value: data.totalRevenue },
+                { Metric: 'Top Venue', Value: data.topVenue }
+              ], 'metric-summary')}>Export Summary CSV</Button>
+
+            <Button className="me-3" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
+            <Button className="me-3" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
+            <Button className="me-3" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
             <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
           </div>
         )}
 
         {data && (
           <>
-            {/* Summary */}
             <div style={{ ...grid, opacity: boxFade ? 1 : 0, transition: 'opacity 0.5s ease' }}>
               <MetricBox title="Tickets Sold" value={data.ticketsSold} />
               <MetricBox title="Total Revenue" value={`EGP ${data?.totalRevenue?.toLocaleString?.() ?? '—'}`} />
               <MetricBox title="Top Venue" value={data.topVenue || '—'} />
             </div>
 
-            {/* Charts */}
             <h3 style={sectionHeader}>📍 Venue Usage</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.venueUsage}>
+              <BarChart
+                data={data.venueUsage}
+                onClick={(e) => {
+                  if (e && e.activeLabel) setSelectedVenue(e.activeLabel);
+                }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis allowDecimals={false} />
@@ -205,13 +200,7 @@ const Metrics = () => {
             <h3 style={sectionHeader}>🥧 Ticket Types</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie
-                  data={data.ticketType}
-                  dataKey="value"
-                  nameKey="type"
-                  outerRadius={100}
-                  label
-                >
+                <Pie data={data.ticketType} dataKey="value" nameKey="type" outerRadius={100} label>
                   {(data?.ticketType ?? []).map((entry, index) => (
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
