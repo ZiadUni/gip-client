@@ -1,21 +1,27 @@
 // Metrics.jsx
 // Dashboard page that displays key system analytics like bookings, revenue, and venue usage.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { Button } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 
 const Metrics = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  const [timeRange, setTimeRange] = useState('7d');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('current');
   const [boxFade, setBoxFade] = useState(false);
+  const pageRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,66 +29,150 @@ const Metrics = () => {
 
       try {
         const res = await apiFetch(
-          `/metrics-data?range=${timeRange}&type=${typeFilter}`, {
+          `/metrics-data?from=${startDate}&to=${endDate}&type=${typeFilter}&status=${statusFilter}`, {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
 
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch metrics');
-
         setData(json.data);
       } catch (err) {
         setError(err.message);
       }
     };
 
-    fetchData();
-  }, [timeRange, typeFilter]);
+    if (startDate && endDate) {
+      fetchData();
+    }
+  }, [startDate, endDate, typeFilter, statusFilter]);
 
-  // Animate metric boxes on filter change
   useEffect(() => {
     setBoxFade(false);
     const timeout = setTimeout(() => setBoxFade(true), 100);
     return () => clearTimeout(timeout);
   }, [data]);
 
+  const exportToCSV = (dataArray, filename) => {
+    if (!dataArray || !dataArray.length) return;
+
+    const keys = Object.keys(dataArray[0]);
+    const csvContent = [
+      keys.join(','),
+      ...dataArray.map(row => keys.map(k => `"${row[k] ?? ''}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${filename}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportPDF = () => {
+    html2canvas(pageRef.current).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const width = pdf.internal.pageSize.getWidth();
+      const height = (canvas.height * width) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save('metrics-dashboard.pdf');
+    });
+  };
+
   return (
-    <div className="fade-in">
+    <div className="fade-in" ref={pageRef}>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
         <h2 style={{ textAlign: 'center' }}>📊 Innovation Park Analytics Dashboard</h2>
 
         {error && <p className="text-danger text-center mt-3">{error}</p>}
         {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
 
+        {/* Filters */}
+        <div style={{ textAlign: 'center', margin: '20px 0' }}>
+          <label><strong>Start Date:</strong></label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            style={filterStyle}
+          />
+
+          <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            style={filterStyle}
+          />
+
+          <label style={{ marginLeft: '40px' }}><strong>Status:</strong></label>
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            style={filterStyle}
+          >
+            <option value="current">Current</option>
+            <option value="past">Past</option>
+            <option value="all">All</option>
+          </select>
+
+          <label style={{ marginLeft: '40px' }}><strong>Booking Type:</strong></label>
+          <select
+            value={typeFilter}
+            onChange={e => setTypeFilter(e.target.value)}
+            style={filterStyle}
+          >
+            <option value="all">All</option>
+            <option value="event">Event Only</option>
+            <option value="venue">Venue Only</option>
+          </select>
+        </div>
+
+        {/* Export Buttons */}
+        {data && (
+          <div className="text-center mb-4">
+            <Button
+              className="me-3"
+              onClick={() =>
+                exportToCSV([
+                  { Metric: 'Tickets Sold', Value: data.ticketsSold },
+                  { Metric: 'Total Revenue', Value: data.totalRevenue },
+                  { Metric: 'Top Venue', Value: data.topVenue }
+                ], 'metric-summary')
+              }
+            >
+              Export Summary CSV
+            </Button>
+            <Button
+              className="me-3"
+              onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}
+            >
+              Export Venue Usage CSV
+            </Button>
+            <Button
+              className="me-3"
+              onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}
+            >
+              Export Revenue Trend CSV
+            </Button>
+            <Button
+              className="me-3"
+              onClick={() => exportToCSV(data.ticketType, 'ticket-types')}
+            >
+              Export Ticket Types CSV
+            </Button>
+            <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
+          </div>
+        )}
+
         {data && (
           <>
-            {/* Filters */}
-            <div style={{ textAlign: 'center', margin: '20px 0' }}>
-              <label><strong>Time Range:</strong></label>
-              <select
-                value={timeRange}
-                onChange={e => setTimeRange(e.target.value)}
-                style={filterStyle}
-              >
-                <option value="7d">Last 7 Days</option>
-                <option value="30d">This Month</option>
-                <option value="all">All Time</option>
-              </select>
-
-              <label style={{ marginLeft: '40px' }}><strong>Booking Type:</strong></label>
-              <select
-                value={typeFilter}
-                onChange={e => setTypeFilter(e.target.value)}
-                style={filterStyle}
-              >
-                <option value="all">All</option>
-                <option value="event">Event Only</option>
-                <option value="venue">Venue Only</option>
-              </select>
-            </div>
-
-            {/* Metrics Summary Boxes */}
+            {/* Summary */}
             <div style={{ ...grid, opacity: boxFade ? 1 : 0, transition: 'opacity 0.5s ease' }}>
               <MetricBox title="Tickets Sold" value={data.ticketsSold} />
               <MetricBox title="Total Revenue" value={`EGP ${data?.totalRevenue?.toLocaleString?.() ?? '—'}`} />
@@ -144,7 +234,6 @@ const MetricBox = ({ title, value }) => (
   </div>
 );
 
-// Chart Styles
 const grid = {
   display: 'flex',
   flexWrap: 'wrap',
