@@ -65,19 +65,11 @@ const VenueBooking = () => {
                     <Card.Text><strong>Date:</strong> {new Date(slot.date).toLocaleDateString('en-GB')}</Card.Text>
                     <Card.Text><strong>Capacity:</strong> {slot.capacity} People</Card.Text>
                     <Card.Text>
-                      <strong>Manager Availability:</strong>{' '}
-                      <span className={slot.availability === 'Available' ? 'text-success' : 'text-danger'}>
-                        {slot.availability}
-                      </span>
-                    </Card.Text>
-
-                    <Card.Text>
                       <strong>Booking Status:</strong>{' '}
                       <span className={slot.status === 'Available' ? 'text-success' : 'text-warning'}>
                         {slot.status}
                       </span>
                     </Card.Text>
-
                     <Card.Text><strong>Price:</strong> {slot.price}</Card.Text>
                   </Card.Body>
                   <Card.Footer>
