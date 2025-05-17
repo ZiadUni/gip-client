@@ -1,67 +1,83 @@
 // TicketBooking.jsx - Displays all available events for booking
 // Map through static or fetched list of events
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
-
-const mockEvents = [
-  {
-    id: "event-1",
-    title: "AI & Tech Startups Conference",
-    date: "2025-03-15",
-    time: "10:00 AM - 4:00 PM",
-    venue: "Auditorium 1"
-  },
-  {
-    id: "event-2",
-    title: "Sustainable Energy Workshop",
-    date: "2025-04-20",
-    time: "1:00 PM - 5:00 PM",
-    venue: "Lab 2"
-  },
-  {
-    id: "event-3",
-    title: "Entrepreneurship Training Program",
-    date: "2025-05-05",
-    time: "9:00 AM - 2:00 PM",
-    venue: "Education Hall"
-  }
-];
+import { apiFetch } from '../utils/api';
 
 const TicketBooking = () => {
+  const [eventBookings, setEventBookings] = useState([]);
   const navigate = useNavigate();
 
-  const handleBook = (event) => {
-    navigate('/live-booking', { state: { event } });
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await apiFetch('/bookings');
+        const data = await res.json();
+        if (res.ok) {
+          const venueBookings = data.filter(b => 
+            b.type === 'venue' && 
+            b.status === 'confirmed' && 
+            b.details?.event
+          );
+          setEventBookings(venueBookings);
+        }
+      } catch (err) {
+        console.error('Failed to fetch bookings:', err);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const groupedEvents = eventBookings.reduce((groups, booking) => {
+    const key = booking.details.event;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(booking);
+    return groups;
+  }, {});
+
+  const handleBook = (eventDetails) => {
+    navigate('/live-booking', { state: { event: eventDetails } });
   };
 
   return (
     <div className="fade-in">
       <Container className="py-5">
         <h2 className="text-center text-brown mb-4">Available Events</h2>
-        <Row className="g-4">
-          {mockEvents.map(event => (
-            <Col md={6} lg={4} key={event.id}>
-              <Card className="h-100 shadow-sm">
-                <Card.Body>
-                  <Card.Title>{event.title}</Card.Title>
-                  <Card.Text><strong>Date:</strong> {event.date}</Card.Text>
-                  <Card.Text><strong>Time:</strong> {event.time}</Card.Text>
-                  <Card.Text><strong>Venue:</strong> {event.venue}</Card.Text>
-                </Card.Body>
-                <Card.Footer>
-                  <Button
-                    className="w-100 bg-brown border-0"
-                    onClick={() => handleBook(event)}
-                  >
-                    Book Now
-                  </Button>
-                </Card.Footer>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+
+        {Object.entries(groupedEvents).length === 0 ? (
+          <p className="text-center text-muted">No events available.</p>
+        ) : (
+          Object.entries(groupedEvents).map(([eventName, bookings]) => (
+            <div key={eventName} className="mb-5">
+              <h4 className="text-center mb-3">{eventName}</h4>
+              <Row className="g-4">
+                {bookings.map((b, idx) => (
+                  <Col md={6} lg={4} key={b._id || idx}>
+                    <Card className="h-100 shadow-sm">
+                      <Card.Body>
+                        <Card.Title>{b.details.event}</Card.Title>
+                        <Card.Text><strong>Date:</strong> {b.details.date}</Card.Text>
+                        <Card.Text><strong>Time:</strong> {b.details.time}</Card.Text>
+                        <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
+                      </Card.Body>
+                      <Card.Footer>
+                        <Button
+                          className="w-100 bg-brown border-0"
+                          onClick={() => handleBook(b.details)}
+                        >
+                          Book Now
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          ))
+        )}
       </Container>
     </div>
   );

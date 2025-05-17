@@ -18,6 +18,7 @@ const VenueLiveBooking = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedVenue = location.state?.slot;
+  const [eventName, setEventName] = useState('');
 
   useEffect(() => {
       if (!location.state?.slot) {
@@ -87,6 +88,7 @@ const VenueLiveBooking = () => {
             name: selectedVenue.name,
             date: selectedVenue.date,
             time: slot.time,
+            event: eventName,
             price: selectedVenue.price,
             image: selectedVenue.image,
             capacity: selectedVenue.capacity,
@@ -167,6 +169,16 @@ const VenueLiveBooking = () => {
             <p><strong>Price:</strong> {selectedVenue.price}</p>
           </div>
         )}
+
+        <Form.Group className="mb-3" controlId="eventNameInput">
+        <Form.Label>Event Name</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter the event name"
+          value={eventName}
+          onChange={(e) => setEventName(e.target.value)}
+        />
+      </Form.Group>
 
         <Row className="g-4 justify-content-center">
           {slots.map(slot => {
