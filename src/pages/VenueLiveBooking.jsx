@@ -44,7 +44,14 @@ const VenueLiveBooking = () => {
         const match = bookings.find(
           b => b.itemId === `${selectedVenue.name}__${selectedVenue.date}` && b.status === 'confirmed'
         );
-        if (match) setMySlotTimes([match.details.time]);
+          if (match) {
+            if (Array.isArray(match.details.slots)) {
+              setMySlotTimes(match.details.slots);
+            } else if (typeof match.details.time === 'string') {
+              const parts = match.details.time.split(' - ');
+              setMySlotTimes([match.details.time, parts[0] && parts[1] ? `${parts[0]} - ${parts[1]}` : match.details.time]);
+            }
+          }
       } catch (err) {
         console.error('Fetch availability error:', err);
       }
