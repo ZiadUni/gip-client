@@ -1,5 +1,5 @@
 // Navbar.jsx
-// Main navigation bar shown on all pages with dynamic link rendering based on authentication
+// Main navigation bar shown on all pages with dynamic link rendering based on authentication and role
 
 import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
@@ -11,6 +11,7 @@ const AppNavbar = () => {
 
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isVisitor = user.role === 'visitor';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -28,8 +29,6 @@ const AppNavbar = () => {
     { path: '/manager', label: 'Manager Panel' }
   ];
 
-  const isVisitor = user.role === 'visitor';
-
   return (
     <Navbar expand="lg" className="custom-navbar shadow-sm bg-custom" variant="dark">
       <Container>
@@ -39,50 +38,51 @@ const AppNavbar = () => {
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav className="ms-auto align-items-center">
-            {token && navLinks.map(link => {
-              if (link.path === '/venue-booking' && isVisitor) return null;
-              if (link.path === '/metrics' && user.role !== 'staff') return null;
-              if (link.path === '/manager' && user.role !== 'staff') return null;
+            {token && (
+              <div className="d-flex flex-wrap align-items-center gap-3">
+                {navLinks.map(link => {
+                  if (link.path === '/venue-booking' && isVisitor) return null;
+                  if (link.path === '/metrics' && user.role !== 'staff') return null;
+                  if (link.path === '/manager' && user.role !== 'staff') return null;
 
-              return (
-                <Nav.Link
-                  key={link.path}
-                  as={Link}
-                  to={link.path}
-                  active={location.pathname === link.path}
-                  className={`mx-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
-                >
-                  {link.label}
+                  return (
+                    <Nav.Link
+                      key={link.path}
+                      as={Link}
+                      to={link.path}
+                      active={location.pathname === link.path}
+                      className={location.pathname === link.path ? 'fw-semibold text-warning' : ''}
+                    >
+                      {link.label}
+                    </Nav.Link>
+                  );
+                })}
+                <span className="text-white small">
+                  👤 Role: <strong>{user.role}</strong>
+                </span>
+                <Nav.Link onClick={handleLogout} className="text-danger fw-semibold">
+                  Log Out
                 </Nav.Link>
-              );
-            })}
+              </div>
+            )}
 
-            {!token ? (
-              <>
+            {!token && (
+              <div className="d-flex gap-3">
                 <Nav.Link
                   as={Link}
                   to="/login"
-                  className={`mx-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
+                  className={location.pathname === '/login' ? 'fw-semibold text-warning' : ''}
                 >
                   Login
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
                   to="/register"
-                  className={`mx-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
+                  className={location.pathname === '/register' ? 'fw-semibold text-warning' : ''}
                 >
                   Register
                 </Nav.Link>
-              </>
-            ) : (
-              <>
-                <span className="text-white mx-3 small">
-                  Role: <strong>{user.role}</strong>
-                </span>
-                <Nav.Link onClick={handleLogout} className="mx-2 text-danger fw-semibold">
-                  Log Out
-                </Nav.Link>
-              </>
+              </div>
             )}
           </Nav>
         </Navbar.Collapse>

@@ -43,10 +43,11 @@ const VenueBooking = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
-    if (user.role === 'visitor') {
-      navigate('/');
-    }
-  }, [user, navigate]);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role === 'visitor') {
+        navigate('/');
+      }
+    }, [user, navigate]);
 
   const handleBook = (slot) => {
     navigate('/VenueLiveBooking', { state: { slot } });

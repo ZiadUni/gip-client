@@ -16,12 +16,13 @@ const ManagerDashboard = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
-    if (user.role !== 'staff') {
-      navigate('/');
-    } else {
-      fetchUsers();
-    }
-  }, []);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.role !== 'staff') {
+        navigate('/');
+        } else {
+        fetchUsers();
+        }
+    }, []);
 
   const fetchUsers = async () => {
     try {

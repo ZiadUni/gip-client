@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Button, Card, Row, Col, Alert } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+const user = JSON.parse(localStorage.getItem('user') || '{}');
 
 const VenueLiveBooking = () => {
   const [slots, setSlots] = useState([]);
