@@ -1,5 +1,5 @@
 // Register.jsx - Handles user registration form and validation
-// Basic email + password check before submission
+// Includes optional checkbox for requesting organizer role
 
 import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert, ProgressBar } from 'react-bootstrap';
@@ -7,7 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/api';
 
 const Register = () => {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirm: '',
+    wantsToBeOrganizer: false
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -42,12 +48,14 @@ const Register = () => {
     }
 
     try {
-const res = await apiFetch('/register', {        method: 'POST',
+      const res = await apiFetch('/register', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name,
           email: form.email,
-          password: form.password
+          password: form.password,
+          wantsToBeOrganizer: form.wantsToBeOrganizer
         })
       });
 
@@ -136,14 +144,32 @@ const res = await apiFetch('/register', {        method: 'POST',
               )}
             </Form.Group>
 
-            <Button type="submit" className="w-100 bg-brown border-0 mt-3">
+            <Form.Group className="mb-3" controlId="wantsToBeOrganizer">
+              <Form.Check
+                type="checkbox"
+                label="I want to register as an organizer"
+                name="wantsToBeOrganizer"
+                checked={form.wantsToBeOrganizer}
+                onChange={e =>
+                  setForm({ ...form, wantsToBeOrganizer: e.target.checked })
+                }
+              />
+            </Form.Group>
+
+            <Button type="submit" className="w-100 bg-brown border-0 mt-2">
               Register
             </Button>
           </Form>
-          <p className="text-center mt-3">
-  Already have an account? <span style={{ color: '#623E2A', cursor: 'pointer' }} onClick={() => navigate('/login')}>Login</span>
-</p>
 
+          <p className="text-center mt-3">
+            Already have an account?{' '}
+            <span
+              style={{ color: '#623E2A', cursor: 'pointer' }}
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </span>
+          </p>
         </Card.Body>
       </Card>
     </Container>

@@ -24,7 +24,8 @@ const AppNavbar = () => {
     { path: '/venue-booking', label: 'Book Venue' },
     { path: '/metrics', label: 'Metrics' },
     { path: '/about', label: 'About Us' },
-    { path: '/my-bookings', label: 'My Bookings' }
+    { path: '/my-bookings', label: 'My Bookings' },
+    { path: '/manager', label: 'Manager Panel' }
   ];
 
   const isVisitor = user.role === 'visitor';
@@ -40,6 +41,9 @@ const AppNavbar = () => {
           <Nav className="ms-auto align-items-center">
             {token && navLinks.map(link => {
               if (link.path === '/venue-booking' && isVisitor) return null;
+              if (link.path === '/metrics' && user.role !== 'staff') return null;
+              if (link.path === '/manager' && user.role !== 'staff') return null;
+
               return (
                 <Nav.Link
                   key={link.path}

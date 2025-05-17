@@ -1,7 +1,7 @@
 // VenueBooking.jsx - Lists venues for booking, each links to slot selection
-// Each venue links to VenueLiveBooking page
+// Redirects visitors to home if accessed directly
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 
@@ -40,6 +40,13 @@ const mockVenueSlots = [
 
 const VenueBooking = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  useEffect(() => {
+    if (user.role === 'visitor') {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleBook = (slot) => {
     navigate('/VenueLiveBooking', { state: { slot } });
