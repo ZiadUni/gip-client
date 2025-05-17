@@ -339,8 +339,12 @@ const handleSaveEdit = async () => {
                     <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.status} onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })} /></td>
-                    <td><Image src={editVenueData.image} alt="venue preview" width="60" height="40" rounded /></td>
-                    <td><Form.Control value={editVenueData.image} onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })} /></td>
+                    <td>
+                        <Image src={editVenueData.image} alt="preview" width="60" height="40" rounded />
+                    </td>
+                    <td>
+                        <Form.Control value={editVenueData.image} onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })} />
+                    </td>
                     <td>
                         <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
                         <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
@@ -354,7 +358,9 @@ const handleSaveEdit = async () => {
                     <td>{venue.capacity}</td>
                     <td>{venue.price}</td>
                     <td>{venue.status}</td>
-                    <td><Image src={venue.image} alt="venue" width="60" height="40" rounded /></td>
+                    <td>
+                        {venue.image && <Image src={venue.image} alt="venue" width="60" height="40" rounded />}
+                    </td>
                     <td>{venue.image}</td>
                     <td>
                         <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>Edit</Button>
