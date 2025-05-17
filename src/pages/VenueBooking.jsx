@@ -66,7 +66,7 @@ const VenueBooking = () => {
                     <Card.Text><strong>Capacity:</strong> {slot.capacity} People</Card.Text>
                     <Card.Text>
                       <strong>Booking Status:</strong>{' '}
-                      <span className={slot.status === 'Available' ? 'text-success' : 'text-warning'}>
+                      <span className={slot.status === 'Available' ? 'text-success' : 'text-danger'}>
                         {slot.status}
                       </span>
                     </Card.Text>

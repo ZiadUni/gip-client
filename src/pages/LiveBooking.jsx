@@ -1,4 +1,5 @@
 // LiveBooking.jsx – Seat selection and booking for an event
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Button, Card, Row, Col, Alert } from 'react-bootstrap';
@@ -17,6 +18,19 @@ const LiveBooking = () => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [notifyMsg, setNotifyMsg] = useState('');
+
+  const formatSlotRange = (timeValue) => {
+    const slots = Array.isArray(timeValue)
+      ? timeValue
+      : typeof timeValue === 'string'
+      ? timeValue.split(' - ')
+      : [];
+
+    if (slots.length <= 1) return timeValue;
+    const start = slots[0]?.split(' - ')[0]?.trim() || slots[0];
+    const end = slots[slots.length - 1]?.split(' - ')[1]?.trim() || slots[slots.length - 1];
+    return `${start} - ${end}`;
+  };
 
   useEffect(() => {
     if (!event) navigate('/ticket-booking');
@@ -132,13 +146,13 @@ const LiveBooking = () => {
     }
   };
 
-  const getColor = (status, isSelected, id) => {
-    if (mySeat === id) return '#198754';
-    if (isSelected) return '#198754';
-    if (status === 'booked') return '#dc3545';
-    if (status === 'pending') return '#0dcaf0';
-    return '#adb5bd';
-  };
+      const getColor = (status, isSelected, id) => {
+        if (mySeat === id) return '#198754';
+        if (isSelected) return '#f0ad4e'; 
+        if (status === 'booked') return '#dc3545';
+        if (status === 'pending') return '#0dcaf0';
+        return '#adb5bd';
+};
 
   return (
     <div className="fade-in">
@@ -146,49 +160,70 @@ const LiveBooking = () => {
         <h2 className="text-brown mb-3">Book Your Ticket</h2>
         <h5>{event?.name}</h5>
         <p><strong>Date:</strong> {event?.date}</p>
-        <p><strong>Time:</strong> {event?.time}</p>
+        <p><strong>Time:</strong> {formatSlotRange(event?.time)}</p>
         <p><strong>Venue:</strong> {event?.venue || event?.name}</p>
 
-    <div className="d-flex flex-wrap justify-content-center gap-2 mt-4">
-      {seats.map(seat => (
-        <div
-          key={seat.id}
-          onClick={() => handleClick(seat)}
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 4,
-            backgroundColor: getColor(seat.status, selectedSeat === seat.id, seat.id),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '0.8rem',
-            cursor: seat.status === 'available' ? 'pointer' : 'not-allowed',
-            border: mySeat === seat.id ? '2px solid white' : 'none'
-          }}
-          title={`Seat ${seat.id}`}
-        >
-          {seat.id}
+        <div className="d-flex flex-wrap justify-content-center gap-2 mt-4">
+          {seats.map(seat => (
+<div style={{ position: 'relative' }}>
+  <div
+    key={seat.id}
+    onClick={() => handleClick(seat)}
+    style={{
+      width: 30,
+      height: 30,
+      borderRadius: 4,
+      backgroundColor: getColor(seat.status, selectedSeat === seat.id, seat.id),
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#fff',
+      fontSize: '0.8rem',
+      cursor: seat.status === 'available' ? 'pointer' : 'not-allowed',
+      border: mySeat === seat.id ? '2px solid white' : 'none'
+    }}
+    title={`Seat ${seat.id}`}
+            >
+              {seat.id}
+            </div>
+            {(seat.status === 'booked' || seat.status === 'pending') && (
+              <Button
+                variant="light"
+                size="sm"
+                style={{
+                  position: 'absolute',
+                  top: 32,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  padding: '1px 6px',
+                  fontSize: '0.65rem'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNotify(seat);
+                }}
+              >
+                Notify Me
+              </Button>
+            )}
+          </div>
+          ))}
         </div>
-      ))}
-    </div>
 
-    <div className="text-center mt-4">
-  <span className="me-3">
-    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Selected
-  </span>
-  <span className="me-3">
-    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
-  </span>
-  <span className="me-3">
-    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
-  </span>
-  <span>
-    <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
-  </span>
-</div>
-
+        <div className="text-center mt-4">
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Selected
+          </span>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
+          </span>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
+          </span>
+          <span>
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
+          </span>
+        </div>
 
         {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
         {success && <Alert variant="success" className="mt-4">{success}</Alert>}
