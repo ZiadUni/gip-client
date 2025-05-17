@@ -43,7 +43,7 @@ const VenueBooking = () => {
         <h2 className="text-center text-brown mb-4">Available Venues</h2>
         <Row className="g-4">
           {venues
-            .filter(v => v.availability === 'Available')
+            .filter(v => v.availability?.toLowerCase().trim() === 'available')
             .sort((a, b) => new Date(a.date) - new Date(b.date))
             .map(slot => (
               <Col md={6} lg={4} key={slot._id}>
