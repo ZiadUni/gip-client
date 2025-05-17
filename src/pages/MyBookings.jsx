@@ -21,7 +21,7 @@ const MyBookings = () => {
     const token = localStorage.getItem('token');
 
     try {
-  const res = await apiFetch('/bookings', {
+const res = await apiFetch(`/bookings/${id}`, {
           headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
