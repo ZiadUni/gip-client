@@ -1,5 +1,5 @@
 // Navbar.jsx
-// Main navigation bar shown on all pages with dynamic link rendering based on authentication and role
+// Main navigation bar with role-based links, responsive layout, and role display
 
 import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
@@ -31,15 +31,15 @@ const AppNavbar = () => {
 
   return (
     <Navbar expand="lg" className="custom-navbar shadow-sm bg-custom" variant="dark">
-      <Container>
-        <Navbar.Brand as={Link} to="/" className="fw-bold">
+      <Container fluid>
+        <Navbar.Brand as={Link} to="/" className="fw-bold ms-2">
           Galala Innovation Park
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
-          <Nav className="ms-auto align-items-center">
-            {token && (
-              <div className="d-flex flex-wrap align-items-center gap-3">
+          <Nav className="ms-auto align-items-center px-3">
+            {token ? (
+              <>
                 {navLinks.map(link => {
                   if (link.path === '/venue-booking' && isVisitor) return null;
                   if (link.path === '/metrics' && user.role !== 'staff') return null;
@@ -51,38 +51,37 @@ const AppNavbar = () => {
                       as={Link}
                       to={link.path}
                       active={location.pathname === link.path}
-                      className={location.pathname === link.path ? 'fw-semibold text-warning' : ''}
+                      className={`mx-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
                     >
                       {link.label}
                     </Nav.Link>
                   );
                 })}
-                <span className="text-white small">
-                  👤 Role: <strong>{user.role}</strong>
+
+                <span className="text-white small mx-2">
+                  <strong>{user.role}</strong>
                 </span>
-                <Nav.Link onClick={handleLogout} className="text-danger fw-semibold">
+                <Nav.Link onClick={handleLogout} className="text-danger fw-semibold mx-2">
                   Log Out
                 </Nav.Link>
-              </div>
-            )}
-
-            {!token && (
-              <div className="d-flex gap-3">
+              </>
+            ) : (
+              <>
                 <Nav.Link
                   as={Link}
                   to="/login"
-                  className={location.pathname === '/login' ? 'fw-semibold text-warning' : ''}
+                  className={`mx-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
                 >
                   Login
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
                   to="/register"
-                  className={location.pathname === '/register' ? 'fw-semibold text-warning' : ''}
+                  className={`mx-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
                 >
                   Register
                 </Nav.Link>
-              </div>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
