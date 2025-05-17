@@ -4,8 +4,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert, Card } from 'react-bootstrap';
+import useRouteGuard from '../hooks/useRouteGuard';
 
 const Payment = () => {
+  useRouteGuard(['items']);
   const navigate = useNavigate();
   const location = useLocation();
   const booking = location.state?.items || [];

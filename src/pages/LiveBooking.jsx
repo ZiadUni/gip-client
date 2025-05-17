@@ -19,6 +19,9 @@ const LiveBooking = () => {
   const selectedEvent = location.state?.event;
 
   useEffect(() => {
+    if (!location.state?.event) {
+      navigate('/ticket-booking');
+  }
     const fetchAvailability = async () => {
       if (!selectedEvent?.id) return;
       const token = localStorage.getItem('token');

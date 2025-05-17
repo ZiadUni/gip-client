@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Card, Button } from 'react-bootstrap';
 
 const BookingConfirmation = () => {
+  useRouteGuard(['items']);
   const location = useLocation();
   const navigate = useNavigate();
   const type = location.state?.type || 'event';

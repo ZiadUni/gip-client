@@ -19,6 +19,9 @@ const VenueLiveBooking = () => {
   const selectedVenue = location.state?.slot;
 
   useEffect(() => {
+      if (user.role === 'visitor') {
+      navigate('/');
+    }
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
       const token = localStorage.getItem('token');
