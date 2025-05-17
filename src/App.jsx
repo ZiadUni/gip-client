@@ -21,6 +21,7 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import MyBookings from './pages/MyBookings';
 import NotificationsPopup from './pages/NotificationsPopup';
+import ManagerDashboard from './pages/ManagerDashboard';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const AppLayout = () => {
           <Route path="/about" element={token ? <About /> : <Navigate to="/login" />} />
           <Route path="/metrics" element={<ProtectedRoute><Metrics /></ProtectedRoute>} />
           <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+          <Route path="/manager" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
