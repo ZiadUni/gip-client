@@ -97,32 +97,46 @@ const formatDate = (rawDate) => {
     }
   };
 
-  const handleAddVenue = async () => {
-    const formattedVenue = {
-      ...newVenue,
-      price: newVenue.price.startsWith('$') ? newVenue.price : `$${newVenue.price}`
-    };
+const handleAddVenue = async () => {
+  const { image, date } = newVenue;
 
-    try {
-      const res = await apiFetch('/venues', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formattedVenue)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setSuccess('Venue added');
-      setNewVenue({
-        name: '', date: '', capacity: '', availability: 'Available', price: '', image: ''
-      });
-      fetchVenues();
-    } catch (err) {
-      setError(err.message);
-    }
+  if (!isValidImageUrl(image)) {
+    setError('Invalid image link. Must end in .jpg, .png, .webp, etc.');
+    return;
+  }
+
+  if (!isValidDate(date)) {
+    setError('Invalid date. Must not be in the past or more than 1 year ahead.');
+    return;
+  }
+
+  const formattedVenue = {
+    ...newVenue,
+    price: newVenue.price.startsWith('$') ? newVenue.price : `$${newVenue.price}`
   };
+
+  try {
+    const res = await apiFetch('/venues', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formattedVenue)
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    setSuccess('Venue added');
+    setNewVenue({
+      name: '', date: '', capacity: '', availability: 'Available', price: '', image: ''
+    });
+    fetchVenues();
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const handleDeleteVenue = async (id) => {
     if (!window.confirm('Delete this venue?')) return;
@@ -307,6 +321,7 @@ const handleSaveEdit = async () => {
               <th>Capacity</th>
               <th>Price</th>
               <th>Status</th>
+              <th>Image URL</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -328,6 +343,13 @@ const handleSaveEdit = async () => {
                       <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
                       <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
                     </td>
+                    <td>
+                    <Form.Control
+                        value={editVenueData.image}
+                        onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })}
+                    />
+                    </td>
+
                   </>
                 ) : (
                   <>
