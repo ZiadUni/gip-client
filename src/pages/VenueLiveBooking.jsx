@@ -40,6 +40,7 @@ const VenueLiveBooking = () => {
         const bookings = await resMyBookings.json();
 
         setSlots(availability.slots || []);
+        console.log('Received slots:', availability.slots);
 
         const match = bookings.find(
           b => b.itemId === `${selectedVenue.name}__${selectedVenue.date}` && b.status === 'confirmed'
@@ -71,7 +72,7 @@ const VenueLiveBooking = () => {
   const handleProceed = async () => {
     const token = localStorage.getItem('token');
     const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
-    
+
     if (!eventName.trim()) {
       return setError('Please enter an event name.');
     }
