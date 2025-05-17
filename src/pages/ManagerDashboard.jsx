@@ -110,10 +110,15 @@ const handleAddVenue = async () => {
     return;
   }
 
-  const formattedVenue = {
-    ...newVenue,
-    price: newVenue.price.startsWith('$') ? newVenue.price : `$${newVenue.price}`
-  };
+const defaultSlots = ["8:00", "10:00", "12:00", "14:00", "16:00"];
+
+const formattedVenue = {
+  ...newVenue,
+  price: newVenue.price.startsWith('$') ? newVenue.price : `$${newVenue.price}`,
+  details: {
+    slots: defaultSlots
+  }
+};
 
   try {
     const res = await apiFetch('/venues', {
