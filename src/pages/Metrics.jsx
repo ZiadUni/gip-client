@@ -14,14 +14,17 @@ import jsPDF from 'jspdf';
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 
 const Metrics = () => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const today = new Date().toISOString().split('T')[0];
+  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+
+  const [startDate, setStartDate] = useState(sevenDaysAgo);
+  const [endDate, setEndDate] = useState(today);
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('current');
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [selectedVenue, setSelectedVenue] = useState(null);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
   const [boxFade, setBoxFade] = useState(false);
   const pageRef = useRef();
 
@@ -40,14 +43,12 @@ const Metrics = () => {
   };
 
   useEffect(() => {
-    if (startDate && endDate) {
-      fetchData();
-      let interval;
-      if (autoRefresh) {
-        interval = setInterval(fetchData, 60000);
-      }
-      return () => clearInterval(interval);
+    fetchData();
+    let interval;
+    if (autoRefresh) {
+      interval = setInterval(fetchData, 60000);
     }
+    return () => clearInterval(interval);
   }, [startDate, endDate, typeFilter, statusFilter, autoRefresh, selectedVenue]);
 
   useEffect(() => {
@@ -92,9 +93,9 @@ const Metrics = () => {
         {error && <p className="text-danger text-center mt-3">{error}</p>}
         {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
 
-        {/* Filters */}
-        <div style={{ textAlign: 'center', margin: '20px 0' }}>
-          <div className="mb-3">
+        {/* Filter Section */}
+        <div style={{ textAlign: 'center', margin: '30px 0' }}>
+          <div style={{ marginBottom: '20px' }}>
             <label style={{ marginRight: '15px' }}>
               <input
                 type="checkbox"
@@ -102,27 +103,30 @@ const Metrics = () => {
                 onChange={e => setAutoRefresh(e.target.checked)}
                 style={{ marginRight: '8px' }}
               />
-              🔁 Auto-refresh every 60s
+              Auto-refresh every 60s
             </label>
           </div>
 
-          <label><strong>Start Date:</strong></label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            style={filterStyle}
-          />
+          <div className="mb-3">
+            <h5>🕒 Time Range Filter</h5>
+            <label><strong>Start Date:</strong></label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={e => setStartDate(e.target.value)}
+              style={filterStyle}
+            />
 
-          <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            style={filterStyle}
-          />
+            <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={e => setEndDate(e.target.value)}
+              style={filterStyle}
+            />
+          </div>
 
-          <label style={{ marginLeft: '40px' }}><strong>Status:</strong></label>
+          <label style={{ marginRight: '10px' }}><strong>Status:</strong></label>
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
@@ -133,7 +137,7 @@ const Metrics = () => {
             <option value="all">All</option>
           </select>
 
-          <label style={{ marginLeft: '40px' }}><strong>Booking Type:</strong></label>
+          <label style={{ marginLeft: '30px', marginRight: '10px' }}><strong>Booking Type:</strong></label>
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
@@ -147,35 +151,37 @@ const Metrics = () => {
 
         {/* Export Buttons */}
         {data && (
-          <div className="text-center mb-4">
-            <Button className="me-3" onClick={() =>
+          <div className="text-center mb-4 d-flex flex-wrap justify-content-center gap-3">
+            <Button onClick={() =>
               exportToCSV([
                 { Metric: 'Tickets Sold', Value: data.ticketsSold },
                 { Metric: 'Total Revenue', Value: data.totalRevenue },
                 { Metric: 'Top Venue', Value: data.topVenue }
               ], 'metric-summary')}>Export Summary CSV</Button>
 
-            <Button className="me-3" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
-            <Button className="me-3" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
-            <Button className="me-3" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
+            <Button onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
+            <Button onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
+            <Button onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
             <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
           </div>
         )}
 
         {data && (
           <>
+            {/* Summary Boxes */}
             <div style={{ ...grid, opacity: boxFade ? 1 : 0, transition: 'opacity 0.5s ease' }}>
               <MetricBox title="Tickets Sold" value={data.ticketsSold} />
               <MetricBox title="Total Revenue" value={`EGP ${data?.totalRevenue?.toLocaleString?.() ?? '—'}`} />
               <MetricBox title="Top Venue" value={data.topVenue || '—'} />
             </div>
 
+            {/* Charts */}
             <h3 style={sectionHeader}>📍 Venue Usage</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={data.venueUsage}
                 onClick={(e) => {
-                  if (e && e.activeLabel) setSelectedVenue(e.activeLabel);
+                  if (e?.activeLabel) setSelectedVenue(e.activeLabel);
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
