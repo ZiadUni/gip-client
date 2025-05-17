@@ -1,6 +1,5 @@
 // VenueLiveBooking.jsx - Real-time time slot booking for venues
-// Polls backend for latest slot availability
-// Sends selected slot to booking API
+// Allows multiple time slot selection and grouped booking
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -10,23 +9,20 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
 
 const VenueLiveBooking = () => {
   const [slots, setSlots] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]); // multiple selections
   const [mySlotTimes, setMySlotTimes] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [notifyMsg, setNotifyMsg] = useState('');
+  const [eventName, setEventName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const selectedVenue = location.state?.slot;
-  const [eventName, setEventName] = useState('');
 
   useEffect(() => {
-      if (!location.state?.slot) {
-      navigate('/venue-booking');
-    }
-      if (user.role === 'visitor') {
-      navigate('/');
-    }
+    if (!location.state?.slot) navigate('/venue-booking');
+    if (user.role === 'visitor') navigate('/');
+
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
       const token = localStorage.getItem('token');
@@ -59,20 +55,29 @@ const VenueLiveBooking = () => {
     return () => clearInterval(interval);
   }, [selectedVenue]);
 
-  const handleClick = slot => {
+  const handleClick = (slot) => {
     if (slot.status !== 'available') return;
-    setSelectedId(slot.id === selectedId ? null : slot.id);
     setError('');
     setSuccess('');
+    setNotifyMsg('');
+
+    setSelectedIds(prev =>
+      prev.includes(slot.id)
+        ? prev.filter(id => id !== slot.id)
+        : [...prev, slot.id]
+    );
   };
 
   const handleProceed = async () => {
-    const slot = slots.find(s => s.id === selectedId);
     const token = localStorage.getItem('token');
+    const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
 
-    if (!slot || !selectedVenue) {
-      return setError('Missing slot or venue details.');
+    if (!selectedSlots.length || !selectedVenue) {
+      return setError('Please select at least one slot.');
     }
+
+    const sortedTimes = selectedSlots.map(s => s.time).sort();
+    const timeRange = `${sortedTimes[0]} - ${sortedTimes[sortedTimes.length - 1]}`;
 
     try {
       const res = await apiFetch('/bookings', {
@@ -87,12 +92,13 @@ const VenueLiveBooking = () => {
           details: {
             name: selectedVenue.name,
             date: selectedVenue.date,
-            time: slot.time,
+            time: timeRange,
             event: eventName,
             price: selectedVenue.price,
             image: selectedVenue.image,
             capacity: selectedVenue.capacity,
-            availability: selectedVenue.availability
+            availability: selectedVenue.availability,
+            slots: sortedTimes
           }
         })
       });
@@ -106,8 +112,9 @@ const VenueLiveBooking = () => {
           state: {
             type: 'venue',
             items: [{
-              ...slot,
-              ...selectedVenue
+              ...selectedVenue,
+              time: timeRange,
+              event: eventName
             }]
           }
         });
@@ -117,7 +124,7 @@ const VenueLiveBooking = () => {
     }
   };
 
-  const handleNotify = async slot => {
+  const handleNotify = async (slot) => {
     const token = localStorage.getItem('token');
     setNotifyMsg('');
 
@@ -149,7 +156,7 @@ const VenueLiveBooking = () => {
   };
 
   const getColor = (status, isSelected, time) => {
-    if (mySlotTimes.includes(time)) return '#198754'; // green
+    if (mySlotTimes.includes(time)) return '#198754';
     if (isSelected) return '#198754';
     if (status === 'booked') return '#dc3545';
     if (status === 'pending') return '#0dcaf0';
@@ -171,18 +178,18 @@ const VenueLiveBooking = () => {
         )}
 
         <Form.Group className="mb-3" controlId="eventNameInput">
-        <Form.Label>Event Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter the event name"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
-        />
-      </Form.Group>
+          <Form.Label>Event Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter the event name"
+            value={eventName}
+            onChange={(e) => setEventName(e.target.value)}
+          />
+        </Form.Group>
 
         <Row className="g-4 justify-content-center">
           {slots.map(slot => {
-            const isSelected = selectedId === slot.id;
+            const isSelected = selectedIds.includes(slot.id);
             return (
               <Col sm={6} md={4} key={slot.id}>
                 <Card
@@ -220,9 +227,9 @@ const VenueLiveBooking = () => {
         {success && <Alert variant="success" className="mt-4">{success}</Alert>}
         {notifyMsg && <Alert variant="info" className="mt-4">{notifyMsg}</Alert>}
 
-        {selectedId && (
+        {selectedIds.length > 0 && (
           <div className="mt-4">
-            <p><strong>Selected Slot:</strong> {slots.find(slot => slot.id === selectedId)?.time}</p>
+            <p><strong>Selected Slots:</strong> {slots.filter(s => selectedIds.includes(s.id)).map(s => s.time).join(', ')}</p>
             <Button className="bg-brown border-0" onClick={handleProceed}>
               Proceed to Payment
             </Button>
