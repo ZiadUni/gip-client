@@ -40,8 +40,7 @@ const VenueLiveBooking = () => {
         const bookings = await resMyBookings.json();
 
         setSlots(availability.slots || []);
-        console.log('Received slots:', availability.slots);
-
+        
         const match = bookings.find(
           b => b.itemId === `${selectedVenue.name}__${selectedVenue.date}` && b.status === 'confirmed'
         );
