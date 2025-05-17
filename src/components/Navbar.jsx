@@ -59,7 +59,7 @@ const AppNavbar = () => {
                 })}
 
                 <span className="text-white small mx-2">
-                  <strong>{user.role}</strong>
+                  Role: <strong>{user.role}</strong>
                 </span>
                 <Nav.Link onClick={handleLogout} className="text-danger fw-semibold mx-2">
                   Log Out
