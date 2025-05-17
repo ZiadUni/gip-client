@@ -20,6 +20,9 @@ const VenueLiveBooking = () => {
   const selectedVenue = location.state?.slot;
 
   useEffect(() => {
+      if (!location.state?.slot) {
+      navigate('/venue-booking');
+    }
       if (user.role === 'visitor') {
       navigate('/');
     }

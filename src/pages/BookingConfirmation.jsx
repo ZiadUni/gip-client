@@ -4,6 +4,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Card, Button } from 'react-bootstrap';
+import useRouteGuard from '../hooks/useRouteGuard';
 
 const BookingConfirmation = () => {
   useRouteGuard(['items']);

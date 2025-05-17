@@ -147,7 +147,7 @@ const Register = () => {
             <Form.Group className="mb-3" controlId="wantsToBeOrganizer">
               <Form.Check
                 type="checkbox"
-                label={<span className="ms-1">I want to register as an organizer</span>}
+                label="I want to register as an organizer"
                 name="wantsToBeOrganizer"
                 checked={form.wantsToBeOrganizer}
                 onChange={e =>
