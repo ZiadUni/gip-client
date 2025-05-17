@@ -314,15 +314,15 @@ const handleSaveEdit = async () => {
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>Image</th>
-              <th>Image URL</th>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Capacity</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Actions</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Capacity</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Image</th>
+            <th>Image URL</th>
+            <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -332,38 +332,35 @@ const handleSaveEdit = async () => {
                   {venue.image && <Image src={venue.image} alt="venue" width="60" height="40" rounded />}
                 </td>
                 {editVenueId === venue._id ? (
-                  <>
+                    <>
                     <td><Form.Control value={editVenueData.name} onChange={e => setEditVenueData({ ...editVenueData, name: e.target.value })} /></td>
                     <td><Form.Control type="date" value={editVenueData.date} onChange={e => setEditVenueData({ ...editVenueData, date: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.availability} onChange={e => setEditVenueData({ ...editVenueData, availability: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.status} onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })} /></td>
+                    <td><Image src={editVenueData.image} alt="venue preview" width="60" height="40" rounded /></td>
+                    <td><Form.Control value={editVenueData.image} onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })} /></td>
                     <td>
-                      <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
-                      <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
+                        <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
+                        <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
                     </td>
-                    <td>
-                    <Form.Control
-                        value={editVenueData.image}
-                        onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })}
-                    />
-                    </td>
-
-                  </>
+                    </>
                 ) : (
-                  <>
+                    <>
                     <td>{venue.name}</td>
                     <td>{formatDate(venue.date)}</td>
                     <td>{venue.availability}</td>
                     <td>{venue.capacity}</td>
                     <td>{venue.price}</td>
                     <td>{venue.status}</td>
+                    <td><Image src={venue.image} alt="venue" width="60" height="40" rounded /></td>
+                    <td>{venue.image}</td>
                     <td>
-                      <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>Edit</Button>
-                      <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(venue._id)}>Delete</Button>
+                        <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>Edit</Button>
+                        <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(venue._id)}>Delete</Button>
                     </td>
-                  </>
+                    </>
                 )}
               </tr>
             ))}
