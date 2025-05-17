@@ -1,42 +1,28 @@
 // VenueBooking.jsx - Lists venues for booking, each links to slot selection
 // Redirects visitors to home if accessed directly
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
+import { apiFetch } from '../utils/api';
 
-const mockVenueSlots = [
-  {
-    id: "slot-1",
-    name: "Conference Hall",
-    date: "2025-05-10",
-    capacity: 200,
-    availability: "9:00 AM to 9:00 PM",
-    status: "Available",
-    price: "$700",
-    image: "https://i.imgur.com/rZAPLJt.jpeg"
-  },
-  {
-    id: "slot-2",
-    name: "Innovation Lab",
-    date: "2025-05-11",
-    capacity: 50,
-    availability: "24/7 Access with prior booking",
-    status: "Available",
-    price: "$500",
-    image: "https://i.imgur.com/GbmML9Y.jpeg"
-  },
-  {
-    id: "slot-3",
-    name: "Co-Working Space",
-    date: "2025-05-12",
-    capacity: 30,
-    availability: "8:00 AM to 8:00 PM",
-    status: "Available",
-    price: "$300",
-    image: "https://i.imgur.com/QVyNa1a.jpeg"
-  }
-];
+const [venues, setVenues] = useState([]);
+
+useEffect(() => {
+  const fetchVenues = async () => {
+    try {
+      const res = await apiFetch('/venues');
+      const data = await res.json();
+      if (res.ok) {
+        setVenues(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch venues:', err);
+    }
+  };
+
+  fetchVenues();
+}, []);
 
 const VenueBooking = () => {
   const navigate = useNavigate();
@@ -58,7 +44,10 @@ const VenueBooking = () => {
       <Container className="py-5">
         <h2 className="text-center text-brown mb-4">Available Venues</h2>
         <Row className="g-4">
-          {mockVenueSlots.map(slot => (
+          {venues
+            .filter(v => v.availability === 'Available')
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .map(slot => (
             <Col md={6} lg={4} key={slot.id}>
               <Card className="h-100 shadow-sm">
                 <Card.Img
@@ -78,7 +67,7 @@ const VenueBooking = () => {
                 <Card.Footer>
                   <Button
                     className="w-100 bg-brown border-0"
-                    onClick={() => handleBook(slot)}
+                    onClick={() => navigate('/VenueLiveBooking', { state: { slot } })}
                   >
                     Book Now
                   </Button>
@@ -86,6 +75,11 @@ const VenueBooking = () => {
               </Card>
             </Col>
           ))}
+                {venues.filter(v => v.availability === 'Available').length === 0 && (
+        <Col>
+          <p className="text-center text-muted">No venues available.</p>
+        </Col>
+          )}
         </Row>
       </Container>
     </div>
