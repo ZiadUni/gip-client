@@ -25,9 +25,7 @@ const Metrics = () => {
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  const [boxFade, setBoxFade] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(Date.now());
-  const [refreshTimer, setRefreshTimer] = useState(0);
   const pageRef = useRef();
 
   const fetchData = async () => {
@@ -46,26 +44,17 @@ const Metrics = () => {
   };
 
   useEffect(() => {
-    fetchData();
-    let interval;
     if (autoRefresh) {
-      interval = setInterval(fetchData, 20000);
+      const interval = setInterval(() => {
+        window.location.reload();
+      }, 20000);
+      return () => clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [startDate, endDate, typeFilter, statusFilter, autoRefresh, selectedVenue]);
+  }, [autoRefresh]);
 
   useEffect(() => {
-    setBoxFade(false);
-    const timeout = setTimeout(() => setBoxFade(true), 100);
-    return () => clearTimeout(timeout);
-  }, [data]);
-
-  useEffect(() => {
-    const tick = setInterval(() => {
-      setRefreshTimer(Date.now());
-    }, 1000);
-    return () => clearInterval(tick);
-  }, []);
+    fetchData();
+  }, [startDate, endDate, typeFilter, statusFilter, selectedVenue]);
 
   const exportToCSV = (dataArray, filename) => {
     if (!dataArray || !dataArray.length) return;
@@ -85,10 +74,12 @@ const Metrics = () => {
   };
 
   const exportPDF = () => {
-    const container = pageRef.current;
-    container.style.boxShadow = 'none';
-    container.style.backgroundColor = '#fff';
-
+    const container = pageRef.current.cloneNode(true);
+    container.style.padding = '40px';
+    container.style.background = '#fff';
+    container.style.maxWidth = '900px';
+    container.style.margin = 'auto';
+    document.body.appendChild(container);
     html2canvas(container, { backgroundColor: '#ffffff' }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -96,8 +87,7 @@ const Metrics = () => {
       const height = (canvas.height * width) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, width, height);
       pdf.save('metrics-dashboard.pdf');
-
-      container.style.boxShadow = '';
+      document.body.removeChild(container);
     });
   };
 
@@ -109,10 +99,10 @@ const Metrics = () => {
         {error && <p className="text-danger text-center mt-3">{error}</p>}
         {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
 
-        {/* Filter Section */}
+        {/* Filters */}
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <div className="mb-2">
-            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <div className="mb-2" style={{ display: 'flex', justifyContent: 'center' }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
               <input
                 type="checkbox"
                 checked={autoRefresh}
@@ -122,51 +112,51 @@ const Metrics = () => {
             </label>
           </div>
 
-          {lastRefreshed && (
+          {autoRefresh && lastRefreshed && (
             <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
               Last refreshed: {Math.floor((Date.now() - lastRefreshed) / 1000)} seconds ago
             </p>
           )}
 
-          <div className="mb-3">
-            <h5>🕒 Time Range Filter</h5>
-            <label><strong>Start Date:</strong></label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
+          <h5>🕒 Time Range Filter</h5>
+          <label><strong>Start Date:</strong></label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            style={filterStyle}
+          />
+          <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            style={filterStyle}
+          />
+
+          <div style={{ marginTop: '15px' }}>
+            <label><strong>Status:</strong></label>
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
               style={filterStyle}
-            />
-            <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
+            >
+              <option value="current">Current</option>
+              <option value="past">Past</option>
+              <option value="all">All</option>
+            </select>
+
+            <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
               style={filterStyle}
-            />
+            >
+              <option value="all">All</option>
+              <option value="event">Event Only</option>
+              <option value="venue">Venue Only</option>
+            </select>
           </div>
-
-          <label style={{ marginRight: '10px' }}><strong>Status:</strong></label>
-          <select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            style={filterStyle}
-          >
-            <option value="current">Current</option>
-            <option value="past">Past</option>
-            <option value="all">All</option>
-          </select>
-
-          <label style={{ marginLeft: '30px', marginRight: '10px' }}><strong>Booking Type:</strong></label>
-          <select
-            value={typeFilter}
-            onChange={e => setTypeFilter(e.target.value)}
-            style={filterStyle}
-          >
-            <option value="all">All</option>
-            <option value="event">Event Only</option>
-            <option value="venue">Venue Only</option>
-          </select>
         </div>
 
         {/* Export Buttons */}
@@ -178,7 +168,6 @@ const Metrics = () => {
                 { Metric: 'Total Revenue', Value: data.totalRevenue },
                 { Metric: 'Top Venue', Value: data.topVenue }
               ], 'metric-summary')}>Export Summary CSV</Button>
-
             <Button onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
             <Button onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
             <Button onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
@@ -186,22 +175,21 @@ const Metrics = () => {
           </div>
         )}
 
+        {/* Metric Charts */}
         {data && (
           <>
-            <div style={{ ...grid, opacity: boxFade ? 1 : 0, transition: 'opacity 0.5s ease' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
               <MetricBox title="Tickets Sold" value={data.ticketsSold} />
-              <MetricBox title="Total Revenue" value={`EGP ${data?.totalRevenue?.toLocaleString?.() ?? '—'}`} />
+              <MetricBox title="Total Revenue" value={`EGP ${data.totalRevenue?.toLocaleString() ?? '—'}`} />
               <MetricBox title="Top Venue" value={data.topVenue || '—'} />
             </div>
 
             <h3 style={sectionHeader}>Venue Usage</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={data.venueUsage}
+              <BarChart data={data.venueUsage}
                 onClick={(e) => {
                   if (e?.activeLabel) setSelectedVenue(e.activeLabel);
-                }}
-              >
+                }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis allowDecimals={false} />
@@ -246,14 +234,6 @@ const MetricBox = ({ title, value }) => (
     <p style={{ fontSize: '24px', margin: 0 }}>{value}</p>
   </div>
 );
-
-const grid = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'center',
-  gap: '20px',
-  marginBottom: '40px'
-};
 
 const boxStyle = {
   backgroundColor: '#fff',
