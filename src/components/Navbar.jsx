@@ -10,6 +10,7 @@ const AppNavbar = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -17,7 +18,6 @@ const AppNavbar = () => {
     navigate('/login');
   };
 
-  // Define nav items
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/ticket-booking', label: 'Book Tickets' },
@@ -26,6 +26,8 @@ const AppNavbar = () => {
     { path: '/about', label: 'About Us' },
     { path: '/my-bookings', label: 'My Bookings' }
   ];
+
+  const isVisitor = user.role === 'visitor';
 
   return (
     <Navbar expand="lg" className="custom-navbar shadow-sm bg-custom" variant="dark">
@@ -36,20 +38,21 @@ const AppNavbar = () => {
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav className="ms-auto align-items-center">
-            {/* Authenticated User Links */}
-            {token && navLinks.map(link => (
-              <Nav.Link
-                key={link.path}
-                as={Link}
-                to={link.path}
-                active={location.pathname === link.path}
-                className={`mx-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
-              >
-                {link.label}
-              </Nav.Link>
-            ))}
+            {token && navLinks.map(link => {
+              if (link.path === '/venue-booking' && isVisitor) return null;
+              return (
+                <Nav.Link
+                  key={link.path}
+                  as={Link}
+                  to={link.path}
+                  active={location.pathname === link.path}
+                  className={`mx-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
+                >
+                  {link.label}
+                </Nav.Link>
+              );
+            })}
 
-            {/* Guest Links */}
             {!token ? (
               <>
                 <Nav.Link
@@ -68,9 +71,14 @@ const AppNavbar = () => {
                 </Nav.Link>
               </>
             ) : (
-              <Nav.Link onClick={handleLogout} className="mx-2 text-danger fw-semibold">
-                Log Out
-              </Nav.Link>
+              <>
+                <span className="text-white mx-3 small">
+                  👤 Role: <strong>{user.role}</strong>
+                </span>
+                <Nav.Link onClick={handleLogout} className="mx-2 text-danger fw-semibold">
+                  Log Out
+                </Nav.Link>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
