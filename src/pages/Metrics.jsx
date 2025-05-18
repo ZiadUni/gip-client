@@ -101,16 +101,23 @@ const Metrics = () => {
 
         {/* Filters */}
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <div className="mb-2" style={{ display: 'flex', justifyContent: 'center' }}>
-            <label style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-              <input
-                type="checkbox"
-                checked={autoRefresh}
-                onChange={e => setAutoRefresh(e.target.checked)}
-              />
-              Auto-refresh every 20s
-            </label>
+        <div className="mb-3" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            fontSize: '16px'
+          }}>
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onChange={e => setAutoRefresh(e.target.checked)}
+              style={{ width: '18px', height: '18px' }}
+            />
+            <span>Auto-refresh every 20 seconds</span>
           </div>
+        </div>
 
           {autoRefresh && lastRefreshed && (
             <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
