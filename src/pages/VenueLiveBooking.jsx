@@ -142,12 +142,12 @@ const handleProceed = () => {
 
   return (
     <div className="fade-in">
+      <Container className="py-5 text-center">
       <div className="d-flex justify-content-start mb-3">
         <Button variant="secondary" onClick={() => navigate(-1)}>
           ← Back
         </Button>
       </div>
-      <Container className="py-5 text-center">
         <h2 className="text-brown mb-3">Live Venue Slot Booking</h2>
         {selectedVenue && (
           <div className="mb-4">
