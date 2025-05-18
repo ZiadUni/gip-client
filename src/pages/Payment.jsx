@@ -27,7 +27,9 @@ const Payment = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const totalPrice = type === 'venue' ? (booking[0]?.price?.replace('$', '') || 0) : 100;
+  const totalPrice = type === 'venue'
+    ? booking.reduce((sum, b) => sum + Number(String(b.price).replace('$', '')), 0)
+    : 100;
 
   const formatCardNumber = (value) => {
     return value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
@@ -39,7 +41,7 @@ const Payment = () => {
     return '';
   };
 
-    const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
 
@@ -88,7 +90,7 @@ const Payment = () => {
     return null;
   };
 
-    const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationError = validateFields();
     if (validationError) return setError(validationError);
@@ -97,35 +99,48 @@ const Payment = () => {
     setShowModal(true);
 
     try {
-      const res = await apiFetch('/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          type,
-          itemId: type === 'event'
-            ? `${booking[0].name}__${booking[0].date}__${booking[0].time}`
-            : booking[0]._id,
-          details: { ...booking[0] }
-        })
-      });
+      const created = [];
 
-      const data = await res.json();
-      if (res.status === 409) return setError(data.error || 'Seat or slot already reserved.');
-      if (!res.ok) throw new Error(data.error || 'Booking failed.');
+      for (const item of booking) {
+        const res = await apiFetch('/bookings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            type,
+            itemId: type === 'event'
+              ? `${item.name}__${item.date}__${item.time}`
+              : `${item.name}__${item.date}`,
+            details: {
+              name: item.name,
+              date: item.date,
+              time: item.time,
+              seat: item.seat,
+              event: item.event,
+              price: item.price,
+              venue: item.venue
+            }
+          })
+        });
 
-      const confirmRes = await apiFetch(`/bookings/${data.booking._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: 'confirmed' })
-      });
+        const data = await res.json();
+        if (res.status === 409) return setError(data.error || 'Seat or slot already reserved.');
+        if (!res.ok) throw new Error(data.error || 'Booking failed.');
 
-      if (!confirmRes.ok) throw new Error('Failed to confirm booking.');
+        const confirmRes = await apiFetch(`/bookings/${data.booking._id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: 'confirmed' })
+        });
+
+        if (!confirmRes.ok) throw new Error('Failed to confirm booking.');
+        created.push(data.booking);
+      }
 
       setTimeout(() => {
         navigate('/booking-confirmation', { state: { type, items: booking } });
@@ -137,22 +152,22 @@ const Payment = () => {
       setShowModal(false);
     }
   };
-  
-      const getValidationClass = (name, value) => {
-        if (!value) return '';
-        switch (name) {
-          case 'nameOnCard':
-            return /^[a-zA-Z]+ [a-zA-Z]+$/.test(value.trim()) ? 'is-valid' : 'is-invalid';
-          case 'cardNumber':
-            return /^\d{4} \d{4} \d{4} \d{4}$/.test(value) ? 'is-valid' : 'is-invalid';
-          case 'expiry':
-            return /^\d{2}\/\d{2}$/.test(value) ? 'is-valid' : 'is-invalid';
-          case 'cvv':
-            return /^\d{3}$/.test(value) ? 'is-valid' : 'is-invalid';
-          default:
-            return '';
-        }
-      };
+
+  const getValidationClass = (name, value) => {
+    if (!value) return '';
+    switch (name) {
+      case 'nameOnCard':
+        return /^[a-zA-Z]+ [a-zA-Z]+$/.test(value.trim()) ? 'is-valid' : 'is-invalid';
+      case 'cardNumber':
+        return /^\d{4} \d{4} \d{4} \d{4}$/.test(value) ? 'is-valid' : 'is-invalid';
+      case 'expiry':
+        return /^\d{2}\/\d{2}$/.test(value) ? 'is-valid' : 'is-invalid';
+      case 'cvv':
+        return /^\d{3}$/.test(value) ? 'is-valid' : 'is-invalid';
+      default:
+        return '';
+    }
+  };
 
   return (
     <div className="fade-in">
