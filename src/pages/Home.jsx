@@ -1,40 +1,17 @@
 // Home.jsx - Landing page after login, brief overview and navigation
 // Feature navigation blocks or highlights go here
 
-import React, { useEffect, useState } from 'react';
+// Home.jsx
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const mockRole = localStorage.getItem('mockRole');
-  const [role, setRole] = useState(mockRole || storedUser.role || 'visitor');
-
-  useEffect(() => {
-    if (mockRole) {
-      setRole(mockRole);
-    }
-  }, []);
-
-  const handleRoleChange = (e) => {
-    const selectedRole = e.target.value;
-    localStorage.setItem('mockRole', selectedRole);
-    window.location.reload();
-  };
-
-  const isVisitor = role === 'visitor';
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isVisitor = user.role === 'visitor';
 
   return (
     <div className="fade-in">
       <div style={container}>
-        <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px', fontWeight: 500 }}>🔧 Preview As:</label>
-          <select value={role} onChange={handleRoleChange} style={{ padding: '6px', borderRadius: '6px' }}>
-            <option value="visitor">Visitor</option>
-            <option value="organizer">Organizer</option>
-            <option value="staff">Staff</option>
-          </select>
-        </div>
-
         <div style={heroSection}>
           <h1 style={mainTitle}>Welcome to Galala Innovation Park</h1>
           <p style={subtitle}>
@@ -49,7 +26,7 @@ const Home = () => {
 
             <Link to="/my-bookings" style={heroButton}>My Bookings</Link>
 
-            {role === 'staff' && (
+            {user.role === 'staff' && (
               <>
                 <Link to="/metrics" style={heroButton}>View Metrics</Link>
                 <Link to="/manager" style={heroButton}>Admin Panel</Link>
@@ -92,6 +69,7 @@ const FeatureCard = ({ title, desc }) => (
   </div>
 );
 
+// --- Styles ---
 const container = {
   padding: '40px',
   fontFamily: 'Segoe UI, sans-serif',
@@ -120,8 +98,7 @@ const buttonGroup = {
   display: 'flex',
   justifyContent: 'center',
   gap: '20px',
-  marginTop: '20px',
-  flexWrap: 'wrap'
+  marginTop: '20px'
 };
 
 const heroButton = {
@@ -167,6 +144,13 @@ const card = {
   width: '280px',
   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   textAlign: 'center'
+};
+
+const footer = {
+  marginTop: '60px',
+  textAlign: 'center',
+  color: '#999',
+  fontSize: '14px'
 };
 
 export default Home;
