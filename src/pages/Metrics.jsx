@@ -83,20 +83,27 @@ const Metrics = () => {
   };
 
   const exportPDF = () => {
-    const container = pageRef.current.cloneNode(true);
-    container.style.padding = '40px';
-    container.style.background = '#fff';
-    container.style.maxWidth = '900px';
-    container.style.margin = 'auto';
-    document.body.appendChild(container);
-    html2canvas(container, { backgroundColor: '#ffffff' }).then(canvas => {
+    const original = pageRef.current;
+    const clone = original.cloneNode(true);
+    clone.style.padding = '40px';
+    clone.style.backgroundColor = '#ffffff';
+    clone.style.maxWidth = '1000px';
+    clone.style.margin = '0 auto';
+    clone.style.boxShadow = 'none';
+    document.body.appendChild(clone);
+    html2canvas(clone, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const width = pdf.internal.pageSize.getWidth();
       const height = (canvas.height * width) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, width, height);
       pdf.save('metrics-dashboard.pdf');
-      document.body.removeChild(container);
+      document.body.removeChild(clone);
     });
   };
 
