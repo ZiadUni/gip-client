@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Card, Row, Col, Alert, Button, Form } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -12,6 +13,7 @@ const MyBookings = () => {
   const [success, setSuccess] = useState('');
   const [filter, setFilter] = useState('all');
   const [sortNewestFirst, setSortNewestFirst] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBookings();

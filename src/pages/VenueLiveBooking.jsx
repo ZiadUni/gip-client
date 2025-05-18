@@ -75,64 +75,31 @@ const VenueLiveBooking = () => {
     );
   };
 
-  const handleProceed = async () => {
-    const token = localStorage.getItem('token');
-    const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
+const handleProceed = () => {
+  const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
 
-    if (!eventName.trim()) {
-      return setError('Please enter an event name.');
+  if (!eventName.trim()) {
+    return setError('Please enter an event name.');
+  }
+  if (!selectedSlots.length || !selectedVenue) {
+    return setError('Please select at least one slot.');
+  }
+
+  const sortedTimes = selectedSlots.map(s => s.time).sort();
+  const timeRange = `${sortedTimes[0]} - ${sortedTimes[sortedTimes.length - 1]}`;
+
+  navigate('/payment', {
+    state: {
+      type: 'venue',
+      items: [{
+        ...selectedVenue,
+        time: timeRange,
+        event: eventName,
+        slots: sortedTimes
+      }]
     }
-    if (!selectedSlots.length || !selectedVenue) {
-      return setError('Please select at least one slot.');
-    }
-
-    const sortedTimes = selectedSlots.map(s => s.time).sort();
-    const timeRange = `${sortedTimes[0]} - ${sortedTimes[sortedTimes.length - 1]}`;
-
-    try {
-      const res = await apiFetch('/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          type: 'venue',
-          itemId: selectedVenue._id,
-          details: {
-            name: selectedVenue.name,
-            date: selectedVenue.date,
-            time: timeRange,
-            event: eventName,
-            price: selectedVenue.price,
-            image: selectedVenue.image,
-            capacity: selectedVenue.capacity,
-            availability: selectedVenue.availability,
-            slots: sortedTimes
-          }
-        })
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Booking failed');
-
-      setSuccess('Venue booked! Redirecting to payment...');
-      setTimeout(() => {
-        navigate('/payment', {
-          state: {
-            type: 'venue',
-            items: [{
-              ...selectedVenue,
-              time: timeRange,
-              event: eventName
-            }]
-          }
-        });
-      }, 1500);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  });
+};
 
   const handleNotify = async (slot) => {
     const token = localStorage.getItem('token');
@@ -175,14 +142,11 @@ const VenueLiveBooking = () => {
 
   return (
     <div className="fade-in">
-          <Button
-      variant="secondary"
-      onClick={() => navigate(-1)}
-      className="mb-3"
-    >
-      ← Back
-    </Button>
-
+      <div className="d-flex justify-content-start mb-3">
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          ← Back
+        </Button>
+      </div>
       <Container className="py-5 text-center">
         <h2 className="text-brown mb-3">Live Venue Slot Booking</h2>
         {selectedVenue && (

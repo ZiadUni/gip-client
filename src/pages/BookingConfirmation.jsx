@@ -20,14 +20,6 @@ const BookingConfirmation = () => {
 
   return (
     <div className="fade-in">
-          <Button
-      variant="secondary"
-      onClick={() => navigate(-1)}
-      className="mb-3"
-    >
-      ← Back
-    </Button>
-
       <Container className="py-5" style={{ maxWidth: '700px' }}>
         <Card className="p-4 shadow-sm">
           <h3 className="text-center text-success mb-4">Booking Confirmed ✅</h3>
@@ -53,6 +45,13 @@ const BookingConfirmation = () => {
           <div className="text-center mt-4">
             <Button variant="outline-success" onClick={handleGoBack}>
               Book Another {type === 'event' ? 'Ticket' : 'Venue'}
+            </Button>
+            <Button
+              variant="outline-secondary"
+              className="ms-2"
+              onClick={() => navigate('/')}
+            >
+              Return Home
             </Button>
           </div>
         </Card>
