@@ -232,3 +232,22 @@ button:hover,
   background-color: #8d7357 !important;
   color: white !important;
 }
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 30px 10px;
+  color: #999;
+  font-size: 14px;
+  background-color: #f5f3f0;
+}

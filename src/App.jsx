@@ -29,11 +29,12 @@ const AppLayout = () => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <>
+    <div className="page-wrapper">
       <Navbar />
       {!isAuthPage && <MiniSidebar />}
       <NotificationsPopup />
-      <div className="app-content" style={{ paddingTop: '80px' }}>
+
+      <main className="main-content">
         <Routes>
           <Route path="/" element={token ? <Home /> : <Navigate to="/login" />} />
           <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
@@ -50,8 +51,13 @@ const AppLayout = () => {
           <Route path="/manager" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
-    </>
+      </main>
+
+      <footer className="site-footer">
+        <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
+        <p>Powered by Edaretna Management System</p>
+      </footer>
+    </div>
   );
 };
 
