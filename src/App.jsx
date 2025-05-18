@@ -31,6 +31,7 @@ const AppLayout = () => {
 
   return (
     <>
+    <div className="app-wrapper">
       <Navbar />
       {!isAuthPage && <MiniSidebar />}
       <NotificationsPopup />
@@ -53,6 +54,7 @@ const AppLayout = () => {
         </Routes>
         <Footer />
       </div>
+    </div>
     </>
   );
 };
