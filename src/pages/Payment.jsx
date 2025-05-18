@@ -49,11 +49,13 @@ const Payment = () => {
     }
 
     if (name === 'expiry') {
-    let cleaned = value.replace(/[^0-9]/g, '');
-    if (cleaned.length >= 2 && cleaned.length <= 4) {
-      cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-    }
-    newValue = cleaned;
+      let cleaned = value.replace(/[^0-9]/g, '');
+      if (cleaned.length > 4) cleaned = cleaned.slice(0, 4);
+      if (cleaned.length >= 3) {
+        newValue = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
+      } else {
+        newValue = cleaned;
+      }
     }
 
     if (name === 'cvv' && /[^0-9]/.test(newValue)) return;
