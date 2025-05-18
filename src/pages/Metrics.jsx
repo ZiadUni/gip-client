@@ -6,7 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Accordion, Tabs, Tab, Button } from 'react-bootstrap';
+import { Accordion, Tabs, Tab, Button, Container } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
 
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
