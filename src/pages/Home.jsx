@@ -45,6 +45,10 @@ const Home = () => {
             desc="Centralized profile, booking history, and payment confirmations."
           />
         </div>
+
+        <div style={footer}>
+          <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved. \n Powered by Edaretna Management System</p>
+        </div>
       </div>
     </div>
   );
