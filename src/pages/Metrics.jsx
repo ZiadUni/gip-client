@@ -52,8 +52,13 @@ const Metrics = () => {
   }, [autoRefresh]);
 
   useEffect(() => {
+    if (!autoRefresh) return;
     fetchData();
-  }, [startDate, endDate, typeFilter, statusFilter, selectedVenue]);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 20000);
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   const exportToCSV = (dataArray, filename) => {
     if (!dataArray || !dataArray.length) return;
@@ -101,12 +106,12 @@ const Metrics = () => {
         {/* Filters */}
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
         <div className="mb-3" style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{
-            display: 'flex',
+          <label style={{
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            fontSize: '16px'
+            gap: '10px',
+            fontSize: '16px',
+            whiteSpace: 'nowrap'
           }}>
             <input
               type="checkbox"
@@ -116,8 +121,8 @@ const Metrics = () => {
                 if (e.target.checked) setLastRefreshed(Date.now());
               }}
             />
-            <span>Auto-refresh every 20 seconds</span>
-          </div>
+            Auto-refresh every 20 seconds
+          </label>
         </div>
 
           {autoRefresh && lastRefreshed && (
