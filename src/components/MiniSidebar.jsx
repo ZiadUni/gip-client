@@ -27,9 +27,7 @@ const MiniSidebar = () => {
       <div
         className="sidebar"
         style={{
-          left: isOpen ? '0px' : '-120px',
-          opacity: isOpen ? 1 : 0.3,
-          pointerEvents: 'auto',
+          left: isOpen ? '0px' : '-100px',
           transition: 'all 0.4s ease',
           zIndex: 1000
         }}
@@ -39,7 +37,7 @@ const MiniSidebar = () => {
           style={{
             position: 'absolute',
             top: '50%',
-            right: '-20px',
+            right: isOpen ? '-20px' : '-12px',
             transform: 'translateY(-50%)',
             width: '36px',
             height: '36px',
