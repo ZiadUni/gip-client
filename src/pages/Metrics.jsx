@@ -189,7 +189,7 @@ const Metrics = () => {
             <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
           </div>
         )}
-        
+
         {/* Summary Boxes */}
         {data && (
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
@@ -228,13 +228,6 @@ const Metrics = () => {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={data.revenueTrend}
-              onClick={(e) => {
-                const clickedDay = e?.activeLabel;
-                if (clickedDay) {
-                  setStartDate(clickedDay);
-                  setEndDate(clickedDay);
-                }
-              }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" label={{ value: 'Date', position: 'insideBottom', offset: -5 }} />
@@ -251,12 +244,7 @@ const Metrics = () => {
           <p className="text-center text-muted">No ticket data available for this range.</p>
         ) : data?.ticketType?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart
-              onClick={(e) => {
-                const status = e?.activePayload?.[0]?.payload?.type;
-                if (status) setStatusFilter(status.toLowerCase());
-              }}
-            >
+            <PieChart>
               <Pie
                 data={data.ticketType}
                 dataKey="value"
