@@ -28,6 +28,7 @@ const Metrics = () => {
   const [error, setError] = useState('');
   const [lastRefreshed, setLastRefreshed] = useState(Date.now());
   const [refreshTimer, setRefreshTimer] = useState(0);
+  const [trend, setTrend] = useState({});
   const pageRef = useRef();
 
   const fetchData = async () => {
@@ -62,6 +63,49 @@ const Metrics = () => {
     }, 1000);
     return () => clearInterval(tick);
   }, [autoRefresh]);
+
+  useEffect(() => {
+  if (data) {
+    const last = JSON.parse(localStorage.getItem('lastMetrics')) || {};
+    const trends = {
+      confirmed: getTrend(data.ticketType, 'Confirmed', last.ticketType),
+      cancelled: getTrend(data.ticketType, 'Cancelled', last.ticketType),
+      revenue: getTrendSimple(data.totalRevenue, last.totalRevenue)
+    };
+    setTrend(trends);
+    localStorage.setItem('lastMetrics', JSON.stringify(data));
+  }
+}, [data]);
+
+  const getTrend = (nowList, type, lastList) => {
+    const now = nowList?.find(t => t.type === type)?.value || 0;
+    const last = lastList?.find(t => t.type === type)?.value || 0;
+    if (last === 0) return 0;
+    return Math.round(((now - last) / last) * 100);
+  };
+
+  const getTrendSimple = (now, last) => {
+    if (!last || last === 0) return 0;
+    return Math.round(((now - last) / last) * 100);
+  };
+
+  const generateInsights = () => {
+  const messages = [];
+
+  if (trend.cancelled > 30) {
+    messages.push("⚠️ Cancellations are unusually high. Consider reviewing refund policies.");
+  }
+
+  if (trend.revenue > 10) {
+    messages.push("💰 Revenue is growing. Focus on high-performing venues.");
+  }
+
+  if (data?.venueUsage?.length === 1) {
+    messages.push(`🏷 Most bookings are concentrated in ${data.topVenue}. Consider promoting other venues.`);
+  }
+
+  return messages;
+};
 
   const exportToCSV = (dataArray, filename) => {
     if (!dataArray || !dataArray.length) return;
@@ -221,6 +265,7 @@ const Metrics = () => {
         <div style={grid}>
           <MetricBox
             title="Confirmed"
+            trend={trend.confirmed}
             value={data?.ticketType?.find(t => t.type === 'Confirmed')?.value || 0}
           />
           <MetricBox
@@ -247,7 +292,10 @@ const Metrics = () => {
           />
         </div>
 
-
+        <h5 className="text-center mt-4">🧠 Smart Insights</h5>
+        <ul className="text-center">
+          {generateInsights().map((msg, i) => <li key={i}>{msg}</li>)}
+        </ul>
 
         {/* Venue Usage Chart */}
         <h3 style={sectionHeader}>📍 Venue Usage</h3>
@@ -327,10 +375,21 @@ const Metrics = () => {
   );
 };
 
-const MetricBox = ({ title, value }) => (
-  <div style={boxStyle}>
+const MetricBox = ({ title, value, alert = false, trend }) => (
+  <div style={{
+    ...boxStyle,
+    backgroundColor: alert ? '#f8d7da' : boxStyle.backgroundColor,
+    border: alert ? '1px solid #dc3545' : boxStyle.border
+  }}>
     <h4>{title}</h4>
-    <p style={{ fontSize: '24px', margin: 0 }}>{value}</p>
+    <p style={{ fontSize: '24px', margin: 0 }}>
+      {value}
+      {trend !== undefined && (
+        <span style={{ fontSize: '14px', marginLeft: '6px', color: trend >= 0 ? 'green' : 'red' }}>
+          {trend >= 0 ? '▲' : '▼'} {Math.abs(trend)}%
+        </span>
+      )}
+    </p>
   </div>
 );
 
