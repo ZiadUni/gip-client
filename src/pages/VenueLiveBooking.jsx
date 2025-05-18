@@ -89,7 +89,8 @@ const handleProceed = () => {
     ...selectedVenue,
     time: slot.time,
     event: eventName,
-    slots: [slot.time]
+    slots: [slot.time],
+    venueId: selectedVenue._id
   }));
 
   navigate('/payment', {

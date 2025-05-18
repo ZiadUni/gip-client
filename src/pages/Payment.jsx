@@ -113,7 +113,8 @@ const Payment = () => {
             itemId: type === 'event'
               ? `${item.name}__${item.date}__${item.time}`
               : `${item.name}__${item.date}`,
-            details: {
+              venueId: item.venueId,
+              details: {
               name: item.name,
               date: item.date,
               time: item.time,
