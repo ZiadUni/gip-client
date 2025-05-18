@@ -92,15 +92,20 @@ const VenueBooking = () => {
         </Row>
       </Container>
         <div style={{
-          textAlign: 'center',
-          padding: '30px',
-          color: '#999',
-          fontSize: '14px',
+          width: '100%',
           backgroundColor: '#f5f3f0',
-          marginTop: '40px'
+          marginTop: 'auto',
+          padding: '30px 10px',
+          textAlign: 'center',
+          color: '#999',
+          fontSize: '14px'
         }}>
-          <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
-          <p>Powered by Edaretna Management System</p>
+          <p style={{ marginBottom: '8px' }}>
+            &copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.
+          </p>
+          <p style={{ marginBottom: 0 }}>
+            Powered by Edaretna Management System
+          </p>
         </div>
     </div>
   );
