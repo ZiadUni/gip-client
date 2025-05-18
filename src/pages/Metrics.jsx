@@ -16,7 +16,6 @@ const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 const Metrics = () => {
   const today = new Date().toISOString().split('T')[0];
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
-
   const [startDate, setStartDate] = useState(sevenDaysAgo);
   const [endDate, setEndDate] = useState(today);
   const [typeFilter, setTypeFilter] = useState('all');
@@ -27,6 +26,7 @@ const Metrics = () => {
   const [error, setError] = useState('');
   const [lastRefreshed, setLastRefreshed] = useState(Date.now());
   const pageRef = useRef();
+  const [refreshTimer, setRefreshTimer] = useState(0);
 
   const fetchData = async () => {
     const token = localStorage.getItem('token');
@@ -44,12 +44,11 @@ const Metrics = () => {
   };
 
   useEffect(() => {
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        window.location.reload();
-      }, 20000);
-      return () => clearInterval(interval);
-    }
+    if (!autoRefresh) return;
+    const tick = setInterval(() => {
+      setRefreshTimer(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(tick);
   }, [autoRefresh]);
 
   useEffect(() => {
