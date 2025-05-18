@@ -111,8 +111,10 @@ const Metrics = () => {
             <input
               type="checkbox"
               checked={autoRefresh}
-              onChange={e => setAutoRefresh(e.target.checked)}
-              style={{ width: '18px', height: '18px' }}
+              onChange={e => {
+                setAutoRefresh(e.target.checked);
+                if (e.target.checked) setLastRefreshed(Date.now());
+              }}
             />
             <span>Auto-refresh every 20 seconds</span>
           </div>
