@@ -17,6 +17,8 @@ const Register = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -105,16 +107,21 @@ const Register = () => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-2" controlId="password">
-              <Form.Label>Password</Form.Label>
+          <Form.Group className="mb-2" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <InputGroup>
               <Form.Control
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Password"
               />
-            </Form.Group>
+              <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Button>
+            </InputGroup>
+          </Form.Group>
 
             {showStrength && (
               <ProgressBar
@@ -129,14 +136,19 @@ const Register = () => {
 
             <Form.Group className="mb-2" controlId="confirm">
               <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="confirm"
-                value={form.confirm}
-                onChange={handleChange}
-                placeholder="Re-type password"
-                isInvalid={showLiveMismatch}
-              />
+              <InputGroup>
+                <Form.Control
+                  type={showConfirm ? 'text' : 'password'}
+                  name="confirm"
+                  value={form.confirm}
+                  onChange={handleChange}
+                  placeholder="Re-type password"
+                  isInvalid={showLiveMismatch}
+                />
+                <Button variant="outline-secondary" onClick={() => setShowConfirm(!showConfirm)}>
+                  {showConfirm ? 'Hide' : 'Show'}
+                </Button>
+              </InputGroup>
               {showLiveMismatch && (
                 <Form.Text className="text-danger">
                   Passwords do not match.

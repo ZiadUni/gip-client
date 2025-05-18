@@ -11,6 +11,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -72,16 +73,21 @@ const Login = () => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-4" controlId="password">
-              <Form.Label>Password</Form.Label>
+          <Form.Group className="mb-4" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <InputGroup>
               <Form.Control
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Password"
               />
-            </Form.Group>
+              <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Button>
+            </InputGroup>
+          </Form.Group>
 
             <Button type="submit" className="w-100 bg-brown border-0">
               Login
