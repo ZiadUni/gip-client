@@ -126,14 +126,12 @@ const Metrics = () => {
 
   return (
     <div className="fade-in" ref={pageRef}>
-      <div className="d-flex justify-content-start mb-3">
-        <Button
-          variant="secondary"
-          onClick={() => navigate(-1)}
-        >
-          ← Back
-        </Button>
-      </div>
+       <Container className="py-5">
+    <div className="d-flex justify-content-start mb-3">
+      <Button variant="secondary" onClick={() => navigate(-1)}>
+        ← Back
+      </Button>
+    </div>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
         <h2 style={{ textAlign: 'center' }}>📊 Innovation Park Analytics Dashboard</h2>
 
@@ -379,6 +377,7 @@ const Metrics = () => {
           </div>
         )}
       </div>
+        </Container>
     </div>
   );
 };

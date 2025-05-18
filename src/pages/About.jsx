@@ -7,6 +7,7 @@ import { Container, Button } from 'react-bootstrap';
 const About = () => {
   return (
     <div className="fade-in">
+    <Container className="py-5" style={{ maxWidth: '900px' }}>
       <div className="d-flex justify-content-start mb-3">
         <Button
           variant="secondary"
@@ -14,8 +15,7 @@ const About = () => {
         >
           ← Back
         </Button>
-      </div>
-    <Container className="py-5" style={{ maxWidth: '900px' }}>
+      </div>      
       <h1 className="text-brown text-center mb-4">About Galala Innovation Park</h1>
       <p className="text-center mb-5">
         Galala Innovation Park is a dynamic space designed to empower creativity, innovation, and sustainable development.

@@ -45,6 +45,7 @@ const VenueBooking = () => {
 
   return (
     <div className="fade-in">
+      <Container className="py-5">
       <div className="d-flex justify-content-start mb-3">
         <Button
           variant="secondary"
@@ -53,7 +54,6 @@ const VenueBooking = () => {
           ← Back
         </Button>
       </div>
-      <Container className="py-5">
         <h2 className="text-center text-brown mb-4">Available Venues</h2>
         <Row className="g-4">
           {venues
