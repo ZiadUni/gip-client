@@ -14,11 +14,14 @@ import jsPDF from 'jspdf';
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 
 const Metrics = () => {
-  const today = new Date().toISOString().split('T')[0];
-  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  const today = new Date();
+  const oneWeekBefore = new Date(today);
+  oneWeekBefore.setDate(today.getDate() - 7);
+  const oneWeekAfter = new Date(today);
+  oneWeekAfter.setDate(today.getDate() + 7);
+  const [startDate, setStartDate] = useState(oneWeekBefore.toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(oneWeekAfter.toISOString().split('T')[0]);
 
-  const [startDate, setStartDate] = useState(sevenDaysAgo);
-  const [endDate, setEndDate] = useState(today);
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('current');
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -191,13 +194,48 @@ const Metrics = () => {
         )}
 
         {/* Summary Boxes */}
-        {data && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
-            <MetricBox title="Tickets Sold" value={data.ticketsSold} />
-            <MetricBox title="Total Revenue" value={`EGP ${data.totalRevenue?.toLocaleString() ?? '—'}`} />
-            <MetricBox title="Top Venue" value={data.topVenue || '—'} />
-          </div>
-        )}
+        {/* VENUE METRICS */}
+        <h4 className="text-center mt-4">📍 Venue Metrics</h4>
+        <div style={grid}>
+          <MetricBox title="Total Venues Used" value={data.venueUsage.length} />
+          <MetricBox title="Most Used Venue" value={data.topVenue || '—'} />
+          <MetricBox
+            title="Avg Bookings per Venue"
+            value={Math.round(data.ticketsSold / (data.venueUsage.length || 1))}
+          />
+        </div>
+
+        {/* TICKET METRICS */}
+        <h4 className="text-center mt-4">🎟 Ticket Metrics</h4>
+        <div style={grid}>
+          <MetricBox
+            title="Confirmed"
+            value={data.ticketType.find(t => t.type === 'Confirmed')?.value || 0}
+          />
+          <MetricBox
+            title="Pending"
+            value={data.ticketType.find(t => t.type === 'Pending')?.value || 0}
+          />
+          <MetricBox
+            title="Cancelled"
+            value={data.ticketType.find(t => t.type === 'Cancelled')?.value || 0}
+          />
+        </div>
+
+        {/* OVERALL METRICS */}
+        <h4 className="text-center mt-4">📊 Overall Metrics</h4>
+        <div style={grid}>
+          <MetricBox title="Tickets Sold" value={data.ticketsSold} />
+          <MetricBox
+            title="Total Revenue"
+            value={`EGP ${data.totalRevenue?.toLocaleString() || '0'}`}
+          />
+          <MetricBox
+            title="Revenue per Ticket"
+            value={`EGP ${Math.round(data.totalRevenue / (data.ticketsSold || 1))}`}
+          />
+        </div>
+
 
         {/* Venue Usage Chart */}
         <h3 style={sectionHeader}>📍 Venue Usage</h3>
