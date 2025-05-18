@@ -346,4 +346,12 @@ const filterStyle = {
   border: '1px solid #ccc'
 };
 
+const grid = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  gap: '20px',
+  marginBottom: '40px'
+};
+
 export default Metrics;
