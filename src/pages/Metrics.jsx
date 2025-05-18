@@ -105,7 +105,6 @@ const Metrics = () => {
         {error && <p className="text-danger text-center mt-3">{error}</p>}
         {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
 
-        {/* Auto-refresh */}
         <div className="mb-3" style={{ display: 'flex', justifyContent: 'center' }}>
           <label style={{
             display: 'inline-flex',
@@ -132,7 +131,6 @@ const Metrics = () => {
           </p>
         )}
 
-        {/* Filters */}
         <h5 className="text-center">🕒 Time Range Filter</h5>
         <div className="text-center mb-3">
           <label><strong>Start Date:</strong></label>
@@ -191,6 +189,7 @@ const Metrics = () => {
             <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
           </div>
         )}
+        
         {/* Summary Boxes */}
         {data && (
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
@@ -202,9 +201,9 @@ const Metrics = () => {
 
         {/* Venue Usage Chart */}
         <h3 style={sectionHeader}>📍 Venue Usage</h3>
-        {data.venueUsage.length === 0 ? (
+        {data?.venueUsage?.length === 0 ? (
           <p className="text-center text-muted">No venue usage data for this range.</p>
-        ) : (
+        ) : data?.venueUsage?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
               data={data.venueUsage}
@@ -219,13 +218,13 @@ const Metrics = () => {
               <Bar dataKey="bookings" fill="#623E2A" />
             </BarChart>
           </ResponsiveContainer>
-        )}
+        ) : null}
 
         {/* Revenue Trend Chart */}
         <h3 style={sectionHeader}>📈 Revenue Over Time</h3>
-        {data.revenueTrend.length === 0 ? (
+        {data?.revenueTrend?.length === 0 ? (
           <p className="text-center text-muted">No revenue data for this range.</p>
-        ) : (
+        ) : data?.revenueTrend?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={data.revenueTrend}
@@ -244,13 +243,13 @@ const Metrics = () => {
               <Line type="monotone" dataKey="revenue" stroke="#A1866F" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
-        )}
+        ) : null}
 
         {/* Ticket Types Chart */}
         <h3 style={sectionHeader}>🥧 Ticket Types</h3>
-        {data.ticketType.length === 0 ? (
+        {data?.ticketType?.length === 0 ? (
           <p className="text-center text-muted">No ticket data available for this range.</p>
-        ) : (
+        ) : data?.ticketType?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <PieChart
               onClick={(e) => {
@@ -275,7 +274,7 @@ const Metrics = () => {
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-        )}
+        ) : null}
 
         {/* Clear Drilldown Button */}
         {selectedVenue && (
