@@ -1,5 +1,4 @@
 // TicketBooking.jsx - Displays all available events for booking
-// Map through static or fetched list of events
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
 
 const TicketBooking = () => {
-  const [eventBookings, setEventBookings] = useState([]);
+  const [groupedEvents, setGroupedEvents] = useState([]);
   const [availabilityMap, setAvailabilityMap] = useState({});
   const navigate = useNavigate();
 
@@ -21,16 +20,36 @@ const TicketBooking = () => {
           }
         });
         const data = await res.json();
-        if (res.ok) {
-          const venueBookings = data.filter(b =>
-            b.type === 'venue' &&
-            b.status === 'confirmed' &&
-            b.details?.event &&
-            b.details?.date &&
-            b.details?.name
-          );
-          setEventBookings(venueBookings);
+        if (!res.ok) throw new Error();
+
+        const venueBookings = data.filter(b =>
+          b.type === 'venue' &&
+          b.status === 'confirmed' &&
+          b.details?.event &&
+          b.details?.date &&
+          b.details?.name
+        );
+
+        const grouped = {};
+        for (const b of venueBookings) {
+          const key = `${b.details.event}__${b.details.date}__${b.details.name}`;
+          if (!grouped[key]) {
+            grouped[key] = {
+              ...b.details,
+              times: [b.details.time],
+              _id: b._id
+            };
+          } else {
+            grouped[key].times.push(b.details.time);
+          }
         }
+
+        const result = Object.values(grouped).map(e => ({
+          ...e,
+          times: [...new Set(e.times)].sort() // Ensure no duplicates and sorted
+        }));
+
+        setGroupedEvents(result);
       } catch (err) {
         console.error('Failed to fetch bookings:', err);
       }
@@ -40,90 +59,85 @@ const TicketBooking = () => {
   }, []);
 
   useEffect(() => {
-  const fetchAvailability = async () => {
-    const availabilityData = {};
+    const fetchAvailability = async () => {
+      const availabilityData = {};
 
-    for (const booking of eventBookings) {
-      const id = `${booking.details.name}__${booking.details.date}__${booking.details.time}`;
-      try {
-        const res = await apiFetch(`/availability/event/${encodeURIComponent(id)}`);
-        const data = await res.json();
+      for (const event of groupedEvents) {
+        const id = `${event.name}__${event.date}__${event.times.join(' - ')}`;
+        try {
+          const res = await apiFetch(`/availability/event/${encodeURIComponent(id)}`);
+          const data = await res.json();
 
-        if (res.ok && Array.isArray(data.seats)) {
-          const booked = data.seats.filter(s => s.status === 'booked').length;
-          const capacity = data.seats.length;
-          availabilityData[booking._id] = { booked, capacity };
+          if (res.ok && Array.isArray(data.seats)) {
+            const booked = data.seats.filter(s => s.status === 'booked').length;
+            const capacity = data.seats.length;
+            availabilityData[event._id] = { booked, capacity };
+          }
+        } catch (err) {
+          console.warn('Availability check failed for', event.event);
         }
-      } catch (err) {
-        console.warn('Availability check failed for', booking.details.event);
       }
+
+      setAvailabilityMap(availabilityData);
+    };
+
+    if (groupedEvents.length > 0) {
+      fetchAvailability();
     }
-
-    setAvailabilityMap(availabilityData);
-  };
-
-  if (eventBookings.length > 0) {
-    fetchAvailability();
-  }
-}, [eventBookings]);
+  }, [groupedEvents]);
 
   const handleBook = (eventDetails) => {
     navigate('/live-booking', { state: { event: eventDetails } });
   };
 
-  const formatTimeRange = (timeStringOrArray) => {
-    const slots = Array.isArray(timeStringOrArray)
-      ? timeStringOrArray
-      : timeStringOrArray?.split(' - ') || [];
-
-    if (slots.length <= 1) return timeStringOrArray;
-    return `${slots[0]} - ${slots[slots.length - 1]}`;
+  const formatTimeRange = (slots) => {
+    if (!Array.isArray(slots) || slots.length === 0) return '';
+    const first = slots[0].split(' - ')[0];
+    const last = slots[slots.length - 1].split(' - ')[1];
+    return `${first} - ${last}`;
   };
 
   return (
     <div className="fade-in">
       <Container className="py-5">
-      <div className="d-flex justify-content-start mb-3">
-        <Button
-          variant="secondary"
-          onClick={() => navigate(-1)}
-        >
-          ← Back
-        </Button>
-      </div>
+        <div className="d-flex justify-content-start mb-3">
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        </div>
         <h2 className="text-center text-brown mb-4">Available Events</h2>
 
-        {eventBookings.length === 0 ? (
+        {groupedEvents.length === 0 ? (
           <p className="text-center text-muted">No events available.</p>
         ) : (
           <Row className="g-4">
-            {eventBookings
-              .sort((a, b) => new Date(a.details.date) - new Date(b.details.date))
-              .map((b, idx) => (
-                <Col md={6} lg={4} key={b._id || idx}>
+            {groupedEvents
+              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .map((event, idx) => (
+                <Col md={6} lg={4} key={idx}>
                   <Card className="h-100 shadow-sm">
-                    {b.details.image && (
+                    {event.image && (
                       <Card.Img
                         variant="top"
-                        src={b.details.image}
-                        alt={b.details.event}
+                        src={event.image}
+                        alt={event.event}
                         style={{ height: '200px', objectFit: 'cover' }}
                       />
                     )}
                     <Card.Body>
-                      <Card.Title>{b.details.event}</Card.Title>
-                      <Card.Text><strong>Date:</strong> {b.details.date}</Card.Text>
-                      <Card.Text><strong>Time:</strong> {formatTimeRange(b.details.time)}</Card.Text>
-                      <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
+                      <Card.Title>{event.event}</Card.Title>
+                      <Card.Text><strong>Date:</strong> {event.date}</Card.Text>
+                      <Card.Text><strong>Time:</strong> {formatTimeRange(event.times)}</Card.Text>
+                      <Card.Text><strong>Venue:</strong> {event.name}</Card.Text>
                       <Card.Text>
                         <strong>Availability Status:</strong>{' '}
-                        {availabilityMap[b._id] ? (
+                        {availabilityMap[event._id] ? (
                           <span className={
-                            availabilityMap[b._id].booked >= availabilityMap[b._id].capacity
+                            availabilityMap[event._id].booked >= availabilityMap[event._id].capacity
                               ? 'text-danger'
                               : 'text-success'
                           }>
-                            {availabilityMap[b._id].booked >= availabilityMap[b._id].capacity
+                            {availabilityMap[event._id].booked >= availabilityMap[event._id].capacity
                               ? 'Fully Booked'
                               : 'Available'}
                           </span>
@@ -135,7 +149,7 @@ const TicketBooking = () => {
                     <Card.Footer>
                       <Button
                         className="w-100 bg-brown border-0"
-                        onClick={() => handleBook(b.details)}
+                        onClick={() => handleBook(event)}
                       >
                         Book Now
                       </Button>
