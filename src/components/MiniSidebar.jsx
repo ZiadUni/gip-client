@@ -39,20 +39,24 @@ const MiniSidebar = () => {
           style={{
             position: 'absolute',
             top: '50%',
-            right: '-18px',
+            right: '-20px',
             transform: 'translateY(-50%)',
-            width: '30px',
-            height: '30px',
+            width: '36px',
+            height: '36px',
             borderRadius: '50%',
-            backgroundColor: '#fff',
-            border: '1px solid #ccc',
-            boxShadow: '0 0 4px rgba(0,0,0,0.2)',
-            fontSize: '16px',
+            backgroundColor: '#623E2A',
+            color: '#fff',
+            border: 'none',
+            fontSize: '18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
             cursor: 'pointer',
             zIndex: 1001
           }}
         >
-          {isOpen ? '←' : '→'}
+          <i className={`bi ${isOpen ? 'bi-chevron-left' : 'bi-chevron-right'}`}></i>
         </button>
 
         <Link to="/" className="sidebar-link">
