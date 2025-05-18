@@ -126,6 +126,13 @@ const Metrics = () => {
 
   return (
     <div className="fade-in" ref={pageRef}>
+          <Button
+      variant="secondary"
+      onClick={() => navigate(-1)}
+      className="mb-3"
+    >
+      ← Back
+    </Button>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
         <h2 style={{ textAlign: 'center' }}>📊 Innovation Park Analytics Dashboard</h2>
 

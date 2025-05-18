@@ -45,6 +45,13 @@ const VenueBooking = () => {
 
   return (
     <div className="fade-in">
+          <Button
+      variant="secondary"
+      onClick={() => navigate(-1)}
+      className="mb-3"
+    >
+      ← Back
+    </Button>
       <Container className="py-5">
         <h2 className="text-center text-brown mb-4">Available Venues</h2>
         <Row className="g-4">

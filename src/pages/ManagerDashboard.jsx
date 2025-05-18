@@ -219,6 +219,13 @@ const handleSaveEdit = async () => {
 
   return (
     <Container className="py-5">
+          <Button
+      variant="secondary"
+      onClick={() => navigate(-1)}
+      className="mb-3"
+    >
+      ← Back
+    </Button>      
       <h2 className="text-center text-brown mb-4">👥 Organizer Requests</h2>
 
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
