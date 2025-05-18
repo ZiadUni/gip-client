@@ -187,14 +187,42 @@ button:hover,
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
-.custom-tabs .nav-link.active {
-  background-color: #cbb6a2 !important;
-  color: #000 !important;
-  border: 1px solid #b19b83;
+.accordion-button {
+  background-color: #e6d9c8;
+  color: #4a3f35;
+  font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #d9c1a3;
+  color: #2d2118;
 }
 
 .custom-tabs .nav-link {
   background-color: #f2f2f2;
-  color: #444;
+  color: #5c5045;
   border: 1px solid #ccc;
+  transition: all 0.2s ease;
+}
+
+.custom-tabs .nav-link:hover {
+  color: #3b3028;
+  background-color: #eae0d4;
+}
+
+.custom-tabs .nav-link.active {
+  background-color: #bfa78a !important;
+  color: #222 !important;
+  border-color: #a89377 !important;
+}
+
+.export-button {
+  background-color: #bfa78a;
+  color: white;
+  border: none;
+}
+
+.export-button:hover {
+  background-color: #a89377;
+  color: white;
 }

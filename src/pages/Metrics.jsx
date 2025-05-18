@@ -185,16 +185,16 @@ const Metrics = () => {
                   <h5 className="text-center mb-3">📁 Export CSV</h5>
                   {data && (
                     <div className="text-center d-flex flex-wrap justify-content-center gap-3">
-                      <Button onClick={() =>
+                      <Button className="export-button" onClick={() =>
                         exportToCSV([
                           { Metric: 'Tickets Sold', Value: data.ticketsSold },
                           { Metric: 'Total Revenue', Value: data.totalRevenue },
                           { Metric: 'Top Venue', Value: data.topVenue }
                         ], 'metric-summary')}>Export Summary CSV</Button>
 
-                      <Button onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
-                      <Button onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
-                      <Button onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
                     </div>
                   )}
                 </Tab>
