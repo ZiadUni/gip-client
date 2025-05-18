@@ -60,7 +60,7 @@ const CancelReasonModal = ({ show, onClose, bookingId, onSubmitted }) => {
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Close</Button>
+        <Button variant="secondary" onClick={onClose}>Close (Leave empty)</Button>
         <Button className="bg-brown" onClick={handleSubmit}>Submit</Button>
       </Modal.Footer>
     </Modal>

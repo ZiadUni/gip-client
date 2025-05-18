@@ -69,7 +69,7 @@ const NotificationPopup = () => {
           </Toast.Header>
           <Toast.Body style={{ color: '#333'}}>
             {n.type === 'event' ? (
-              <>🎟️ Seat <strong>#{n.itemId}</strong> for <strong>{n.details?.title}</strong> is now available!</>
+              <>🎟️ Seat <strong>#{n.itemId}</strong> <strong>{n.details?.title}</strong> is now available!</>
             ) : (
               <>🏢 <strong>{n.details?.name}</strong> has a free slot at <strong>{n.details?.time}</strong>!</>
             )}
