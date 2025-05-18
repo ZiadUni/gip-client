@@ -86,7 +86,18 @@ const TicketBooking = () => {
                       <Card.Text><strong>Date:</strong> {b.details.date}</Card.Text>
                       <Card.Text><strong>Time:</strong> {formatTimeRange(b.details.time)}</Card.Text>
                       <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
-                      {/* Placeholder for future full-booked status */}
+                      <Card.Text>
+                        <strong>Availability Status:</strong>{' '}
+                        <span className={
+                          b.details?.seats?.length >= b.details?.capacity
+                            ? 'text-danger'
+                            : 'text-success'
+                        }>
+                          {b.details?.seats?.length >= b.details?.capacity
+                            ? 'Fully Booked'
+                            : 'Available'}
+                        </span>
+                      </Card.Text>
                     </Card.Body>
                     <Card.Footer>
                       <Button
