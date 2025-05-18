@@ -16,6 +16,7 @@ const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 const Metrics = () => {
   const today = new Date().toISOString().split('T')[0];
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+
   const [startDate, setStartDate] = useState(sevenDaysAgo);
   const [endDate, setEndDate] = useState(today);
   const [typeFilter, setTypeFilter] = useState('all');
@@ -25,8 +26,8 @@ const Metrics = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [lastRefreshed, setLastRefreshed] = useState(Date.now());
-  const pageRef = useRef();
   const [refreshTimer, setRefreshTimer] = useState(0);
+  const pageRef = useRef();
 
   const fetchData = async () => {
     const token = localStorage.getItem('token');
@@ -43,9 +44,15 @@ const Metrics = () => {
     }
   };
 
-useEffect(() => {
-  fetchData();
-}, [startDate, endDate, typeFilter, statusFilter, selectedVenue]);
+  useEffect(() => {
+    fetchData();
+  }, [startDate, endDate, typeFilter, statusFilter, selectedVenue]);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(fetchData, 20000);
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   useEffect(() => {
     if (!autoRefresh) return;
@@ -53,15 +60,6 @@ useEffect(() => {
       setRefreshTimer(prev => prev + 1);
     }, 1000);
     return () => clearInterval(tick);
-  }, [autoRefresh]);
-
-  useEffect(() => {
-    if (!autoRefresh) return;
-    fetchData();
-    const interval = setInterval(() => {
-      fetchData();
-    }, 20000);
-    return () => clearInterval(interval);
   }, [autoRefresh]);
 
   const exportToCSV = (dataArray, filename) => {
@@ -107,8 +105,7 @@ useEffect(() => {
         {error && <p className="text-danger text-center mt-3">{error}</p>}
         {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
 
-        {/* Filters */}
-        <div style={{ textAlign: 'center', margin: '30px 0' }}>
+        {/* Auto-refresh */}
         <div className="mb-3" style={{ display: 'flex', justifyContent: 'center' }}>
           <label style={{
             display: 'inline-flex',
@@ -129,13 +126,15 @@ useEffect(() => {
           </label>
         </div>
 
-          {autoRefresh && lastRefreshed && (
-            <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
-              Last refreshed: {Math.floor((Date.now() - lastRefreshed) / 1000)} seconds ago
-            </p>
-          )}
+        {autoRefresh && lastRefreshed && (
+          <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
+            Last refreshed: {Math.floor((Date.now() - lastRefreshed) / 1000)} seconds ago
+          </p>
+        )}
 
-          <h5>🕒 Time Range Filter</h5>
+        {/* Filters */}
+        <h5 className="text-center">🕒 Time Range Filter</h5>
+        <div className="text-center mb-3">
           <label><strong>Start Date:</strong></label>
           <input
             type="date"
@@ -150,37 +149,36 @@ useEffect(() => {
             onChange={e => setEndDate(e.target.value)}
             style={filterStyle}
           />
-
-          <h5 style={{ marginTop: '30px' }}>📋 Booking Filters</h5>
-          <div style={{ marginTop: '15px' }}>
-            <label><strong>Status:</strong></label>
-            <select
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              style={filterStyle}
-            >
-              <option value="current">Current</option>
-              <option value="past">Past</option>
-              <option value="all">All</option>
-            </select>
-
-            <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
-            <select
-              value={typeFilter}
-              onChange={e => setTypeFilter(e.target.value)}
-              style={filterStyle}
-            >
-              <option value="all">All</option>
-              <option value="event">Event Only</option>
-              <option value="venue">Venue Only</option>
-            </select>
-          </div>
         </div>
 
-        {/* Export Buttons */}
+        <h5 className="text-center">📋 Booking Filters</h5>
+        <div className="text-center mb-4">
+          <label><strong>Status:</strong></label>
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            style={filterStyle}
+          >
+            <option value="current">Current</option>
+            <option value="past">Past</option>
+            <option value="all">All</option>
+          </select>
+
+          <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
+          <select
+            value={typeFilter}
+            onChange={e => setTypeFilter(e.target.value)}
+            style={filterStyle}
+          >
+            <option value="all">All</option>
+            <option value="event">Event Only</option>
+            <option value="venue">Venue Only</option>
+          </select>
+        </div>
+
+        <h5 className="text-center">📁 Export Options</h5>
         {data && (
           <div className="text-center mb-4 d-flex flex-wrap justify-content-center gap-3">
-            <h5 style={{ textAlign: 'center', marginBottom: '15px' }}>📁 Export Options</h5>
             <Button onClick={() =>
               exportToCSV([
                 { Metric: 'Tickets Sold', Value: data.ticketsSold },
@@ -193,54 +191,99 @@ useEffect(() => {
             <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
           </div>
         )}
-
-        {/* Metric Charts */}
+        {/* Summary Boxes */}
         {data && (
-          <>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
-              <MetricBox title="Tickets Sold" value={data.ticketsSold} />
-              <MetricBox title="Total Revenue" value={`EGP ${data.totalRevenue?.toLocaleString() ?? '—'}`} />
-              <MetricBox title="Top Venue" value={data.topVenue || '—'} />
-            </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
+            <MetricBox title="Tickets Sold" value={data.ticketsSold} />
+            <MetricBox title="Total Revenue" value={`EGP ${data.totalRevenue?.toLocaleString() ?? '—'}`} />
+            <MetricBox title="Top Venue" value={data.topVenue || '—'} />
+          </div>
+        )}
 
-            <h3 style={sectionHeader}>Venue Usage</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.venueUsage}
-                onClick={(e) => {
-                  if (e?.activeLabel) setSelectedVenue(e.activeLabel);
-                }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="bookings" fill="#623E2A" />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Venue Usage Chart */}
+        <h3 style={sectionHeader}>📍 Venue Usage</h3>
+        {data.venueUsage.length === 0 ? (
+          <p className="text-center text-muted">No venue usage data for this range.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={data.venueUsage}
+              onClick={(e) => {
+                if (e?.activeLabel) setSelectedVenue(e.activeLabel);
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="bookings" fill="#623E2A" />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
 
-            <h3 style={sectionHeader}>Revenue Trend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.revenueTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="revenue" stroke="#A1866F" strokeWidth={3} />
-              </LineChart>
-            </ResponsiveContainer>
+        {/* Revenue Trend Chart */}
+        <h3 style={sectionHeader}>📈 Revenue Over Time</h3>
+        {data.revenueTrend.length === 0 ? (
+          <p className="text-center text-muted">No revenue data for this range.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={data.revenueTrend}
+              onClick={(e) => {
+                const clickedDay = e?.activeLabel;
+                if (clickedDay) {
+                  setStartDate(clickedDay);
+                  setEndDate(clickedDay);
+                }
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" label={{ value: 'Date', position: 'insideBottom', offset: -5 }} />
+              <YAxis label={{ value: 'Revenue (EGP)', angle: -90, position: 'insideLeft' }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="revenue" stroke="#A1866F" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
 
-            <h3 style={sectionHeader}>Ticket Types</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={data.ticketType} dataKey="value" nameKey="type" outerRadius={100} label>
-                  {(data?.ticketType ?? []).map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </>
+        {/* Ticket Types Chart */}
+        <h3 style={sectionHeader}>🥧 Ticket Types</h3>
+        {data.ticketType.length === 0 ? (
+          <p className="text-center text-muted">No ticket data available for this range.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart
+              onClick={(e) => {
+                const status = e?.activePayload?.[0]?.payload?.type;
+                if (status) setStatusFilter(status.toLowerCase());
+              }}
+            >
+              <Pie
+                data={data.ticketType}
+                dataKey="value"
+                nameKey="type"
+                outerRadius={100}
+                label={({ type, percent, value }) =>
+                  `${type}: ${(percent * 100).toFixed(1)}% (${value})`
+                }
+              >
+                {(data?.ticketType ?? []).map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+
+        {/* Clear Drilldown Button */}
+        {selectedVenue && (
+          <div className="text-center mt-3">
+            <Button variant="secondary" onClick={() => setSelectedVenue(null)}>
+              Clear Drilldown: {selectedVenue}
+            </Button>
+          </div>
         )}
       </div>
     </div>
