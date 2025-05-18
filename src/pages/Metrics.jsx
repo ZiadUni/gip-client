@@ -6,10 +6,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Button } from 'react-bootstrap';
+import { Accordion, Tabs, Tab, Button } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 
@@ -82,31 +80,6 @@ const Metrics = () => {
     document.body.removeChild(link);
   };
 
-  const exportPDF = () => {
-    const original = pageRef.current;
-    const clone = original.cloneNode(true);
-    clone.style.padding = '40px';
-    clone.style.backgroundColor = '#ffffff';
-    clone.style.maxWidth = '1000px';
-    clone.style.margin = '0 auto';
-    clone.style.boxShadow = 'none';
-    document.body.appendChild(clone);
-    html2canvas(clone, {
-      backgroundColor: '#ffffff',
-      scale: 2,
-      useCORS: true,
-      logging: false
-    }).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const width = pdf.internal.pageSize.getWidth();
-      const height = (canvas.height * width) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-      pdf.save('metrics-dashboard.pdf');
-      document.body.removeChild(clone);
-    });
-  };
-
   return (
     <div className="fade-in" ref={pageRef}>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
@@ -141,64 +114,82 @@ const Metrics = () => {
           </p>
         )}
 
-        <h5 className="text-center">🕒 Time Range Filter</h5>
-        <div className="text-center mb-3">
-          <label><strong>Start Date:</strong></label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            style={filterStyle}
-          />
-          <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            style={filterStyle}
-          />
-        </div>
+        {/* FILTER & EXPORT PANEL */}
+        <Accordion defaultActiveKey={null} className="mb-4">
+          <Accordion.Item eventKey="0" style={{ border: '1px solid #ccc', borderRadius: '8px' }}>
+            <Accordion.Header>🔧 Filter & Export Options</Accordion.Header>
+            <Accordion.Body>
 
-        <h5 className="text-center">📋 Booking Filters</h5>
-        <div className="text-center mb-4">
-          <label><strong>Status:</strong></label>
-          <select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            style={filterStyle}
-          >
-            <option value="current">Current</option>
-            <option value="past">Past</option>
-            <option value="all">All</option>
-          </select>
+              <Tabs defaultActiveKey="filters" className="mb-3 justify-content-center" fill>
+                {/* FILTERS TAB */}
+                <Tab eventKey="filters" title="Filters">
+                  <h5 className="text-center mb-3">🕒 Time Range Filter</h5>
+                  <div className="text-center mb-3">
+                    <label><strong>Start Date:</strong></label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={e => setStartDate(e.target.value)}
+                      style={filterStyle}
+                    />
+                    <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={e => setEndDate(e.target.value)}
+                      style={filterStyle}
+                    />
+                  </div>
 
-          <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
-          <select
-            value={typeFilter}
-            onChange={e => setTypeFilter(e.target.value)}
-            style={filterStyle}
-          >
-            <option value="all">All</option>
-            <option value="event">Event Only</option>
-            <option value="venue">Venue Only</option>
-          </select>
-        </div>
+                  <h5 className="text-center">📋 Booking Filters</h5>
+                  <div className="text-center mb-3">
+                    <label><strong>Status:</strong></label>
+                    <select
+                      value={statusFilter}
+                      onChange={e => setStatusFilter(e.target.value)}
+                      style={filterStyle}
+                    >
+                      <option value="current">Current</option>
+                      <option value="past">Past</option>
+                      <option value="all">All</option>
+                    </select>
 
-        <h5 className="text-center">📁 Export Options</h5>
-        {data && (
-          <div className="text-center mb-4 d-flex flex-wrap justify-content-center gap-3">
-            <Button onClick={() =>
-              exportToCSV([
-                { Metric: 'Tickets Sold', Value: data.ticketsSold },
-                { Metric: 'Total Revenue', Value: data.totalRevenue },
-                { Metric: 'Top Venue', Value: data.topVenue }
-              ], 'metric-summary')}>Export Summary CSV</Button>
-            <Button onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
-            <Button onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
-            <Button onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
-            <Button variant="dark" onClick={exportPDF}>Export Full Page PDF</Button>
-          </div>
-        )}
+                    <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
+                    <select
+                      value={typeFilter}
+                      onChange={e => setTypeFilter(e.target.value)}
+                      style={filterStyle}
+                    >
+                      <option value="all">All</option>
+                      <option value="event">Event Only</option>
+                      <option value="venue">Venue Only</option>
+                    </select>
+                  </div>
+                </Tab>
+
+                {/* EXPORT TAB */}
+                <Tab eventKey="export" title="Export">
+                  <h5 className="text-center mb-3">📁 Export CSV</h5>
+                  {data && (
+                    <div className="text-center d-flex flex-wrap justify-content-center gap-3">
+                      <Button onClick={() =>
+                        exportToCSV([
+                          { Metric: 'Tickets Sold', Value: data.ticketsSold },
+                          { Metric: 'Total Revenue', Value: data.totalRevenue },
+                          { Metric: 'Top Venue', Value: data.topVenue }
+                        ], 'metric-summary')}>Export Summary CSV</Button>
+
+                      <Button onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
+                      <Button onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
+                      <Button onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
+                    </div>
+                  )}
+                </Tab>
+              </Tabs>
+
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
 
         {/* Summary Boxes */}
         {/* VENUE METRICS */}
