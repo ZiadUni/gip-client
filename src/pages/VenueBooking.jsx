@@ -91,6 +91,10 @@ const VenueBooking = () => {
           )}
         </Row>
       </Container>
+        <div style={footer}>
+          <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
+          <p>Powered by Edaretna Management System</p>
+        </div>
     </div>
   );
 };

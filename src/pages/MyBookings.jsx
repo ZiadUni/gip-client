@@ -141,6 +141,18 @@ const MyBookings = () => {
       <Row className="g-4">
         {filteredBookings.map(renderCard)}
       </Row>
+      <div style={{
+        textAlign: 'center',
+        padding: '30px',
+        color: '#999',
+        fontSize: '14px',
+        backgroundColor: '#f5f3f0',
+        marginTop: '40px'
+      }}>
+        <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
+        <p>Powered by Edaretna Management System</p>
+      </div>
+
     </Container>
   );
 };
