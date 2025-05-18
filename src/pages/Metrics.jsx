@@ -130,7 +130,7 @@ const Metrics = () => {
 
         <Tabs
           defaultActiveKey="filters"
-          className="mb-3 justify-content-center"
+          className="mb-3 justify-content-center custom-tabs"
           fill
           variant="pills"
         >
