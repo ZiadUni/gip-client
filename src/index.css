@@ -235,3 +235,9 @@ button:hover,
   background-color: #8d7357 !important;
   color: white !important;
 }
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
