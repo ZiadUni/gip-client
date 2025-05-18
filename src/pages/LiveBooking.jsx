@@ -156,6 +156,14 @@ const LiveBooking = () => {
 
   return (
     <div className="fade-in">
+            <Button
+        variant="secondary"
+        onClick={() => navigate(-1)}
+        className="mb-3"
+      >
+        ← Back
+      </Button>
+
       <Container className="py-5 text-center">
         <h2 className="text-brown mb-3">Book Your Ticket</h2>
         <h5>{event?.name}</h5>

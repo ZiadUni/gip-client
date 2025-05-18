@@ -38,6 +38,14 @@ const Payment = () => {
 
   return (
     <div className="fade-in">
+        <Button
+    variant="secondary"
+    onClick={() => navigate(-1)}
+    className="mb-3"
+  >
+    ← Back
+  </Button>
+
       <Container className="py-5" style={{ maxWidth: '600px' }}>
         <Card className="p-4 shadow-sm">
           <h3 className="text-center text-brown mb-4">Payment</h3>
