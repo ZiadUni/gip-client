@@ -1,7 +1,7 @@
 // NotFound.jsx - 404 page displayed for unknown routes
 
 import React from 'react';
-import { Container } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const NotFound = () => {

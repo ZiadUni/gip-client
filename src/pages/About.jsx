@@ -2,18 +2,19 @@
 // Static content page showing about info
 
 import React from 'react';
-import { Container } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 
 const About = () => {
   return (
     <div className="fade-in">
-          <Button
-      variant="secondary"
-      onClick={() => navigate(-1)}
-      className="mb-3"
-    >
-      ← Back
-    </Button>      
+      <div className="d-flex justify-content-start mb-3">
+        <Button
+          variant="secondary"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </Button>
+      </div>
     <Container className="py-5" style={{ maxWidth: '900px' }}>
       <h1 className="text-brown text-center mb-4">About Galala Innovation Park</h1>
       <p className="text-center mb-5">

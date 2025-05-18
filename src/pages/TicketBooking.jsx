@@ -53,13 +53,14 @@ const TicketBooking = () => {
 
   return (
     <div className="fade-in">
-          <Button
-      variant="secondary"
-      onClick={() => navigate(-1)}
-      className="mb-3"
-    >
-      ← Back
-    </Button>
+      <div className="d-flex justify-content-start mb-3">
+        <Button
+          variant="secondary"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </Button>
+      </div>
       <Container className="py-5">
         <h2 className="text-center text-brown mb-4">Available Events</h2>
 
