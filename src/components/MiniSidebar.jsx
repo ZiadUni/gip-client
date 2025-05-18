@@ -1,5 +1,5 @@
 // MiniSidebar.jsx
-// Toggleable sidebar with hide/show button
+// Toggleable sidebar with RBAC-based links
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,11 +8,14 @@ const MiniSidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const role = user?.role;
+
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      setIsOpen(!mobile); 
+      setIsOpen(!mobile);
     };
 
     checkMobile();
@@ -64,12 +67,14 @@ const MiniSidebar = () => {
           </div>
         </Link>
 
-        <Link to="/metrics" className="sidebar-link">
-          <div className="icon-label">
-            <span role="img" aria-label="Metrics">📊</span>
-            <span className="label">Metrics</span>
-          </div>
-        </Link>
+        {role === 'staff' && (
+          <Link to="/metrics" className="sidebar-link">
+            <div className="icon-label">
+              <span role="img" aria-label="Metrics">📊</span>
+              <span className="label">Metrics</span>
+            </div>
+          </Link>
+        )}
 
         <Link to="/ticket-booking" className="sidebar-link">
           <div className="icon-label">
@@ -78,12 +83,14 @@ const MiniSidebar = () => {
           </div>
         </Link>
 
-        <Link to="/venue-booking" className="sidebar-link">
-          <div className="icon-label">
-            <span role="img" aria-label="Venues">🏛️</span>
-            <span className="label">Venues</span>
-          </div>
-        </Link>
+        {role !== 'visitor' && (
+          <Link to="/venue-booking" className="sidebar-link">
+            <div className="icon-label">
+              <span role="img" aria-label="Venues">🏛️</span>
+              <span className="label">Venues</span>
+            </div>
+          </Link>
+        )}
 
         <Link to="/my-bookings" className="sidebar-link">
           <div className="icon-label">

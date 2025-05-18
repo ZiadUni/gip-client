@@ -47,7 +47,7 @@ const BookingConfirmation = () => {
               Book Another {type === 'event' ? 'Ticket' : 'Venue'}
             </Button>
             <Button
-              variant="outline-secondary"
+              variant="outline-success"
               className="ms-2"
               onClick={() => navigate('/')}
             >
