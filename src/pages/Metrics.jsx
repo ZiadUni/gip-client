@@ -116,11 +116,24 @@ const Metrics = () => {
 
         {/* FILTER & EXPORT PANEL */}
         <Accordion defaultActiveKey={null} className="mb-4">
-          <Accordion.Item eventKey="0" style={{ border: '1px solid #ccc', borderRadius: '8px' }}>
+        <Accordion.Item
+          eventKey="0"
+          style={{
+            border: '1px solid #ccc',
+            borderRadius: '10px',
+            backgroundColor: '#f8f9fa',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+          }}
+        >
             <Accordion.Header>🔧 Filter & Export Options</Accordion.Header>
             <Accordion.Body>
 
-              <Tabs defaultActiveKey="filters" className="mb-3 justify-content-center" fill>
+        <Tabs
+          defaultActiveKey="filters"
+          className="mb-3 justify-content-center"
+          fill
+          variant="pills"
+        >
                 {/* FILTERS TAB */}
                 <Tab eventKey="filters" title="Filters">
                   <h5 className="text-center mb-3">🕒 Time Range Filter</h5>
