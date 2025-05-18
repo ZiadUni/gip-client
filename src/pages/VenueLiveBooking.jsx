@@ -85,18 +85,17 @@ const handleProceed = () => {
     return setError('Please select at least one slot.');
   }
 
-  const sortedTimes = selectedSlots.map(s => s.time).sort();
-  const timeRange = `${sortedTimes[0]} - ${sortedTimes[sortedTimes.length - 1]}`;
+  const items = selectedSlots.map(slot => ({
+    ...selectedVenue,
+    time: slot.time,
+    event: eventName,
+    slots: [slot.time]
+  }));
 
   navigate('/payment', {
     state: {
       type: 'venue',
-      items: [{
-        ...selectedVenue,
-        time: timeRange,
-        event: eventName,
-        slots: sortedTimes
-      }]
+      items
     }
   });
 };
