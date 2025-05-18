@@ -91,7 +91,14 @@ const VenueBooking = () => {
           )}
         </Row>
       </Container>
-        <div style={footer}>
+        <div style={{
+          textAlign: 'center',
+          padding: '30px',
+          color: '#999',
+          fontSize: '14px',
+          backgroundColor: '#f5f3f0',
+          marginTop: '40px'
+        }}>
           <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
           <p>Powered by Edaretna Management System</p>
         </div>
