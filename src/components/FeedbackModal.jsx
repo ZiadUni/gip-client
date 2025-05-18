@@ -38,7 +38,7 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
       setSuccess(true);
       setTimeout(() => {
         onClose();
-        onSubmitted?.(); // optional callback
+        onSubmitted?.();
       }, 1000);
     } catch (err) {
       setError(err.message);
@@ -66,7 +66,7 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
       <Modal.Header closeButton>
         <Modal.Title>📝 Leave Feedback</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="bg-light rounded shadow-sm p-3">
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">Feedback submitted!</Alert>}
 
@@ -89,7 +89,7 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button className="bg-brown" onClick={handleSubmit}>
           Submit Feedback
         </Button>
       </Modal.Footer>

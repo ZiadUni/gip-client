@@ -9,6 +9,7 @@ import {
 import { apiFetch } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import FeedbackModal from '../components/FeedbackModal';
+import CancelReasonModal from '../components/CancelReasonModal';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -21,6 +22,8 @@ const MyBookings = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackBookingId, setFeedbackBookingId] = useState(null);
   const navigate = useNavigate();
+  const [showCancelReason, setShowCancelReason] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState(null);
 
   useEffect(() => {
     fetchBookings();
@@ -87,27 +90,29 @@ const MyBookings = () => {
   };
 
   const handleCancel = async id => {
-    const token = localStorage.getItem('token');
-    const confirm = window.confirm('Are you sure you want to cancel this booking?');
-    if (!confirm) return;
+  const token = localStorage.getItem('token');
+  const confirm = window.confirm('Are you sure you want to cancel this booking?');
+  if (!confirm) return;
 
-    try {
-      const res = await apiFetch(`/bookings/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+  try {
+    const res = await apiFetch(`/bookings/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Cancel failed');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Cancel failed');
 
-      setSuccess('Booking cancelled');
-      fetchBookings();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+    setSuccess('Booking cancelled');
+    setCancelBookingId(id);
+    setShowCancelReason(true);
+    fetchBookings();
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const handleOpenFeedback = (bookingId) => {
     setFeedbackBookingId(bookingId);
@@ -162,7 +167,7 @@ const MyBookings = () => {
               )}
               {booking.status === 'confirmed' && (
                 <Button
-                  variant="outline-primary"
+                  className="bg-brown"
                   size="sm"
                   onClick={() => handleOpenFeedback(booking._id)}
                 >
@@ -226,7 +231,7 @@ const MyBookings = () => {
       <Tabs
         activeKey={activeTab}
         onSelect={(key) => setActiveTab(key)}
-        className="mb-3 justify-content-center"
+        className="mb-3 justify-content-center custom-tabs"
         fill
       >
         <Tab eventKey="event" title="🎟 Event Bookings">
@@ -247,6 +252,13 @@ const MyBookings = () => {
         bookingId={feedbackBookingId}
         onSubmitted={fetchBookings}
       />
+      <CancelReasonModal
+        show={showCancelReason}
+        onClose={() => setShowCancelReason(false)}
+        bookingId={cancelBookingId}
+        onSubmitted={fetchBookings}
+      />
+
     </Container>
   );
 };
