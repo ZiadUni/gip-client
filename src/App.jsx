@@ -34,7 +34,7 @@ const AppLayout = () => {
       <Navbar />
       {!isAuthPage && <MiniSidebar />}
       <NotificationsPopup />
-      <div style={{ paddingTop: '80px', minHeight: '100vh' }}>
+      <div className="app-content" style={{ paddingTop: '80px' }}>
         <Routes>
           <Route path="/" element={token ? <Home /> : <Navigate to="/login" />} />
           <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
@@ -51,7 +51,7 @@ const AppLayout = () => {
           <Route path="/manager" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {!isAuthPage && <Footer />}
+        <Footer />
       </div>
     </>
   );
