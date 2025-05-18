@@ -8,6 +8,7 @@ import { apiFetch } from '../utils/api';
 
 const TicketBooking = () => {
   const [eventBookings, setEventBookings] = useState([]);
+  const [availabilityMap, setAvailabilityMap] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +38,34 @@ const TicketBooking = () => {
 
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+  const fetchAvailability = async () => {
+    const availabilityData = {};
+
+    for (const booking of eventBookings) {
+      const id = `${booking.details.name}__${booking.details.date}__${booking.details.time}`;
+      try {
+        const res = await apiFetch(`/availability/event/${encodeURIComponent(id)}`);
+        const data = await res.json();
+
+        if (res.ok && Array.isArray(data.seats)) {
+          const booked = data.seats.filter(s => s.status === 'booked').length;
+          const capacity = data.seats.length;
+          availabilityData[booking._id] = { booked, capacity };
+        }
+      } catch (err) {
+        console.warn('Availability check failed for', booking.details.event);
+      }
+    }
+
+    setAvailabilityMap(availabilityData);
+  };
+
+  if (eventBookings.length > 0) {
+    fetchAvailability();
+  }
+}, [eventBookings]);
 
   const handleBook = (eventDetails) => {
     navigate('/live-booking', { state: { event: eventDetails } });
@@ -88,15 +117,19 @@ const TicketBooking = () => {
                       <Card.Text><strong>Venue:</strong> {b.details.name}</Card.Text>
                       <Card.Text>
                         <strong>Availability Status:</strong>{' '}
-                        <span className={
-                          b.details?.seats?.length >= b.details?.capacity
-                            ? 'text-danger'
-                            : 'text-success'
-                        }>
-                          {b.details?.seats?.length >= b.details?.capacity
-                            ? 'Fully Booked'
-                            : 'Available'}
-                        </span>
+                        {availabilityMap[b._id] ? (
+                          <span className={
+                            availabilityMap[b._id].booked >= availabilityMap[b._id].capacity
+                              ? 'text-danger'
+                              : 'text-success'
+                          }>
+                            {availabilityMap[b._id].booked >= availabilityMap[b._id].capacity
+                              ? 'Fully Booked'
+                              : 'Available'}
+                          </span>
+                        ) : (
+                          <span className="text-muted">Loading...</span>
+                        )}
                       </Card.Text>
                     </Card.Body>
                     <Card.Footer>

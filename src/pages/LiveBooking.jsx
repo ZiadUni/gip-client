@@ -117,13 +117,13 @@ const LiveBooking = () => {
     }
   };
 
-  const getColor = (status, isSelected, id) => {
-    if (mySeat === id) return '#198754';
-    if (isSelected) return '#0d6efd';
-    if (status === 'booked') return '#dc3545';
-    if (status === 'pending') return '#0dcaf0';
-    return '#adb5bd';
-  };
+      const getColor = (status, isSelected, id) => {
+        if (status === 'booked') return '#dc3545';
+        if (status === 'pending') return '#0dcaf0';
+        if (mySeat === id) return '#198754';
+        if (isSelected) return '#0d6efd';
+        return '#adb5bd';
+      };
 
   return (
     <div className="fade-in">
@@ -164,12 +164,13 @@ const LiveBooking = () => {
                   variant="light"
                   size="sm"
                   style={{
-                    position: 'absolute',
-                    top: 32,
+                    marginTop: 6,
+                    position: 'relative',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    padding: '1px 6px',
-                    fontSize: '0.65rem'
+                    padding: '2px 8px',
+                    fontSize: '0.65rem',
+                    zIndex: 2
                   }}
                   onClick={(e) => {
                     e.stopPropagation();

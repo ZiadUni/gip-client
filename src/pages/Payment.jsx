@@ -216,7 +216,7 @@ const Payment = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Expiry (MM/YY)</Form.Label>
+              <Form.Label>Expiry (MMYY)</Form.Label>
               <Form.Control
                 className={getValidationClass('expiry', form.expiry)}
                 type="text"
@@ -228,7 +228,7 @@ const Payment = () => {
                     document.querySelector('input[name="cvv"]').focus();
                   }
                 }}
-                placeholder="MM/YY"
+                placeholder="MMYY"
               />
             </Form.Group>
 
