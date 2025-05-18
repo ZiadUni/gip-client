@@ -46,7 +46,7 @@ const AppLayout = () => {
           <Route path="/payment" element={token ? <Payment /> : <Navigate to="/login" />} />
           <Route path="/booking-confirmation" element={token ? <BookingConfirmation /> : <Navigate to="/login" />} />
           <Route path="/about" element={token ? <About /> : <Navigate to="/login" />} />
-          <Route path="/metrics" element={<ProtectedRoute><Metrics /></ProtectedRoute>} />
+          <Route path="/metrics" element={<ProtectedRoute requiredRole="staff"><Metrics /></ProtectedRoute>} />
           <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
           <Route path="/manager" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
