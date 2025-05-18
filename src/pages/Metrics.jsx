@@ -197,11 +197,11 @@ const Metrics = () => {
         {/* VENUE METRICS */}
         <h4 className="text-center mt-4">📍 Venue Metrics</h4>
         <div style={grid}>
-          <MetricBox title="Total Venues Used" value={data.venueUsage.length} />
-          <MetricBox title="Most Used Venue" value={data.topVenue || '—'} />
+          <MetricBox title="Total Venues Used" value={data?.venueUsage?.length || 0} />
+          <MetricBox title="Most Used Venue" value={data?.topVenue || '—'} />
           <MetricBox
             title="Avg Bookings per Venue"
-            value={Math.round(data.ticketsSold / (data.venueUsage.length || 1))}
+            value={Math.round((data?.ticketsSold || 0) / (data?.venueUsage?.length || 1))}
           />
         </div>
 
@@ -210,31 +210,32 @@ const Metrics = () => {
         <div style={grid}>
           <MetricBox
             title="Confirmed"
-            value={data.ticketType.find(t => t.type === 'Confirmed')?.value || 0}
+            value={data?.ticketType?.find(t => t.type === 'Confirmed')?.value || 0}
           />
           <MetricBox
             title="Pending"
-            value={data.ticketType.find(t => t.type === 'Pending')?.value || 0}
+            value={data?.ticketType?.find(t => t.type === 'Pending')?.value || 0}
           />
           <MetricBox
             title="Cancelled"
-            value={data.ticketType.find(t => t.type === 'Cancelled')?.value || 0}
+            value={data?.ticketType?.find(t => t.type === 'Cancelled')?.value || 0}
           />
         </div>
 
         {/* OVERALL METRICS */}
         <h4 className="text-center mt-4">📊 Overall Metrics</h4>
         <div style={grid}>
-          <MetricBox title="Tickets Sold" value={data.ticketsSold} />
+          <MetricBox title="Tickets Sold" value={data?.ticketsSold || 0} />
           <MetricBox
             title="Total Revenue"
-            value={`EGP ${data.totalRevenue?.toLocaleString() || '0'}`}
+            value={`EGP ${data?.totalRevenue?.toLocaleString() || '0'}`}
           />
           <MetricBox
             title="Revenue per Ticket"
-            value={`EGP ${Math.round(data.totalRevenue / (data.ticketsSold || 1))}`}
+            value={`EGP ${Math.round((data?.totalRevenue || 0) / (data?.ticketsSold || 1))}`}
           />
         </div>
+
 
 
         {/* Venue Usage Chart */}
