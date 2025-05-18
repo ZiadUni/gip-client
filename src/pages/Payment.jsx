@@ -73,9 +73,13 @@ const Payment = () => {
     if (!/^\d{3}$/.test(cvv)) return 'CVV must be 3 digits.';
 
     const [mm, yy] = expiry.split('/').map(Number);
-    const expDate = new Date(2000 + yy, mm - 1);
+    if (mm < 1 || mm > 12) return 'Expiry month must be between 01 and 12.';
+    if (yy < 0 || yy > 99) return 'Invalid year format. Use two-digit year (e.g., 25 for 2025).';
+
+    const expDate = new Date(2000 + yy, mm - 1, 1);
     const now = new Date();
-    if (expDate < now) return 'Card is expired.';
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    if (expDate < currentMonth) return 'Card is expired.';
     if (cleanCard === '4000000000000002') return 'Card was declined.';
     if (cvv === '000') return 'Invalid CVV.';
 
