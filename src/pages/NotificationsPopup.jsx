@@ -49,6 +49,15 @@ const NotificationPopup = () => {
     setNotifications(prev => prev.filter(n => n._id !== id));
   };
 
+  const formatItemLabel = (itemId) => {
+    const parts = itemId.split('__');
+    if (parts.length === 3) {
+      const [name, date, time] = parts;
+      return `${name} on ${date} at ${time}`;
+    }
+    return itemId;
+  };
+
   return (
     <ToastContainer position="top-start" className="p-3" style={{ zIndex: 9999, marginTop: '130px', marginLeft: '0px' }}>
       {notifications.map(n => (
@@ -69,7 +78,7 @@ const NotificationPopup = () => {
           </Toast.Header>
           <Toast.Body style={{ color: '#333'}}>
             {n.type === 'event' ? (
-              <>🎟️ Seat <strong>#{n.itemId}</strong> <strong>{n.details?.title}</strong> is now available!</>
+              <>🎟️ Seat <strong>#{n.details?.seat}</strong> for <strong>{formatItemLabel(n.itemId)}</strong> is now available!</>
             ) : (
               <>🏢 <strong>{n.details?.name}</strong> has a free slot at <strong>{n.details?.time}</strong>!</>
             )}
