@@ -48,6 +48,14 @@ const Payment = () => {
       setCardBrand(detectCardBrand(newValue.replace(/\s/g, '')));
     }
 
+    if (name === 'expiry') {
+    let cleaned = value.replace(/[^0-9]/g, '');
+    if (cleaned.length >= 2 && cleaned.length <= 4) {
+      cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
+    }
+    newValue = cleaned;
+    }
+
     if (name === 'cvv' && /[^0-9]/.test(newValue)) return;
 
     setForm({ ...form, [name]: newValue });
@@ -59,7 +67,7 @@ const Payment = () => {
     const cleanCard = cardNumber.replace(/\s/g, '');
 
     if (!nameOnCard || !cardNumber || !expiry || !cvv) return 'All fields are required.';
-    if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(nameOnCard)) return 'Name must be "Firstname Lastname" format.';
+    if (!/^[a-zA-Z]+ [a-zA-Z]+$/.test(nameOnCard.trim())) return 'Please enter your first and last name in this format: "John Doe"';
     if (!/^\d{16}$/.test(cleanCard)) return 'Card number must be 16 digits.';
     if (!/^\d{2}\/\d{2}$/.test(expiry)) return 'Expiry must be in MM/YY format.';
     if (!/^\d{3}$/.test(cvv)) return 'CVV must be 3 digits.';
@@ -123,6 +131,22 @@ const Payment = () => {
       setShowModal(false);
     }
   };
+  
+      const getValidationClass = (name, value) => {
+        if (!value) return '';
+        switch (name) {
+          case 'nameOnCard':
+            return /^[a-zA-Z]+ [a-zA-Z]+$/.test(value.trim()) ? 'is-valid' : 'is-invalid';
+          case 'cardNumber':
+            return /^\d{4} \d{4} \d{4} \d{4}$/.test(value) ? 'is-valid' : 'is-invalid';
+          case 'expiry':
+            return /^\d{2}\/\d{2}$/.test(value) ? 'is-valid' : 'is-invalid';
+          case 'cvv':
+            return /^\d{3}$/.test(value) ? 'is-valid' : 'is-invalid';
+          default:
+            return '';
+        }
+      };
 
   return (
     <div className="fade-in">
@@ -158,6 +182,7 @@ const Payment = () => {
             <Form.Group className="mb-3">
               <Form.Label>Name on Card</Form.Label>
               <Form.Control
+                className={getValidationClass('nameOnCard', form.nameOnCard)}
                 type="text"
                 name="nameOnCard"
                 value={form.nameOnCard}
@@ -169,10 +194,16 @@ const Payment = () => {
             <Form.Group className="mb-3">
               <Form.Label>Card Number {cardBrand && <small>({cardBrand})</small>}</Form.Label>
               <Form.Control
+                className={getValidationClass('cardNumber', form.cardNumber)}
                 type="text"
                 name="cardNumber"
                 value={form.cardNumber}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  if (e.target.name === 'cardNumber' && e.target.value.replace(/\s/g, '').length === 16) {
+                    document.querySelector('input[name="expiry"]').focus();
+                  }
+                }}
                 placeholder="1234 5678 9012 3456"
                 maxLength={19}
               />
@@ -181,10 +212,16 @@ const Payment = () => {
             <Form.Group className="mb-3">
               <Form.Label>Expiry (MM/YY)</Form.Label>
               <Form.Control
+                className={getValidationClass('expiry', form.expiry)}
                 type="text"
                 name="expiry"
                 value={form.expiry}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  if (e.target.name === 'expiry' && e.target.value.length === 5) {
+                    document.querySelector('input[name="cvv"]').focus();
+                  }
+                }}
                 placeholder="MM/YY"
               />
             </Form.Group>
@@ -193,6 +230,7 @@ const Payment = () => {
               <Form.Label>CVV</Form.Label>
               <InputGroup>
                 <Form.Control
+                  className={getValidationClass('cvv', form.cvv)}
                   type={showCVV ? "text" : "password"}
                   name="cvv"
                   value={form.cvv}
