@@ -19,7 +19,19 @@ const Home = () => {
           </p>
           <div style={buttonGroup}>
             <Link to="/ticket-booking" style={heroButton}>Book Event</Link>
-            {!isVisitor && <Link to="/venue-booking" style={heroButton}>Reserve Venue</Link>}
+
+            {!isVisitor && (
+              <Link to="/venue-booking" style={heroButton}>Reserve Venue</Link>
+            )}
+
+            <Link to="/my-bookings" style={heroButton}>My Bookings</Link>
+
+            {user.role === 'staff' && (
+              <>
+                <Link to="/metrics" style={heroButton}>View Metrics</Link>
+                <Link to="/manager" style={heroButton}>Admin Panel</Link>
+              </>
+            )}
           </div>
         </div>
 
