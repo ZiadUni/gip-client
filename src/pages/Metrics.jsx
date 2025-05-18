@@ -43,6 +43,10 @@ const Metrics = () => {
     }
   };
 
+useEffect(() => {
+  fetchData();
+}, [startDate, endDate, typeFilter, statusFilter, selectedVenue]);
+
   useEffect(() => {
     if (!autoRefresh) return;
     const tick = setInterval(() => {
@@ -147,6 +151,7 @@ const Metrics = () => {
             style={filterStyle}
           />
 
+          <h5 style={{ marginTop: '30px' }}>📋 Booking Filters</h5>
           <div style={{ marginTop: '15px' }}>
             <label><strong>Status:</strong></label>
             <select
@@ -175,6 +180,7 @@ const Metrics = () => {
         {/* Export Buttons */}
         {data && (
           <div className="text-center mb-4 d-flex flex-wrap justify-content-center gap-3">
+            <h5 style={{ textAlign: 'center', marginBottom: '15px' }}>📁 Export Options</h5>
             <Button onClick={() =>
               exportToCSV([
                 { Metric: 'Tickets Sold', Value: data.ticketsSold },
