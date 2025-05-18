@@ -1,0 +1,100 @@
+import React, { useState } from 'react';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { apiFetch } from '../utils/api';
+
+const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async () => {
+    setError('');
+    setSuccess(false);
+
+    if (!rating) {
+      setError('Please select a rating.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await apiFetch('/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          bookingId,
+          rating,
+          comment
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      setSuccess(true);
+      setTimeout(() => {
+        onClose();
+        onSubmitted?.(); // optional callback
+      }, 1000);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const renderStars = () => {
+    return [1, 2, 3, 4, 5].map(star => (
+      <span
+        key={star}
+        onClick={() => setRating(star)}
+        style={{
+          fontSize: '24px',
+          cursor: 'pointer',
+          color: star <= rating ? '#ffc107' : '#ccc'
+        }}
+      >
+        ★
+      </span>
+    ));
+  };
+
+  return (
+    <Modal show={show} onHide={onClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>📝 Leave Feedback</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">Feedback submitted!</Alert>}
+
+        <Form.Group className="mb-3">
+          <Form.Label>Rating</Form.Label>
+          <div>{renderStars()}</div>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Comment (optional)</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+          />
+        </Form.Group>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleSubmit}>
+          Submit Feedback
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default FeedbackModal;
