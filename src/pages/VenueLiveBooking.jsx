@@ -132,13 +132,16 @@ const handleProceed = () => {
     }
   };
 
-      const getColor = (status, isSelected, time) => {
-        if (mySlotTimes.includes(time)) return '#198754';
-        if (isSelected) return '#0d6efd';
-        if (status === 'booked') return '#dc3545';
-        if (status === 'pending') return '#0dcaf0';
-        return '#adb5bd';
-      };
+  const getColor = (status, isSelected, time) => {
+  const normalizedTime = (time || '').trim();
+  const hasBooking = mySlotTimes.some(t => t.trim() === normalizedTime);
+
+  if (hasBooking) return '#198754';
+  if (isSelected) return '#0d6efd';
+  if (status === 'booked') return '#dc3545';
+  if (status === 'pending') return '#0dcaf0';
+  return '#adb5bd';
+};
 
   return (
     <div className="fade-in">
@@ -240,4 +243,4 @@ const handleProceed = () => {
   );
 };
 
-export default VenueLiveBooking;
+export default VenueLiveBooking
