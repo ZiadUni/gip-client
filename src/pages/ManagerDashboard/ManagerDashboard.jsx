@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import UserManagementTab from './UserManagementTab';
 import VenueManagementTab from './VenueManagementTab';
 import FeedbackManagementTab from './FeedbackManagementTab';
-import BookingManagementTab from './BookingMangementTab';
+import BookingManagementTab from './BookingManagementTab';
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
