@@ -98,6 +98,13 @@ const MiniSidebar = () => {
             <span className="label">My Bookings</span>
           </div>
         </Link>
+
+        <Link to="/support" className="sidebar-link">
+          <div className="icon-label">
+            <span role="img" aria-label="Support">💬</span>
+            <span className="label">Support</span>
+          </div>
+        </Link>
       </div>
     </>
   );

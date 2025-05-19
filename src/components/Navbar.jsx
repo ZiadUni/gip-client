@@ -32,6 +32,7 @@ const AppNavbar = () => {
     { path: '/venue-booking', label: 'Book Venue' },
     { path: '/metrics', label: 'Metrics' },
     { path: '/about', label: 'About Us' },
+    { path: '/support', label: 'Support' },
     { path: '/my-bookings', label: 'My Bookings' },
     { path: '/manager', label: 'Manager Panel' }
   ];
