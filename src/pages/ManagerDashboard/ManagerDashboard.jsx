@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import UserManagementTab from './UserManagementTab';
 import VenueManagementTab from './VenueManagementTab';
 import FeedbackManagementTab from './FeedbackManagementTab';
+import BookingManagementTab from './BookingMangementTab';
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
@@ -28,15 +29,13 @@ const ManagerDashboard = () => {
           <VenueManagementTab />
         </Tab>
 
+        <Tab eventKey="bookings" title="Booking Management">
+        <BookingManagementTab />
+        </Tab>
+
         <Tab eventKey="feedback" title="Feedback & Ratings">
           <FeedbackManagementTab />
         </Tab>
-
-        {/* Future tab:
-        <Tab eventKey="bookings" title="Booking Management">
-          <BookingManagementTab />
-        </Tab>
-        */}
       </Tabs>
     </Container>
   );
