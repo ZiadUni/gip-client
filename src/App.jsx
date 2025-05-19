@@ -21,7 +21,7 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import MyBookings from './pages/MyBookings';
 import NotificationsPopup from './pages/NotificationsPopup';
-import ManagerDashboard from './pages/ManagerDashboard';
+import ManagerDashboard from './pages/ManagerDashboard/ManagerDashboard';
 
 const AppLayout = () => {
   const location = useLocation();
