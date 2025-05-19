@@ -285,6 +285,8 @@ const handleSaveEdit = async () => {
             <Form.Control
               type="date"
               value={newVenue.date}
+              min={new Date().toISOString().split('T')[0]}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]}
               onChange={e => setNewVenue({ ...newVenue, date: e.target.value })}
             />
           </Col>
@@ -350,7 +352,14 @@ const handleSaveEdit = async () => {
                 {editVenueId === venue._id ? (
                     <>
                     <td><Form.Control value={editVenueData.name} onChange={e => setEditVenueData({ ...editVenueData, name: e.target.value })} /></td>
-                    <td><Form.Control type="date" value={editVenueData.date} onChange={e => setEditVenueData({ ...editVenueData, date: e.target.value })} /></td>
+                    <td><Form.Control
+                          type="date"
+                          value={editVenueData.date}
+                          min={new Date().toISOString().split('T')[0]}
+                          max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]}
+                          onChange={e => setEditVenueData({ ...editVenueData, date: e.target.value })}
+                        />
+                        </td>
                     <td><Form.Control value={editVenueData.availability} onChange={e => setEditVenueData({ ...editVenueData, availability: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
