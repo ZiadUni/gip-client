@@ -32,7 +32,9 @@ const MiniSidebar = () => {
         style={{
           left: isOpen ? '0px' : '-100px',
           transition: 'all 0.4s ease',
-          zIndex: 1000
+          zIndex: 1000,
+          maxHeight: '95vh',
+          overflowY: 'auto'
         }}
       >
         <button

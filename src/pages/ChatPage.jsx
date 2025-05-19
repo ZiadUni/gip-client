@@ -3,6 +3,8 @@ import { apiFetch } from '../utils/api';
 import ChatWindow from '../components/ChatWindow';
 import ChatSidebar from '../components/ChatSidebar';
 import FeedbackForm from '../components/FeedbackForm';
+import { Container, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -101,48 +103,67 @@ const ChatPage = () => {
 
   return (
     <div className="d-flex flex-wrap p-3">
-        <div className="d-flex justify-content-start mb-3">
-            <button className="btn btn-secondary" onClick={() => window.history.back()}>
-                ← Back
-            </button>
-        </div>
+        <Container className="py-5" style={{ maxWidth: '900px' }}>
+          <div className="d-flex justify-content-start mb-3">
+            <Button
+              variant="secondary"
+              onClick={() => navigate(-1)}
+            >
+              ← Back
+            </Button>
+          </div>      
       {user.role === 'staff' && (
-        <div className="me-4">
-          <div className="mb-2">
-            <button className={`btn btn-${tab === 'active' ? 'primary' : 'outline-primary'} me-2`} onClick={() => loadStaffChats('active')}>Active</button>
+        <div className="me-4 d-flex flex-column align-items-start" style={{ minWidth: '250px' }}>
+        <div className="mb-3 d-flex gap-2">
+            <button className={`btn btn-${tab === 'active' ? 'primary' : 'outline-primary'}`} onClick={() => loadStaffChats('active')}>Active</button>
             <button className={`btn btn-${tab === 'history' ? 'primary' : 'outline-primary'}`} onClick={() => loadStaffChats('history')}>History</button>
-          </div>
-          <ChatSidebar chats={staffChats} selectedChatId={selectedChat?._id} onSelectChat={setSelectedChat} title={`${tab === 'active' ? 'Open Chats' : 'Closed Chats'}`} />
+        </div>
+        <ChatSidebar chats={staffChats} selectedChatId={selectedChat?._id} onSelectChat={setSelectedChat} title={`${tab === 'active' ? 'Open Chats' : 'Closed Chats'}`} />
         </div>
       )}
 
       <div className="flex-grow-1">
-        {(chat || selectedChat) ? (
-          <>
+        {user.role === 'staff' ? (
+        selectedChat ? (
+            <>
             <ChatWindow
-              chat={user.role === 'staff' ? selectedChat : chat}
-              currentUserId={user._id}
-              onSend={handleSend}
+                chat={selectedChat}
+                currentUserId={user._id}
+                onSend={handleSend}
             />
-            {user.role !== 'staff' && chat?.status === 'active' && (
-              <div className="mt-3">
+            </>
+        ) : (
+            <div className="text-center mt-5 text-muted">Select a chat from the list.</div>
+        )
+        ) : (
+        chat ? (
+            <>
+            <ChatWindow
+                chat={chat}
+                currentUserId={user._id}
+                onSend={handleSend}
+            />
+            {chat?.status === 'active' && (
+                <div className="mt-3">
                 <button className="btn btn-danger" onClick={handleClose}>End Chat</button>
-              </div>
+                </div>
             )}
-            {user.role !== 'staff' && chat?.status === 'closed' && (
-              <FeedbackForm
+            {chat?.status === 'closed' && (
+                <FeedbackForm
                 rating={rating}
                 comment={comment}
                 onChangeRating={setRating}
                 onChangeComment={setComment}
                 onSubmit={handleFeedbackSubmit}
-              />
+                />
             )}
-          </>
+            </>
         ) : (
-          <div className="text-center mt-5 text-muted">No chat selected.</div>
+            <div className="text-center mt-5 text-muted">Loading your chat...</div>
+        )
         )}
       </div>
+      </Container>
     </div>
   );
 };
