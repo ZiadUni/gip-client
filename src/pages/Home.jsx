@@ -26,8 +26,6 @@ const Home = () => {
 
             <Link to="/my-bookings" style={heroButton}>My Bookings</Link>
 
-            <Link to="/support" style={heroButton}>Support Chat</Link>
-
             {user.role === 'staff' && (
               <>
                 <Link to="/metrics" style={heroButton}>View Metrics</Link>

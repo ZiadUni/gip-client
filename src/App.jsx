@@ -22,7 +22,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import MyBookings from './pages/MyBookings';
 import NotificationsPopup from './pages/NotificationsPopup';
 import ManagerDashboard from './pages/ManagerDashboard';
-import ChatPage from './pages/ChatPage';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -47,7 +46,6 @@ const AppLayout = () => {
           <Route path="/payment" element={token ? <Payment /> : <Navigate to="/login" />} />
           <Route path="/booking-confirmation" element={token ? <BookingConfirmation /> : <Navigate to="/login" />} />
           <Route path="/about" element={token ? <About /> : <Navigate to="/login" />} />
-          <Route path="/support" element={token ? <ChatPage /> : <Navigate to="/login" />} />
           <Route path="/metrics" element={<ProtectedRoute requiredRole="staff"><Metrics /></ProtectedRoute>} />
           <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
           <Route path="/manager" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
