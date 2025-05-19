@@ -173,7 +173,7 @@ const VenueManagementTab = () => {
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
       {success && <Alert variant="success" className="text-center">{success}</Alert>}
 
-      {/* Add Venue Form */}
+      <h5 className="text-center mb-3">➕ Add New Venue</h5>
       <Card className="p-4 shadow-sm mb-4">
         <Row className="g-2">
           <Col md={4}>
@@ -234,7 +234,7 @@ const VenueManagementTab = () => {
         </Row>
       </Card>
 
-      {/* Venue Table */}
+      <h5 className="text-center mb-3">📋 All Venues</h5>
       <Card className="p-4 shadow-sm">
         <Table responsive bordered hover>
           <thead>

@@ -11,6 +11,8 @@ const UserManagementTab = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [organizerFilter, setOrganizerFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -109,6 +111,11 @@ const UserManagementTab = () => {
     return matchesSearch && matchesRole && matchesOrganizer;
   });
 
+  const totalUsers = filteredUsers.length;
+  const indexOfLast = currentPage * usersPerPage;
+  const indexOfFirst = indexOfLast - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
+
   return (
     <div>
       <h4 className="text-center mb-3">👥 Manage Users</h4>
@@ -156,10 +163,10 @@ const UserManagementTab = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length === 0 ? (
+            {currentUsers.length === 0 ? (
               <tr><td colSpan="5" className="text-center">No users found.</td></tr>
             ) : (
-              filteredUsers.map(u => (
+              currentUsers.map(u => (
                 <tr key={u._id}>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
@@ -190,6 +197,29 @@ const UserManagementTab = () => {
             )}
           </tbody>
         </Table>
+
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <span>Total Users: {totalUsers}</span>
+          <div>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+              className="me-2"
+            >
+              ← Prev
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={indexOfLast >= totalUsers}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Next →
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );
