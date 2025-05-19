@@ -25,13 +25,18 @@ const MiniSidebar = () => {
 
   const toggleSidebar = () => setIsOpen(prev => !prev);
 
+  const isStaff = role === 'staff';
   const sidebarStyle = {
     left: isOpen ? '0px' : '-100px',
     transition: 'all 0.4s ease',
     zIndex: 1000,
-    height: role === 'staff' ? '85vh' : '100vh',
-    overflowY: role === 'staff' ? 'auto' : 'hidden'
+    height: '100vh',
+    overflow: 'hidden',
+    paddingTop: isStaff ? '0.4rem' : '1rem',
+    fontSize: isStaff ? '0.85rem' : '1rem',
+    gap: isStaff ? '0.2rem' : '0.6rem'
   };
+
 
   return (
     <>
@@ -61,7 +66,7 @@ const MiniSidebar = () => {
           <i className={`bi ${isOpen ? 'bi-chevron-left' : 'bi-chevron-right'}`}></i>
         </button>
 
-        <Link to="/" className="sidebar-link">
+        <Link to="/" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
           <div className="icon-label">
             <span role="img" aria-label="Home">🏠</span>
             <span className="label">Home</span>
@@ -69,7 +74,7 @@ const MiniSidebar = () => {
         </Link>
 
         {role === 'staff' && (
-          <Link to="/metrics" className="sidebar-link">
+          <Link to="/metrics" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
             <div className="icon-label">
               <span role="img" aria-label="Metrics">📊</span>
               <span className="label">Metrics</span>
@@ -77,7 +82,7 @@ const MiniSidebar = () => {
           </Link>
         )}
 
-        <Link to="/ticket-booking" className="sidebar-link">
+        <Link to="/ticket-booking" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
           <div className="icon-label">
             <span role="img" aria-label="Tickets">🎟️</span>
             <span className="label">Tickets</span>
@@ -85,7 +90,7 @@ const MiniSidebar = () => {
         </Link>
 
         {role !== 'visitor' && (
-          <Link to="/venue-booking" className="sidebar-link">
+          <Link to="/venue-booking" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
             <div className="icon-label">
               <span role="img" aria-label="Venues">🏛️</span>
               <span className="label">Venues</span>
@@ -93,14 +98,14 @@ const MiniSidebar = () => {
           </Link>
         )}
 
-        <Link to="/my-bookings" className="sidebar-link">
+        <Link to="/my-bookings" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
           <div className="icon-label">
             <span role="img" aria-label="My Bookings">📝</span>
             <span className="label">My Bookings</span>
           </div>
         </Link>
 
-        <Link to="/support" className="sidebar-link">
+        <Link to="/support" className={`sidebar-link ${isStaff ? 'compact-link' : ''}`}>
           <div className="icon-label">
             <span role="img" aria-label="Support">💬</span>
             <span className="label">Support</span>
