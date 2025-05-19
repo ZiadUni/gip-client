@@ -4,9 +4,9 @@
 import React from 'react';
 import { Tabs, Tab, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import UserManagementTab from './ManagerDashboard/UserManagementTab';
-import VenueManagementTab from './ManagerDashboard/VenueManagementTab';
-import FeedbackManagementTab from './ManagerDashboard/FeedbackManagementTab';
+import UserManagementTab from './UserManagementTab';
+import VenueManagementTab from './VenueManagementTab';
+import FeedbackManagementTab from './FeedbackManagementTab';
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
