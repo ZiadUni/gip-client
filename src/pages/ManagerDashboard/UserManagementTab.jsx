@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Button, Alert, Form, Row, Col } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
+import { unparse } from 'papaparse';
 
 const UserManagementTab = () => {
   const [users, setUsers] = useState([]);
@@ -116,6 +117,26 @@ const UserManagementTab = () => {
   const indexOfFirst = indexOfLast - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
 
+  const handleExportCSV = () => {
+  const exportData = filteredUsers.map(u => ({
+    Name: u.name,
+    Email: u.email,
+    Role: u.role,
+    OrganizerRequest: u.organizerRequest ? 'Yes' : 'No'
+  }));
+
+  const csv = unparse(exportData);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'users.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   return (
     <div>
       <h4 className="text-center mb-3">👥 Manage Users</h4>
@@ -150,6 +171,13 @@ const UserManagementTab = () => {
           </Col>
         </Row>
       </Card>
+
+        <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="mb-0">📋 User List</h5>
+        <Button size="sm" variant="outline-dark" onClick={handleExportCSV}>
+            Export CSV
+        </Button>
+        </div>
 
       <Card className="p-4 shadow-sm">
         <Table responsive bordered hover>

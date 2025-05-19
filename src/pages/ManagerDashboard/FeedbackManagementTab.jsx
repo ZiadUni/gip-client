@@ -1,8 +1,9 @@
-// FeedbackManagementTab.jsx – View user feedback and cancellation reasons
+// FeedbackManagementTab.jsx – View and moderate user feedback
 
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Alert, Badge, Form, Row, Col } from 'react-bootstrap';
+import { Card, Table, Alert, Badge, Form, Row, Col, Button } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
+import { unparse } from 'papaparse';
 
 const FeedbackManagementTab = () => {
   const [feedbackList, setFeedbackList] = useState([]);
@@ -27,15 +28,71 @@ const FeedbackManagementTab = () => {
     }
   };
 
-  const filteredFeedback = feedbackList.filter(f =>
+  const renderStars = (count) => '★'.repeat(count) + '☆'.repeat(5 - count);
+
+  const handleFlagToggle = async (id) => {
+    try {
+      const res = await apiFetch(`/feedback/${id}/flag`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchFeedback();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirm = window.confirm('Are you sure you want to delete this feedback?');
+    if (!confirm) return;
+
+    try {
+      const res = await apiFetch(`/feedback/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchFeedback();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const filtered = feedbackList.filter(f =>
     typeFilter === 'all' || f.feedbackType === typeFilter
   );
 
-  const renderStars = (count) => '★'.repeat(count) + '☆'.repeat(5 - count);
+  const handleExportCSV = () => {
+  const exportData = filtered.map(f => ({
+    User: f.user?.name || 'Unknown',
+    Email: f.user?.email || 'N/A',
+    Type: f.feedbackType,
+    BookingType: f.booking?.type || 'Unknown',
+    BookingName: f.booking?.details?.event || f.booking?.details?.name || '—',
+    Rating: f.feedbackType === 'rating' ? f.rating : '',
+    Comment: f.comment || '',
+    Flagged: f.flagged ? 'Yes' : 'No',
+    Submitted: new Date(f.createdAt).toLocaleString()
+  }));
+
+  const csv = unparse(exportData);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'feedback.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
   return (
     <div>
-      <h4 className="text-center mb-3">📝 User Feedback & Ratings</h4>
+      <h4 className="text-center mb-3">📝 User Feedback & Moderation</h4>
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
 
       <Card className="p-4 shadow-sm mb-4">
@@ -53,6 +110,13 @@ const FeedbackManagementTab = () => {
         </Row>
       </Card>
 
+        <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="mb-0">📋 Feedback List</h5>
+        <Button size="sm" variant="outline-dark" onClick={handleExportCSV}>
+            Export CSV
+        </Button>
+        </div>
+
       <Card className="p-4 shadow-sm">
         <Table responsive bordered hover>
           <thead>
@@ -62,14 +126,15 @@ const FeedbackManagementTab = () => {
               <th>Booking</th>
               <th>Comment</th>
               <th>Rating</th>
-              <th>Submitted</th>
+              <th>Flag</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredFeedback.length === 0 ? (
-              <tr><td colSpan="6" className="text-center">No feedback found.</td></tr>
+            {filtered.length === 0 ? (
+              <tr><td colSpan="7" className="text-center">No feedback found.</td></tr>
             ) : (
-              filteredFeedback.map(f => (
+              filtered.map(f => (
                 <tr key={f._id}>
                   <td>{f.user?.name || 'Unknown'}</td>
                   <td>
@@ -87,7 +152,19 @@ const FeedbackManagementTab = () => {
                       ? <span style={{ color: '#f7b100' }}>{renderStars(f.rating)}</span>
                       : '—'}
                   </td>
-                  <td>{new Date(f.createdAt).toLocaleString()}</td>
+                  <td>
+                    <Badge bg={f.flagged ? 'danger' : 'secondary'}>
+                      {f.flagged ? 'Flagged' : 'Clean'}
+                    </Badge>
+                  </td>
+                  <td className="d-flex gap-2 flex-wrap">
+                    <Button size="sm" variant={f.flagged ? 'outline-danger' : 'outline-warning'} onClick={() => handleFlagToggle(f._id)}>
+                      {f.flagged ? 'Unflag' : 'Flag'}
+                    </Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => handleDelete(f._id)}>
+                      Delete
+                    </Button>
+                  </td>
                 </tr>
               ))
             )}
