@@ -15,6 +15,7 @@ const ChatPage = () => {
   const [rating, setRating] = useState('');
   const [comment, setComment] = useState('');
   const [tab, setTab] = useState('active');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user.role === 'staff') {
@@ -26,7 +27,7 @@ const ChatPage = () => {
 
   const loadStaffChats = async (status) => {
     try {
-      const res = await apiFetch(`/chat/staff/${status}`);
+      const res = await apiFetch(`api/chat/staff/${status}`);
       const data = await res.json();
       if (res.ok) {
         setStaffChats(data);
@@ -40,7 +41,7 @@ const ChatPage = () => {
 
   const startChat = async () => {
     try {
-      const res = await apiFetch('/chat/start', { method: 'POST' });
+      const res = await apiFetch('api/chat/start', { method: 'POST' });
       const data = await res.json();
       if (res.ok) setChat(data);
     } catch (err) {
@@ -52,7 +53,7 @@ const ChatPage = () => {
     const chatId = user.role === 'staff' ? selectedChat?._id : chat?._id;
     if (!chatId) return;
 
-    const res = await apiFetch(`/chat/${chatId}/message`, {
+    const res = await apiFetch(`api/chat/${chatId}/message`, {
       method: 'POST',
       body: JSON.stringify({ text }),
       headers: { 'Content-Type': 'application/json' }
@@ -70,7 +71,7 @@ const ChatPage = () => {
   };
 
   const handleFeedbackSubmit = async () => {
-    const res = await apiFetch(`/chat/${chat._id}/feedback`, {
+    const res = await apiFetch(`api/chat/${chat._id}/feedback`, {
       method: 'PATCH',
       body: JSON.stringify({ rating, comment }),
       headers: { 'Content-Type': 'application/json' }
@@ -87,7 +88,7 @@ const ChatPage = () => {
     const chatId = user.role === 'staff' ? selectedChat?._id : chat?._id;
     if (!chatId) return;
 
-    const res = await apiFetch(`/chat/${chatId}/close`, {
+    const res = await apiFetch(`api/chat/${chatId}/close`, {
       method: 'PATCH'
     });
 

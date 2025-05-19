@@ -25,18 +25,17 @@ const MiniSidebar = () => {
 
   const toggleSidebar = () => setIsOpen(prev => !prev);
 
+  const sidebarStyle = {
+    left: isOpen ? '0px' : '-100px',
+    transition: 'all 0.4s ease',
+    zIndex: 1000,
+    height: role === 'staff' ? '85vh' : '100vh',
+    overflowY: role === 'staff' ? 'auto' : 'hidden'
+  };
+
   return (
     <>
-      <div
-        className="sidebar"
-        style={{
-          left: isOpen ? '0px' : '-100px',
-          transition: 'all 0.4s ease',
-          zIndex: 1000,
-          maxHeight: '95vh',
-          overflowY: 'auto'
-        }}
-      >
+      <div className="sidebar" style={sidebarStyle}>
         <button
           onClick={toggleSidebar}
           style={{
