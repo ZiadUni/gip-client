@@ -104,6 +104,47 @@ const Metrics = () => {
     messages.push(`🏷 Most bookings are concentrated in ${data.topVenue}. Consider promoting other venues.`);
   }
 
+  if (data?.ticketsSold < 5) {
+    messages.push("📉 Very low booking volume. Consider promoting new events or reviewing demand.");
+  }
+
+  if (trend.revenue < -10) {
+  messages.push("📉 Revenue is dropping. Evaluate marketing and pricing strategies.");
+}
+
+  const confirmed = data?.ticketType?.find(t => t.type === 'Confirmed')?.value || 0;
+  const pending = data?.ticketType?.find(t => t.type === 'Pending')?.value || 0;
+
+  if (confirmed < pending) {
+    messages.push("⌛ More bookings are pending than confirmed. Consider improving approval speed or confirmation flow.");
+  }
+
+  const cancelled = data?.ticketType?.find(t => t.type === 'Cancelled')?.value || 0;
+
+  if (confirmed > 0 && cancelled / confirmed > 0.5) {
+  messages.push("🔁 More than half of confirmed bookings were later cancelled. Investigate cancellation reasons.");
+  }
+
+  if (data?.ticketsSold === 0) {
+  messages.push("📭 No bookings were made in the selected period. Consider running promotions.");
+  }
+
+  if (data?.venueUsage?.length > 0) {
+  const topCount = data.venueUsage[0]?.bookings || 0;
+  const total = data.venueUsage.reduce((sum, v) => sum + v.bookings, 0);
+    if (topCount / total > 0.75) {
+      messages.push(`🏢 ${data.topVenue} accounts for over 75% of bookings. Consider diversifying usage.`);
+    }
+  }
+
+  if (trend.confirmed >= 50) {
+  messages.push("📈 Confirmed bookings have surged by over 50%. Review system scalability or staffing.");
+  }
+
+  if (trend.revenue === 0 && data?.totalRevenue > 0) {
+  messages.push("⏸️ Revenue has flatlined compared to the last snapshot. Investigate booking trends.");
+  }
+
   return messages;
 };
 
@@ -199,7 +240,15 @@ const Metrics = () => {
                     <input
                       type="date"
                       value={endDate}
-                      onChange={e => setEndDate(e.target.value)}
+                      max={new Date().toISOString().split('T')[0]}
+                      onChange={e => {
+                        if (new Date(e.target.value) > new Date()) {
+                          setError("End date can't be in the future.");
+                        } else {
+                          setError('');
+                          setEndDate(e.target.value);
+                        }
+                      }}
                       style={filterStyle}
                     />
                   </div>

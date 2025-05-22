@@ -96,7 +96,7 @@ const BookingManagementTab = () => {
           </Col>
           <Col md={4}>
             <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-              <option value="all">All Statuses</option>
+              <option value="all">Filter by Status</option>
               <option value="confirmed">Confirmed</option>
               <option value="pending">Pending</option>
               <option value="cancelled">Cancelled</option>

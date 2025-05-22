@@ -164,7 +164,7 @@ const MyBookings = () => {
       <Row className="mb-4">
         <Col md={6}>
           <Form.Select value={filter} onChange={e => setFilter(e.target.value)}>
-            <option value="all">All Statuses</option>
+            <option value="all">Filter by Status</option>
             <option value="confirmed">Confirmed</option>
             <option value="pending">Pending</option>
             <option value="cancelled">Cancelled</option>
