@@ -1,5 +1,5 @@
 // ManagerDashboard.jsx
-// Tabbed interface for admin tasks: users, venues, feedback
+// Tabbed interface for admin tasks: users, venues, feedback, bookings
 
 import React from 'react';
 import { Tabs, Tab, Container } from 'react-bootstrap';

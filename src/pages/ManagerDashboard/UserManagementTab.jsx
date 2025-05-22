@@ -54,6 +54,27 @@ const UserManagementTab = () => {
     }
   };
 
+  const denyOrganizerRequest = async (userId) => {
+  try {
+    const res = await apiFetch(`/users/${userId}/role`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ role: 'visitor' })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Deny failed');
+
+    setSuccess(`Denied organizer request from ${data.user.name}`);
+    fetchUsers();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   const handleRoleChange = async (userId, newRole) => {
     try {
       const res = await apiFetch(`/users/${userId}/role`, {
@@ -214,6 +235,11 @@ const UserManagementTab = () => {
                     {u.organizerRequest && u.role === 'visitor' && (
                       <Button size="sm" variant="success" onClick={() => approveOrganizer(u._id)}>
                         Approve
+                      </Button>
+                    )}
+                    {u.organizerRequest && u.role === 'visitor' && (
+                      <Button size="sm" variant="warning" onClick={() => denyOrganizerRequest(u._id)}>
+                        Deny
                       </Button>
                     )}
                     <Button size="sm" variant="danger" onClick={() => handleDeleteUser(u._id)}>
