@@ -1,12 +1,14 @@
 // MiniSidebar.jsx
-// Toggleable sidebar with RBAC-based links
+// Toggleable sidebar with RBAC-based links, RTL compatibility, and i18n
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const MiniSidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useTranslation();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = user?.role;
@@ -24,13 +26,14 @@ const MiniSidebar = () => {
   }, []);
 
   const toggleSidebar = () => setIsOpen(prev => !prev);
+  const isRTL = document.body.dir === 'rtl';
 
   return (
     <>
       <div
         className="sidebar"
         style={{
-          left: isOpen ? '0px' : '-100px',
+          [isRTL ? 'right' : 'left']: isOpen ? '0px' : '-100px',
           transition: 'all 0.4s ease',
           zIndex: 1000
         }}
@@ -40,7 +43,7 @@ const MiniSidebar = () => {
           style={{
             position: 'absolute',
             top: '50%',
-            right: isOpen ? '-20px' : '-12px',
+            [isRTL ? 'left' : 'right']: isOpen ? '-20px' : '-12px',
             transform: 'translateY(-50%)',
             width: '36px',
             height: '36px',
@@ -57,13 +60,19 @@ const MiniSidebar = () => {
             zIndex: 1001
           }}
         >
-          <i className={`bi ${isOpen ? 'bi-chevron-left' : 'bi-chevron-right'}`}></i>
+          <i
+            className={`bi ${
+              isRTL
+                ? isOpen ? 'bi-chevron-right' : 'bi-chevron-left'
+                : isOpen ? 'bi-chevron-left' : 'bi-chevron-right'
+            }`}
+          ></i>
         </button>
 
         <Link to="/" className="sidebar-link">
           <div className="icon-label">
             <span role="img" aria-label="Home">🏠</span>
-            <span className="label">Home</span>
+            <span className="label">{t('sidebar.home')}</span>
           </div>
         </Link>
 
@@ -71,7 +80,7 @@ const MiniSidebar = () => {
           <Link to="/metrics" className="sidebar-link">
             <div className="icon-label">
               <span role="img" aria-label="Metrics">📊</span>
-              <span className="label">Metrics</span>
+              <span className="label">{t('sidebar.metrics')}</span>
             </div>
           </Link>
         )}
@@ -79,7 +88,7 @@ const MiniSidebar = () => {
         <Link to="/ticket-booking" className="sidebar-link">
           <div className="icon-label">
             <span role="img" aria-label="Tickets">🎟️</span>
-            <span className="label">Tickets</span>
+            <span className="label">{t('sidebar.tickets')}</span>
           </div>
         </Link>
 
@@ -87,7 +96,7 @@ const MiniSidebar = () => {
           <Link to="/venue-booking" className="sidebar-link">
             <div className="icon-label">
               <span role="img" aria-label="Venues">🏛️</span>
-              <span className="label">Venues</span>
+              <span className="label">{t('sidebar.venues')}</span>
             </div>
           </Link>
         )}
@@ -95,7 +104,7 @@ const MiniSidebar = () => {
         <Link to="/my-bookings" className="sidebar-link">
           <div className="icon-label">
             <span role="img" aria-label="My Bookings">📝</span>
-            <span className="label">My Bookings</span>
+            <span className="label">{t('sidebar.myBookings')}</span>
           </div>
         </Link>
       </div>

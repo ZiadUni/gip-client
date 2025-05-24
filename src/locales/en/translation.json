@@ -15,5 +15,28 @@
     "card2desc": "Access key performance metrics for events, users, and resources.",
     "card3": "All-in-One Access",
     "card3desc": "Centralized profile, booking history, and payment confirmations."
+  },
+
+  "navbar": {
+    "title": "Galala Innovation Park",
+    "role": "Role",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "home": "Home",
+    "bookTickets": "Book Tickets",
+    "bookVenue": "Book Venue",
+    "metrics": "Metrics",
+    "about": "About Us",
+    "myBookings": "My Bookings",
+    "managerPanel": "Manager Panel"
+  },
+
+  "sidebar": {
+    "home": "Home",
+    "metrics": "Metrics",
+    "tickets": "Tickets",
+    "venues": "Venues",
+    "myBookings": "My Bookings"
   }
 }
