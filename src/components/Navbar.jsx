@@ -83,7 +83,7 @@ const AppNavbar = () => {
           />
 
           <Navbar.Collapse id="main-navbar">
-            <Nav className="align-items-center ms-auto px-3 gap-2">
+            <Nav className={`align-items-center ${isRTL ? 'me-auto' : 'ms-auto'} px-3 gap-2`}>
               {token ? (
                 <>
                   {navLinks.map(link => {
