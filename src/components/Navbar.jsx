@@ -85,6 +85,7 @@ const LanguageSwitcher = () => {
                 <span className="text-white small mx-2 py-2">
                   Role: <strong>{user.role}</strong>
                 </span>
+                <LanguageSwitcher />
                 <Nav.Link onClick={handleLogout} className="text-danger fw-semibold mx-2 py-2">
                   Log Out
                 </Nav.Link>

@@ -4,57 +4,54 @@
 // Home.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isVisitor = user.role === 'visitor';
+  const { t } = useTranslation();
 
   return (
     <div className="fade-in">
       <div style={container}>
         <div style={heroSection}>
-          <h1 style={mainTitle}>Welcome to Galala Innovation Park</h1>
-          <p style={subtitle}>
-            Empowering innovation, collaboration, and sustainable progress through smart facilities and events.
-          </p>
+          <h1 style={mainTitle}>{t('home.title')}</h1>
+          <p style={subtitle}>{t('home.subtitle')}</p>
           <div style={buttonGroup}>
-            <Link to="/ticket-booking" style={heroButton}>Book Event</Link>
+            <Link to="/ticket-booking" style={heroButton}>{t('home.bookEvent')}</Link>
 
             {!isVisitor && (
-              <Link to="/venue-booking" style={heroButton}>Reserve Venue</Link>
+              <Link to="/venue-booking" style={heroButton}>{t('home.reserveVenue')}</Link>
             )}
 
-            <Link to="/my-bookings" style={heroButton}>My Bookings</Link>
+            <Link to="/my-bookings" style={heroButton}>{t('home.myBookings')}</Link>
 
             {user.role === 'staff' && (
               <>
-                <Link to="/metrics" style={heroButton}>View Metrics</Link>
-                <Link to="/manager" style={heroButton}>Admin Panel</Link>
+                <Link to="/metrics" style={heroButton}>{t('home.viewMetrics')}</Link>
+                <Link to="/manager" style={heroButton}>{t('home.adminPanel')}</Link>
               </>
             )}
           </div>
         </div>
 
         <div style={section}>
-          <h2 style={sectionTitle}>Why Galala Innovation Park?</h2>
-          <p style={paragraph}>
-            At the heart of Galala lies an ecosystem that supports startups, researchers, and innovators. Our mission is
-            to streamline collaboration through high-tech labs, event spaces, and data-backed performance insights.
-          </p>
+          <h2 style={sectionTitle}>{t('home.whyTitle')}</h2>
+          <p style={paragraph}>{t('home.whyText')}</p>
         </div>
 
         <div style={cardGrid}>
           <FeatureCard
-            title="Smart Booking System"
-            desc="Real-time seat and venue availability with instant booking feedback."
+            title={t('home.card1')}
+            desc={t('home.card1desc')}
           />
           <FeatureCard
-            title="Analytics Dashboard"
-            desc="Access key performance metrics for events, users, and resources."
+            title={t('home.card2')}
+            desc={t('home.card2desc')}
           />
           <FeatureCard
-            title="All-in-One Access"
-            desc="Centralized profile, booking history, and payment confirmations."
+            title={t('home.card3')}
+            desc={t('home.card3desc')}
           />
         </div>
       </div>
