@@ -41,29 +41,31 @@ const MiniSidebar = () => {
         }}
       >
         <button
-          onClick={toggleSidebar}
-          style={{
-            position: 'absolute',
-            top: '50%',
-            ...(isRTL
-              ? { left: isOpen ? '-20px' : '-12px', right: 'auto' }
-              : { right: isOpen ? '-20px' : '-12px', left: 'auto' }),
-            transform: 'translateY(-50%)',
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            backgroundColor: '#623E2A',
-            color: '#fff',
-            border: 'none',
-            fontSize: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-            cursor: 'pointer',
-            zIndex: 1001
-          }}
-        >
+            onClick={toggleSidebar}
+            className={!isOpen ? 'sidebar-closed-toggle' : ''}
+            style={{
+              position: isOpen ? 'absolute' : 'fixed',
+              top: '50%',
+              ...(isRTL
+                ? { left: isOpen ? '-20px' : 'auto', right: isOpen ? 'auto' : '0' }
+                : { right: isOpen ? '-20px' : 'auto', left: isOpen ? 'auto' : '0' }),
+              transform: 'translateY(-50%)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              backgroundColor: '#623E2A',
+              color: '#fff',
+              border: 'none',
+              fontSize: '18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+              cursor: 'pointer',
+              zIndex: 1001
+            }}
+          >
+
           <i
             className={`bi ${
               isRTL

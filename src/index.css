@@ -15,12 +15,25 @@
     border-radius: 10px 0 0 10px;
   }
 
+  body[dir='rtl'] .navbar .container {
+    flex-direction: row-reverse !important;
+    justify-content: space-between !important;
+  }
+
   body[dir='rtl'] .sidebar-link {
     text-align: right;
   }
 
   body[dir='rtl'] .navbar-collapse {
-  flex-direction: row-reverse !important;
+    flex-direction: row-reverse !important;
+  }
+
+  body[dir='rtl'] .sidebar-closed-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
   }
 
   html, body, #root {
