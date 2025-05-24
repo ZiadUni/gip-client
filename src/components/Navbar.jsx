@@ -61,9 +61,9 @@ const AppNavbar = () => {
   };
 
   const roleLabels = {
-  visitor: t('roles.visitor'),
-  staff: t('roles.staff'),
-  organizer: t('roles.organizer')
+    visitor: t('roles.visitor'),
+    staff: t('roles.staff'),
+    organizer: t('roles.organizer')
   };
 
   return (
@@ -115,8 +115,6 @@ const AppNavbar = () => {
                     {t('navbar.role')}: <strong>{roleLabels[user.role]}</strong>
                   </span>
 
-                  <LanguageSwitcher />
-
                   <Nav.Link
                     onClick={handleLogout}
                     className="text-danger fw-semibold py-2"
@@ -144,6 +142,7 @@ const AppNavbar = () => {
                   </Nav.Link>
                 </>
               )}
+              <LanguageSwitcher />
             </Nav>
           </Navbar.Collapse>
         </Container>
