@@ -1,20 +1,21 @@
 // Navbar.jsx
-// Responsive navbar with better mobile spacing and auto-collapse on link click
+// Responsive navbar with RTL support and translation integration
 
 import React, { useState } from 'react';
 import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CircleFlag } from 'react-circle-flags'
+import { CircleFlag } from 'react-circle-flags';
 
 const AppNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isVisitor = user.role === 'visitor';
-  const { t } = useTranslation();
+  const isRTL = document.body.dir === 'rtl';
 
   const [expanded, setExpanded] = useState(false);
 
@@ -30,39 +31,34 @@ const AppNavbar = () => {
   };
 
   const navLinks = [
-  { path: '/', label: t('navbar.home') },
-  { path: '/ticket-booking', label: t('navbar.bookTickets') },
-  { path: '/venue-booking', label: t('navbar.bookVenue') },
-  { path: '/metrics', label: t('navbar.metrics') },
-  { path: '/about', label: t('navbar.about') },
-  { path: '/my-bookings', label: t('navbar.myBookings') },
-  { path: '/manager', label: t('navbar.managerPanel') }
-];
+    { path: '/', label: t('navbar.home') },
+    { path: '/ticket-booking', label: t('navbar.bookTickets') },
+    { path: '/venue-booking', label: t('navbar.bookVenue') },
+    { path: '/metrics', label: t('navbar.metrics') },
+    { path: '/about', label: t('navbar.about') },
+    { path: '/my-bookings', label: t('navbar.myBookings') },
+    { path: '/manager', label: t('navbar.managerPanel') }
+  ];
 
-const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
-  const currentLang = i18n.language;
-
-  return (
-    <Dropdown className="mx-2">
-      <Dropdown.Toggle variant="outline-light" size="sm" id="language-dropdown">
-        <CircleFlag countryCode={currentLang === 'ar' ? 'eg' : 'gb'} height="20" className="me-2" />
-        {currentLang === 'ar' ? 'العربية' : 'English'}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <Dropdown.Item onClick={() => i18n.changeLanguage('en')}>
-          <CircleFlag countryCode="gb" height="20" className="me-2" />
-          English
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => i18n.changeLanguage('ar')}>
-          <CircleFlag countryCode="eg" height="20" className="me-2" />
-          العربية
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
-  );
-};
+  const LanguageSwitcher = () => {
+    const currentLang = i18n.language;
+    return (
+      <Dropdown className="mx-2">
+        <Dropdown.Toggle variant="outline-light" size="sm" id="language-dropdown">
+          <CircleFlag countryCode={currentLang === 'ar' ? 'eg' : 'gb'} height="20" className="me-2" />
+          {currentLang === 'ar' ? 'العربية' : 'English'}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => i18n.changeLanguage('en')}>
+            <CircleFlag countryCode="gb" height="20" className="me-2" /> English
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => i18n.changeLanguage('ar')}>
+            <CircleFlag countryCode="eg" height="20" className="me-2" /> العربية
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
 
   return (
     <Navbar
@@ -71,13 +67,27 @@ const LanguageSwitcher = () => {
       variant="dark"
       expanded={expanded}
     >
-      <Container fluid>
-        <Navbar.Brand as={Link} to="/" className="fw-bold ms-2">
+      <Container fluid className={`${isRTL ? 'flex-row-reverse' : ''}`}>
+        <Navbar.Brand
+          as={Link}
+          to="/"
+          className={`fw-bold ${isRTL ? 'ms-2' : 'me-2'}`}
+        >
           {t('navbar.title')}
         </Navbar.Brand>
-        <Navbar.Toggle onClick={() => setExpanded(!expanded)} aria-controls="main-navbar" />
-        <Navbar.Collapse id="main-navbar">
-          <Nav className={`align-items-center px-3 ${document.body.dir === 'rtl' ? 'me-auto' : 'ms-auto'}`}>
+
+        <Navbar.Toggle
+          onClick={() => setExpanded(!expanded)}
+          aria-controls="main-navbar"
+        />
+
+        <Navbar.Collapse
+          id="main-navbar"
+          className={`${isRTL ? 'justify-content-start' : 'justify-content-end'}`}
+        >
+          <Nav
+            className={`align-items-center px-3 gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+          >
             {token ? (
               <>
                 {navLinks.map(link => {
@@ -92,18 +102,23 @@ const LanguageSwitcher = () => {
                       to={link.path}
                       onClick={handleNavClick}
                       active={location.pathname === link.path}
-                      className={`mx-2 py-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
+                      className={`py-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
                     >
                       {link.label}
                     </Nav.Link>
                   );
                 })}
 
-                <span className="text-white small mx-2 py-2">
+                <span className="text-white small py-2">
                   {t('navbar.role')}: <strong>{user.role}</strong>
                 </span>
+
                 <LanguageSwitcher />
-                <Nav.Link onClick={handleLogout} className="text-danger fw-semibold mx-2 py-2">
+
+                <Nav.Link
+                  onClick={handleLogout}
+                  className="text-danger fw-semibold py-2"
+                >
                   {t('navbar.logout')}
                 </Nav.Link>
               </>
@@ -113,7 +128,7 @@ const LanguageSwitcher = () => {
                   as={Link}
                   to="/login"
                   onClick={handleNavClick}
-                  className={`mx-2 py-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
+                  className={`py-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
                 >
                   {t('navbar.login')}
                 </Nav.Link>
@@ -121,7 +136,7 @@ const LanguageSwitcher = () => {
                   as={Link}
                   to="/register"
                   onClick={handleNavClick}
-                  className={`mx-2 py-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
+                  className={`py-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
                 >
                   {t('navbar.register')}
                 </Nav.Link>

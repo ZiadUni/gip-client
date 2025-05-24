@@ -33,7 +33,9 @@ const MiniSidebar = () => {
       <div
         className="sidebar"
         style={{
-          [isRTL ? 'right' : 'left']: isOpen ? '0px' : '-100px',
+          ...(isRTL
+            ? { right: isOpen ? '0px' : '-100px', left: 'auto' }
+            : { left: isOpen ? '0px' : '-100px', right: 'auto' }),
           transition: 'all 0.4s ease',
           zIndex: 1000
         }}
@@ -43,7 +45,9 @@ const MiniSidebar = () => {
           style={{
             position: 'absolute',
             top: '50%',
-            [isRTL ? 'left' : 'right']: isOpen ? '-20px' : '-12px',
+            ...(isRTL
+              ? { left: isOpen ? '-20px' : '-12px', right: 'auto' }
+              : { right: isOpen ? '-20px' : '-12px', left: 'auto' }),
             transform: 'translateY(-50%)',
             width: '36px',
             height: '36px',
