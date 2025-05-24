@@ -61,91 +61,88 @@ const AppNavbar = () => {
   };
 
   return (
-    <Navbar
-      expand="lg"
-      className="custom-navbar shadow-sm bg-custom"
-      variant="dark"
-      expanded={expanded}
-    >
-      <Container fluid className={`${isRTL ? 'flex-row-reverse' : ''}`}>
-        <Navbar.Brand
-          as={Link}
-          to="/"
-          className={`fw-bold ${isRTL ? 'ms-2' : 'me-2'}`}
-        >
-          {t('navbar.title')}
-        </Navbar.Brand>
-
-        <Navbar.Toggle
-          onClick={() => setExpanded(!expanded)}
-          aria-controls="main-navbar"
-        />
-
-        <Navbar.Collapse
-          id="main-navbar"
-          className={`${isRTL ? 'justify-content-start' : 'justify-content-end'}`}
-        >
-          <Nav
-            className={`align-items-center px-3 gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
+      <Navbar
+        expand="lg"
+        className="custom-navbar shadow-sm bg-custom"
+        variant="dark"
+        expanded={expanded}
+      >
+        <Container fluid>
+          <Navbar.Brand
+            as={Link}
+            to="/"
+            className="fw-bold"
           >
-            {token ? (
-              <>
-                {navLinks.map(link => {
-                  if (link.path === '/venue-booking' && isVisitor) return null;
-                  if (link.path === '/metrics' && user.role !== 'staff') return null;
-                  if (link.path === '/manager' && user.role !== 'staff') return null;
+            {t('navbar.title')}
+          </Navbar.Brand>
 
-                  return (
-                    <Nav.Link
-                      key={link.path}
-                      as={Link}
-                      to={link.path}
-                      onClick={handleNavClick}
-                      active={location.pathname === link.path}
-                      className={`py-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
-                    >
-                      {link.label}
-                    </Nav.Link>
-                  );
-                })}
+          <Navbar.Toggle
+            onClick={() => setExpanded(!expanded)}
+            aria-controls="main-navbar"
+          />
 
-                <span className="text-white small py-2">
-                  {t('navbar.role')}: <strong>{user.role}</strong>
-                </span>
+          <Navbar.Collapse id="main-navbar">
+            <Nav className="align-items-center ms-auto px-3 gap-2">
+              {token ? (
+                <>
+                  {navLinks.map(link => {
+                    if (link.path === '/venue-booking' && isVisitor) return null;
+                    if (link.path === '/metrics' && user.role !== 'staff') return null;
+                    if (link.path === '/manager' && user.role !== 'staff') return null;
 
-                <LanguageSwitcher />
+                    return (
+                      <Nav.Link
+                        key={link.path}
+                        as={Link}
+                        to={link.path}
+                        onClick={handleNavClick}
+                        active={location.pathname === link.path}
+                        className={`py-2 ${location.pathname === link.path ? 'fw-semibold text-warning' : ''}`}
+                      >
+                        {link.label}
+                      </Nav.Link>
+                    );
+                  })}
 
-                <Nav.Link
-                  onClick={handleLogout}
-                  className="text-danger fw-semibold py-2"
-                >
-                  {t('navbar.logout')}
-                </Nav.Link>
-              </>
-            ) : (
-              <>
-                <Nav.Link
-                  as={Link}
-                  to="/login"
-                  onClick={handleNavClick}
-                  className={`py-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
-                >
-                  {t('navbar.login')}
-                </Nav.Link>
-                <Nav.Link
-                  as={Link}
-                  to="/register"
-                  onClick={handleNavClick}
-                  className={`py-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
-                >
-                  {t('navbar.register')}
-                </Nav.Link>
-              </>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+                  <span className="text-white small py-2">
+                    {t('navbar.role')}: <strong>{user.role}</strong>
+                  </span>
+
+                  <LanguageSwitcher />
+
+                  <Nav.Link
+                    onClick={handleLogout}
+                    className="text-danger fw-semibold py-2"
+                  >
+                    {t('navbar.logout')}
+                  </Nav.Link>
+                </>
+              ) : (
+                <>
+                  <Nav.Link
+                    as={Link}
+                    to="/login"
+                    onClick={handleNavClick}
+                    className={`py-2 ${location.pathname === '/login' ? 'fw-semibold text-warning' : ''}`}
+                  >
+                    {t('navbar.login')}
+                  </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/register"
+                    onClick={handleNavClick}
+                    className={`py-2 ${location.pathname === '/register' ? 'fw-semibold text-warning' : ''}`}
+                  >
+                    {t('navbar.register')}
+                  </Nav.Link>
+                </>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </div>
   );
 };
 
