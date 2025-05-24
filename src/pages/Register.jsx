@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert, ProgressBar, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -19,6 +20,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { t } = useTranslation();
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,9 +29,9 @@ const Register = () => {
   };
 
   const checkStrength = password => {
-    if (password.length < 6) return { label: 'Weak', variant: 'danger', now: 33 };
-    if (password.length < 10) return { label: 'Medium', variant: 'warning', now: 66 };
-    return { label: 'Strong', variant: 'success', now: 100 };
+    if (password.length < 6) return { label: t('register.weak'), variant: 'danger', now: 33 };
+    if (password.length < 10) return { label: t('register.medium'), variant: 'warning', now: 66 };
+    return { label: t('register.strong'), variant: 'success', now: 100 };
   };
 
   const handleSubmit = async e => {
@@ -37,16 +39,16 @@ const Register = () => {
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!form.name || !form.email || !form.password || !form.confirm) {
-      return setError('Please fill in all fields.');
+      return setError(t('register.error1'));
     }
     if (!emailRegex.test(form.email)) {
-      return setError('Please enter a valid email address.');
+      return setError(t('register.error2'));
     }
     if (form.password.length < 6) {
-      return setError('Password must be at least 6 characters.');
+      return setError(t('register.error3'));
     }
     if (form.password !== form.confirm) {
-      return setError('Passwords do not match.');
+      return setError(t('register.error4'));
     }
 
     try {
@@ -62,12 +64,12 @@ const Register = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) return setError(data.error || 'Registration failed.');
+      if (!res.ok) return setError(data.error || t('register.error5'));
 
-      setSuccess('Registered successfully!');
+      setSuccess(t('register.success'));
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-      setError('Something went wrong.');
+      setError(t('register.error6'));
     }
   };
 
@@ -79,46 +81,46 @@ const Register = () => {
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
       <Card style={{ width: '100%', maxWidth: '450px' }} className="p-4 shadow-sm">
         <Card.Body>
-          <h2 className="text-center mb-4 text-brown">Register</h2>
+          <h2 className="text-center mb-4 text-brown">{t('register.title')}</h2>
 
           {error && <Alert variant="danger">{error}</Alert>}
           {success && <Alert variant="success">{success}</Alert>}
 
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="name">
-              <Form.Label>Full Name</Form.Label>
+              <Form.Label>{t('register.name')}</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Enter full name"
+                placeholder= {t('register.namePlaceholder')}
               />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="email">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>{t('register.email')}</Form.Label>
               <Form.Control
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="Enter email"
+                placeholder={t('register.emailPlaceholder')}
               />
             </Form.Group>
 
           <Form.Group className="mb-2" controlId="password">
-            <Form.Label>Password</Form.Label>
+            <Form.Label>{t('register.password')}</Form.Label>
             <InputGroup>
               <Form.Control
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Password"
+                placeholder={t('register.passwordPlaceholder')}
               />
               <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? t('register.hide') : t('register.show')}
               </Button>
             </InputGroup>
           </Form.Group>
@@ -135,23 +137,23 @@ const Register = () => {
             )}
 
             <Form.Group className="mb-2" controlId="confirm">
-              <Form.Label>Confirm Password</Form.Label>
+              <Form.Label>{t('register.passwordConfirm')}</Form.Label>
               <InputGroup>
                 <Form.Control
                   type={showConfirm ? 'text' : 'password'}
                   name="confirm"
                   value={form.confirm}
                   onChange={handleChange}
-                  placeholder="Re-type password"
+                  placeholder={t('register.passwordConfirmPlaceholder')}
                   isInvalid={showLiveMismatch}
                 />
                 <Button variant="outline-secondary" onClick={() => setShowConfirm(!showConfirm)}>
-                  {showConfirm ? 'Hide' : 'Show'}
+                  {showConfirm ? t('register.hide2') : t('register.show2')}
                 </Button>
               </InputGroup>
               {showLiveMismatch && (
                 <Form.Text className="text-danger">
-                  Passwords do not match.
+                  {t('register.passwordMismatched')}
                 </Form.Text>
               )}
             </Form.Group>
@@ -159,7 +161,7 @@ const Register = () => {
             <Form.Group className="mb-3" controlId="wantsToBeOrganizer">
               <Form.Check
                 type="checkbox"
-                label="I want to register as an organizer"
+                label={t('register.organizerReq')}
                 name="wantsToBeOrganizer"
                 checked={form.wantsToBeOrganizer}
                 onChange={e =>
@@ -169,17 +171,17 @@ const Register = () => {
             </Form.Group>
 
             <Button type="submit" className="w-100 bg-brown border-0 mt-2">
-              Register
+              {t('register.registerButton')}
             </Button>
           </Form>
 
           <p className="text-center mt-3">
-            Already have an account?{' '}
+            {t('register.alreadyAccount')}{' '}
             <span
               style={{ color: '#623E2A', cursor: 'pointer' }}
               onClick={() => navigate('/login')}
             >
-              Login
+              {t('register.login')}
             </span>
           </p>
         </Card.Body>

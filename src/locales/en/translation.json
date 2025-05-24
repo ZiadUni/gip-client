@@ -49,6 +49,55 @@
     "visitor": "Visitor",
     "staff": "Staff",
     "organizer": "Organizer"
+  },
+
+  "login": {
+    "error1": "Please fill in all fields.",
+    "error2": "Please enter a valid email address.",
+    "error3": "Login failed.",
+    "success": "Login successful!",
+    "error4": "Something went wrong.",
+    "title": "Login",
+    "email": "Email address",
+    "emailPlaceholder": "Enter email",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "hide": "Hide",
+    "show": "Show",
+    "loginbutton": "Login",
+    "noAccount": "Don't have an account?",
+    "register": "Register"
+  },
+
+  "register": {
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong",
+    "error1": "Please fill in all fields.",
+    "error2": "Please enter a valid email address.",
+    "error3": "Password must be at least 6 characters.",
+    "error4": "Passwords do not match.",
+    "error5": "Registration failed.",
+    "error6": "Something went wrong.",
+    "success": "Registered successfully!",
+    "title": "Register",
+    "name": "Full Name",
+    "namePlaceholder": "Enter full name",
+    "email": "Email address",
+    "emailPlaceholder": "Enter email",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "hide": "Hide",
+    "show": "Show",
+    "passwordConfirm": "Confirm Password",
+    "passwordConfirmPlaceholder": "Re-type password",
+    "hide2": "Hide",
+    "show2": "Show",
+    "passwordMismatched": "Passwords do not match.",
+    "organizerReq": "I want to register as an organizer",
+    "registerButton": "Register",
+    "alreadyAccount": "Already have an account?",
+    "login": "Login"
   }
 
 }
