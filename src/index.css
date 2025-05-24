@@ -4,11 +4,6 @@
     box-sizing: border-box;
   }
 
-  body[dir='rtl'] {
-  text-align: right;
-  font-family: 'Cairo', sans-serif;
-}
-
   html, body, #root {
     height: 100%;
     font-family: 'Segoe UI', sans-serif;

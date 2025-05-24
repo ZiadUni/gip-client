@@ -1,7 +1,6 @@
 // main.jsx
 // Application entry point — mounts React app, loads Bootstrap and global styles
 
-import './i18n';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { StrictMode } from 'react';
