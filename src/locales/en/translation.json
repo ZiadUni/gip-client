@@ -8,7 +8,7 @@
     "viewMetrics": "View Metrics",
     "adminPanel": "Admin Panel",
     "whyTitle": "Why Galala Innovation Park?",
-    "whyText": "At the heart of Galala lies an ecosystem that supports startups, researchers, and innovators...",
+    "whyText": "At the heart of Galala lies an ecosystem that supports startups, researchers, and innovators. Our mission is to streamline collaboration through high-tech labs, event spaces, and data-backed performance insights.",
     "card1": "Smart Booking System",
     "card1desc": "Real-time seat and venue availability with instant booking feedback.",
     "card2": "Analytics Dashboard",
@@ -38,5 +38,11 @@
     "tickets": "Tickets",
     "venues": "Venues",
     "myBookings": "My Bookings"
+  },
+
+  "footer": {
+    "copyright": "Galala Innovation Park | All rights reserved.",
+    "powered": "Powered by Edaretna Management System"
   }
+
 }

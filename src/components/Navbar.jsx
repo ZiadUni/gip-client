@@ -15,7 +15,7 @@ const AppNavbar = () => {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isVisitor = user.role === 'visitor';
-  const isRTL = document.body.dir === 'rtl';
+  const isRTL = i18n.language === 'ar';
 
   const [expanded, setExpanded] = useState(false);
 

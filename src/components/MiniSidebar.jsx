@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 const MiniSidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = user?.role;
@@ -26,7 +26,7 @@ const MiniSidebar = () => {
   }, []);
 
   const toggleSidebar = () => setIsOpen(prev => !prev);
-  const isRTL = document.body.dir === 'rtl';
+  const isRTL = i18n.language === 'ar';
 
   return (
     <>

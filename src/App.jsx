@@ -1,8 +1,9 @@
 // App.jsx
 // Entry point for route definitions and layout logic
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -27,6 +28,12 @@ const AppLayout = () => {
   const location = useLocation();
   const token = localStorage.getItem('token');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    document.body.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+  }, [i18n.language]);
 
   return (
     <div className="page-wrapper">
@@ -54,8 +61,8 @@ const AppLayout = () => {
       </main>
 
       <footer className="site-footer">
-        <p>&copy; {new Date().getFullYear()} Galala Innovation Park | All rights reserved.</p>
-        <p>Powered by Edaretna Management System</p>
+        <p>&copy; {new Date().getFullYear()} {t('footer.copyright')}</p>
+        <p>{t('footer.powered')}</p>
       </footer>
     </div>
   );

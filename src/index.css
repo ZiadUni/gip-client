@@ -19,6 +19,10 @@
     text-align: right;
   }
 
+  body[dir='rtl'] .navbar-collapse {
+  flex-direction: row-reverse !important;
+  }
+
   html, body, #root {
     height: 100%;
     font-family: 'Segoe UI', sans-serif;
