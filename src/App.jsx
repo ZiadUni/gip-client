@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -22,6 +24,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import MyBookings from './pages/MyBookings';
 import NotificationsPopup from './pages/NotificationsPopup';
 import ManagerDashboard from './pages/ManagerDashboard/ManagerDashboard';
+
+const { i18n } = useTranslation();
+  useEffect(() => {
+    document.body.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+  }, [i18n.language]);
 
 const AppLayout = () => {
   const location = useLocation();

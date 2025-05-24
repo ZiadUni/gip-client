@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const AppNavbar = () => {
   const location = useLocation();
@@ -35,6 +36,16 @@ const AppNavbar = () => {
     { path: '/my-bookings', label: 'My Bookings' },
     { path: '/manager', label: 'Manager Panel' }
   ];
+
+const LanguageSwitcher = () => {
+  const { i18n } = useTranslation();
+    return (
+    <div className="language-switcher">
+      <button onClick={() => i18n.changeLanguage('en')}>🇬🇧 English</button>
+      <button onClick={() => i18n.changeLanguage('ar')}>🇪🇬 العربية</button>
+    </div>
+  );
+};
 
   return (
     <Navbar
