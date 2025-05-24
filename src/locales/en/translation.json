@@ -43,6 +43,12 @@
   "footer": {
     "copyright": "Galala Innovation Park | All rights reserved.",
     "powered": "Powered by Edaretna Management System"
+  },
+
+  "roles": {
+    "visitor": "Visitor",
+    "staff": "Staff",
+    "organizer": "Organizer"
   }
 
 }

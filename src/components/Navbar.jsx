@@ -60,6 +60,12 @@ const AppNavbar = () => {
     );
   };
 
+  const roleLabels = {
+  visitor: t('roles.visitor'),
+  staff: t('roles.staff'),
+  organizer: t('roles.organizer')
+  };
+
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar
@@ -106,7 +112,7 @@ const AppNavbar = () => {
                   })}
 
                   <span className="text-white small py-2">
-                    {t('navbar.role')}: <strong>{user.role}</strong>
+                    {t('navbar.role')}: <strong>{roleLabels[user.role]}</strong>
                   </span>
 
                   <LanguageSwitcher />
