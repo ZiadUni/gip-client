@@ -141,11 +141,9 @@
     "date": "Date:",
     "time": "Time:",
     "price": "Price:",
-    "bookAnother": "Book Another",
-    "event": "Event",
-    "ticket": "Ticket",
-    "venue": "Venue",
+    "bookanotherTicket": "Book another ticket",
+    "bookanotherVenue": "Book another venue",
     "home": "Return Home"
   }
-  
+
 }

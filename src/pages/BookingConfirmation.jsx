@@ -50,7 +50,9 @@ const BookingConfirmation = () => {
 
           <div className="text-center mt-4">
             <Button variant="outline-success" onClick={handleGoBack}>
-              {t('bookingConfirmation.bookAnother')} {type === t('bookingConfirmation.event') ? t('bookingConfirmation.ticket') : t('bookingConfirmation.venue')}
+                {type === 'event'
+                  ? t('bookingConfirmation.bookAnotherTicket')
+                  : t('bookingConfirmation.bookAnotherVenue')}
             </Button>
             <Button
               variant="outline-success"

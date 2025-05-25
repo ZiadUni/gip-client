@@ -142,10 +142,8 @@
     "date": "التاريخ:",
     "time": "الوقت:",
     "price": "السعر:",
-    "bookAnother": "حجز مرة اخرى",
-    "event": "تذكرة",
-    "ticket": "تذكرة",
-    "venue": "قاعة",
+    "bookanotherTicket": "حجز تذكرة مرة اخرى",
+    "bookanotherVenue": "حجز قاعة مرة اخرى",
     "home": "رجوع للصفحة الرئيسية"
   }
   
