@@ -141,8 +141,8 @@
     "date": "Date:",
     "time": "Time:",
     "price": "Price:",
-    "bookanotherTicket": "Book another ticket",
-    "bookanotherVenue": "Book another venue",
+    "bookAnotherTicket": "Book another ticket",
+    "bookAnotherVenue": "Book another venue",
     "home": "Return Home"
   }
 
