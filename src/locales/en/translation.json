@@ -132,6 +132,20 @@
     "processing": "Processing...",
     "confirm": "Confirm Payment",
     "processing2": "Processing Payment..."
-  }
+  },
 
+  "bookingConfirmation": {
+    "title": "Booking Confirmed",
+    "title2": "Confirmation Summary:",
+    "seat": "Seat",
+    "date": "Date:",
+    "time": "Time:",
+    "price": "Price:",
+    "bookAnother": "Book Another",
+    "event": "Event",
+    "ticket": "Ticket",
+    "venue": "Venue",
+    "home": "Return Home"
+  }
+  
 }
