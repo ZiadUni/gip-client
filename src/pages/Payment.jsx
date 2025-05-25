@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert, Card, Modal, Spinner, InputGroup } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
 import useRouteGuard from '../hooks/useRouteGuard';
+import { useTranslation } from 'react-i18next';
 
 const Payment = () => {
   useRouteGuard(['items']);
@@ -26,6 +27,8 @@ const Payment = () => {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  
+  const { t } = useTranslation();
 
   const totalPrice = type === 'venue'
     ? booking.reduce((sum, b) => sum + Number(String(b.price).replace('$', '')), 0)
@@ -36,8 +39,8 @@ const Payment = () => {
   };
 
   const detectCardBrand = (num) => {
-    if (num.startsWith('4')) return 'Visa';
-    if (num.startsWith('5')) return 'Mastercard';
+    if (num.startsWith('4')) return t('payment.visa');
+    if (num.startsWith('5')) return t('payment.mastercard');
     return '';
   };
 
@@ -70,22 +73,22 @@ const Payment = () => {
     const { nameOnCard, cardNumber, expiry, cvv } = form;
     const cleanCard = cardNumber.replace(/\s/g, '');
 
-    if (!nameOnCard || !cardNumber || !expiry || !cvv) return 'All fields are required.';
-    if (!/^[a-zA-Z]+ [a-zA-Z]+$/.test(nameOnCard.trim())) return 'Please enter your first and last name in this format: "John Doe"';
-    if (!/^\d{16}$/.test(cleanCard)) return 'Card number must be 16 digits.';
-    if (!/^\d{2}\/\d{2}$/.test(expiry)) return 'Expiry must be in MM/YY format.';
-    if (!/^\d{3}$/.test(cvv)) return 'CVV must be 3 digits.';
+    if (!nameOnCard || !cardNumber || !expiry || !cvv) return t('payment.error1');
+    if (!/^[a-zA-Z]+ [a-zA-Z]+$/.test(nameOnCard.trim())) return t('payment.error2');
+    if (!/^\d{16}$/.test(cleanCard)) return t('payment.error3');
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) return t('payment.error4');
+    if (!/^\d{3}$/.test(cvv)) return t('payment.error5');
 
     const [mm, yy] = expiry.split('/').map(Number);
-    if (mm < 1 || mm > 12) return 'Expiry month must be between 01 and 12.';
-    if (yy < 0 || yy > 99) return 'Invalid year format. Use two-digit year (e.g., 25 for 2025).';
+    if (mm < 1 || mm > 12) return t('payment.error6');
+    if (yy < 0 || yy > 99) return t('payment.error7');
 
     const expDate = new Date(2000 + yy, mm - 1, 1);
     const now = new Date();
     const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    if (expDate < currentMonth) return 'Card is expired.';
-    if (cleanCard === '4000000000000002') return 'Card was declined.';
-    if (cvv === '000') return 'Invalid CVV.';
+    if (expDate < currentMonth) return t('payment.error8');
+    if (cleanCard === '4000000000000002') return t('payment.error9');
+    if (cvv === '000') return t('payment.error10');
 
     return null;
   };
@@ -127,8 +130,8 @@ const Payment = () => {
         });
 
         const data = await res.json();
-        if (res.status === 409) return setError(data.error || 'Seat or slot already reserved.');
-        if (!res.ok) throw new Error(data.error || 'Booking failed.');
+        if (res.status === 409) return setError(data.error || t('payment.error11'));
+        if (!res.ok) throw new Error(data.error || t('payment.error12'));
 
         const confirmRes = await apiFetch(`/bookings/${data.booking._id}`, {
           method: 'PATCH',
@@ -139,7 +142,7 @@ const Payment = () => {
           body: JSON.stringify({ status: 'confirmed' })
         });
 
-        if (!confirmRes.ok) throw new Error('Failed to confirm booking.');
+        if (!confirmRes.ok) throw new Error(t('payment.error13'));
         created.push(data.booking);
       }
 
@@ -177,9 +180,9 @@ const Payment = () => {
           <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button>
         </div>
         <Card className="p-4 shadow-sm">
-          <h3 className="text-center text-brown mb-4">Payment</h3>
+          <h3 className="text-center text-brown mb-4">{t('payment.title')}</h3>
 
-          <h6>Booking Summary:</h6>
+          <h6>{t('payment.title2')}</h6>
           <ul>
             {booking.map((item, idx) => (
               <li key={idx}>
@@ -188,33 +191,33 @@ const Payment = () => {
                   : (
                     <>
                       <strong>{item.name}</strong><br />
-                      Date: {item.date} <br />
-                      Time: {item.time} <br />
-                      Price: ${String(item.price || '').replace('$', '')}
+                      {t('payment.date')} {item.date} <br />
+                      {t('payment.time')} {item.time} <br />
+                      {t('payment.price')} ${String(item.price || '').replace('$', '')}
                     </>
                   )}
               </li>
             ))}
           </ul>
-          <p className="mt-2"><strong>Total:</strong> ${totalPrice}</p>
+          <p className="mt-2"><strong>{t('payment.total')}</strong> ${totalPrice}</p>
 
           {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
 
           <Form onSubmit={handleSubmit} className="mt-3">
             <Form.Group className="mb-3">
-              <Form.Label>Name on Card</Form.Label>
+              <Form.Label>{t('payment.name')}</Form.Label>
               <Form.Control
                 className={getValidationClass('nameOnCard', form.nameOnCard)}
                 type="text"
                 name="nameOnCard"
                 value={form.nameOnCard}
                 onChange={handleChange}
-                placeholder="John Doe"
+                placeholder={t('payment.namePlaceholder')}
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Card Number {cardBrand && <small>({cardBrand})</small>}</Form.Label>
+              <Form.Label>{t('payment.cardNumber')} {cardBrand && <small>({cardBrand})</small>}</Form.Label>
               <Form.Control
                 className={getValidationClass('cardNumber', form.cardNumber)}
                 type="text"
@@ -232,7 +235,7 @@ const Payment = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Expiry (MMYY)</Form.Label>
+              <Form.Label>{t('payment.expiry')}</Form.Label>
               <Form.Control
                 className={getValidationClass('expiry', form.expiry)}
                 type="text"
@@ -249,7 +252,7 @@ const Payment = () => {
             </Form.Group>
 
             <Form.Group className="mb-4">
-              <Form.Label>CVV</Form.Label>
+              <Form.Label>{t('payment.cvv')}</Form.Label>
               <InputGroup>
                 <Form.Control
                   className={getValidationClass('cvv', form.cvv)}
@@ -261,13 +264,13 @@ const Payment = () => {
                   maxLength={3}
                 />
                 <Button variant="outline-secondary" onClick={() => setShowCVV(!showCVV)}>
-                  {showCVV ? 'Hide' : 'Show'}
-                </Button>
+                  {showCVV ? t('payment.hide') : t('payment.show')}
+                  </Button>
               </InputGroup>
             </Form.Group>
 
             <Button type="submit" className="w-100 bg-brown border-0" disabled={submitting}>
-              {submitting ? 'Processing...' : 'Confirm Payment'}
+              {submitting ? t('payment.processing') : t('payment.confirm')}
             </Button>
           </Form>
         </Card>
@@ -276,7 +279,7 @@ const Payment = () => {
       <Modal show={showModal} centered backdrop="static">
         <Modal.Body className="text-center py-5">
           <Spinner animation="border" className="mb-3" />
-          <h5>Processing Payment...</h5>
+          <h5>{t('payment.processing2')}</h5>
         </Modal.Body>
       </Modal>
     </div>

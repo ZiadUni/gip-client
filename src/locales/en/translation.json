@@ -98,6 +98,40 @@
     "registerButton": "Register",
     "alreadyAccount": "Already have an account?",
     "login": "Login"
+  },
+
+  "payment": {
+    "visa": "Visa",
+    "mastercard": "Mastercard",
+    "error1": "All fields are required.",
+    "error2": "Please enter your first and last name in this format: 'John Doe'",
+    "error3": "Card number must be 16 digits.",
+    "error4": "Expiry must be in MM/YY format.",
+    "error5": "CVV must be 3 digits.",
+    "error6": "Expiry month must be between 01 and 12.",
+    "error7": "Ivalid year format. Use two-digit year (e.g., 25 for 2025).",
+    "error8": "Card is expired.",
+    "error9": "Card was declined.",
+    "error10": "Invalid CVV.",
+    "error11": "Seat or slot already reserved.",
+    "error12": "Booking failed.",
+    "error13": "Failed to confirm booking.",
+    "title": "Payment",
+    "title2": "Booking Summary:",
+    "date": "Date:",
+    "time": "Time:",
+    "price": "Price:",
+    "total": "Total:",
+    "name": "Name on Card",
+    "namePlaceholder": "John Doe",
+    "cardNumber": "Card Number",
+    "expiry": "Expiry (MMYY)",
+    "cvv": "CVV",
+    "hide": "Hide",
+    "show": "Show",
+    "processing": "Processing...",
+    "confirm": "Confirm Payment",
+    "processing2": "Processing Payment..."
   }
 
 }
