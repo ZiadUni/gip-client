@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const { t } = useTranslation();
+  
 
   const handleSubmit = async () => {
     setError('');
     setSuccess(false);
 
     if (!rating) {
-      setError('Please select a rating.');
+      setError(t('feedback.error1'));
       return;
     }
 
@@ -33,7 +36,7 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Submission failed');
+      if (!res.ok) throw new Error(data.error || t('feedback.error2'));
 
       setSuccess(true);
       setTimeout(() => {
@@ -64,19 +67,19 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
   return (
     <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>📝 Leave Feedback</Modal.Title>
+        <Modal.Title>{t('feedback.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body className="bg-light rounded shadow-sm p-3">
         {error && <Alert variant="danger">{error}</Alert>}
-        {success && <Alert variant="success">Feedback submitted!</Alert>}
+        {success && <Alert variant="success">{t('feedback.success')}</Alert>}
 
         <Form.Group className="mb-3">
-          <Form.Label>Rating</Form.Label>
+          <Form.Label>{t('feedback.rating')}</Form.Label>
           <div>{renderStars()}</div>
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Comment (optional)</Form.Label>
+          <Form.Label>{t('feedback.comment')}</Form.Label>
           <Form.Control
             as="textarea"
             rows={3}
@@ -87,10 +90,10 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
-          Cancel
+          {t('feedback.cancel')}
         </Button>
         <Button className="bg-brown" onClick={handleSubmit}>
-          Submit Feedback
+          {t('feedback.submit')}
         </Button>
       </Modal.Footer>
     </Modal>

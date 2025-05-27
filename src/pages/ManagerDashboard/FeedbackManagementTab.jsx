@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, Table, Alert, Badge, Form, Row, Col, Button } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
 import { unparse } from 'papaparse';
+import { useTranslation } from 'react-i18next';
 
 const FeedbackManagementTab = () => {
   const [feedbackList, setFeedbackList] = useState([]);
   const [error, setError] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const token = localStorage.getItem('token');
+  const { t } = useTranslation();  
 
   useEffect(() => {
     fetchFeedback();
@@ -21,7 +23,7 @@ const FeedbackManagementTab = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch feedback');
+      if (!res.ok) throw new Error(data.error || t('fdbckMgmt.error1'));
       setFeedbackList(data);
     } catch (err) {
       setError(err.message);
@@ -45,7 +47,7 @@ const FeedbackManagementTab = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm('Are you sure you want to delete this feedback?');
+    const confirm = window.confirm(t('fdbckMgmt.confirmationMsg'));
     if (!confirm) return;
 
     try {
@@ -92,7 +94,7 @@ const FeedbackManagementTab = () => {
 
   return (
     <div>
-      <h4 className="text-center mb-3">📝 User Feedback & Moderation</h4>
+      <h4 className="text-center mb-3">{t('fdbckMgmt.title')}</h4>
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
 
       <Card className="p-4 shadow-sm mb-4">
@@ -102,18 +104,18 @@ const FeedbackManagementTab = () => {
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
             >
-              <option value="all">All Types</option>
-              <option value="rating">Ratings</option>
-              <option value="cancellation">Cancellations</option>
+              <option value="all">{t('fdbckMgmt.filterTitle')}</option>
+              <option value="rating">{t('fdbckMgmt.ratingsFilter')}</option>
+              <option value="cancellation">{t('fdbckMgmt.cancellationFilter')}</option>
             </Form.Select>
           </Col>
         </Row>
       </Card>
 
         <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="mb-0">📋 Feedback List</h5>
+        <h5 className="mb-0">{t('fdbckMgmt.title2')}</h5>
         <Button size="sm" variant="outline-dark" onClick={handleExportCSV}>
-            Export CSV
+            {t('fdbckMgmt.exportButton')}
         </Button>
         </div>
 
@@ -121,32 +123,32 @@ const FeedbackManagementTab = () => {
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>User</th>
-              <th>Type</th>
-              <th>Booking</th>
-              <th>Comment</th>
-              <th>Rating</th>
-              <th>Flag</th>
-              <th>Actions</th>
+              <th>{t('fdbckMgmt.labelUser')}</th>
+              <th>{t('fdbckMgmt.labelType')}</th>
+              <th>{t('fdbckMgmt.labelBooking')}</th>
+              <th>{t('fdbckMgmt.labelComment')}</th>
+              <th>{t('fdbckMgmt.labelRating')}</th>
+              <th>{t('fdbckMgmt.labelFlag')}</th>
+              <th>{t('fdbckMgmt.labelActions')}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan="7" className="text-center">No feedback found.</td></tr>
+              <tr><td colSpan="7" className="text-center">{t('fdbckMgmt.noFeedback')}</td></tr>
             ) : (
               filtered.map(f => (
                 <tr key={f._id}>
-                  <td>{f.user?.name || 'Unknown'}</td>
+                  <td>{f.user?.name || t('fdbckMgmt.unknown')}</td>
                   <td>
                     <Badge bg={f.feedbackType === 'rating' ? 'primary' : 'warning'}>
-                      {f.feedbackType.charAt(0).toUpperCase() + f.feedbackType.slice(1)}
+                      {t(`fdbckMgmt.${f.feedbackType}`)}
                     </Badge>
                   </td>
                   <td>
-                    {f.booking?.type === 'event' ? '🎟 Event' : '🏛 Venue'}<br />
+                    {f.booking?.type === 'event' ? t('fdbckMgmt.bookingEvent') : t('fdbckMgmt.bookingVenue')}<br />
                     {f.booking?.details?.event || f.booking?.details?.name || '—'}
                   </td>
-                  <td>{f.comment || <span className="text-muted">No comment</span>}</td>
+                  <td>{f.comment || <span className="text-muted">{t('fdbckMgmt.noComment')}</span>}</td>
                   <td>
                     {f.feedbackType === 'rating' && f.rating
                       ? <span style={{ color: '#f7b100' }}>{renderStars(f.rating)}</span>
@@ -154,15 +156,15 @@ const FeedbackManagementTab = () => {
                   </td>
                   <td>
                     <Badge bg={f.flagged ? 'danger' : 'secondary'}>
-                      {f.flagged ? 'Flagged' : 'Clean'}
+                      {f.flagged ? t('fdbckMgmt.flagged') : t('fdbckMgmt.clean')}
                     </Badge>
                   </td>
                   <td className="d-flex gap-2 flex-wrap">
                     <Button size="sm" variant={f.flagged ? 'outline-danger' : 'outline-warning'} onClick={() => handleFlagToggle(f._id)}>
-                      {f.flagged ? 'Unflag' : 'Flag'}
+                      {f.flagged ? t('fdbckMgmt.unflag') : t('fdbckMgmt.flag')}
                     </Button>
                     <Button size="sm" variant="outline-danger" onClick={() => handleDelete(f._id)}>
-                      Delete
+                      {t('fdbckMgmt.deleteButton')}
                     </Button>
                   </td>
                 </tr>

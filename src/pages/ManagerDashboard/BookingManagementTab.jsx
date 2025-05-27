@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Table, Alert, Form, Row, Col, Button, Badge } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
 import { unparse } from 'papaparse';
+import { useTranslation } from 'react-i18next';
 
 const BookingManagementTab = () => {
   const [bookings, setBookings] = useState([]);
@@ -11,6 +12,7 @@ const BookingManagementTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 10;
   const token = localStorage.getItem('token');
+  const { t } = useTranslation();  
 
   useEffect(() => {
     fetchBookings();
@@ -22,7 +24,7 @@ const BookingManagementTab = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch bookings');
+      if (!res.ok) throw new Error(data.error || t('bkngMgmt.error1'));
       setBookings(data);
     } catch (err) {
       setError(err.message);
@@ -30,7 +32,7 @@ const BookingManagementTab = () => {
   };
 
   const handleCancelBooking = async (id) => {
-    const confirm = window.confirm('Are you sure you want to cancel this booking?');
+    const confirm = window.confirm(t('bkngMgmt.confirmationMsg'));
     if (!confirm) return;
 
     try {
@@ -82,29 +84,29 @@ const BookingManagementTab = () => {
 
   return (
     <div>
-      <h4 className="text-center mb-3">📦 Booking Management</h4>
+      <h4 className="text-center mb-3">{t('bkngMgmt.title')}</h4>
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
 
       <Card className="p-4 shadow-sm mb-4">
         <Row className="g-3">
           <Col md={4}>
             <Form.Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-              <option value="all">All Types</option>
-              <option value="event">Event</option>
-              <option value="venue">Venue</option>
+              <option value="all">{t('bkngMgmt.types')}</option>
+              <option value="event">{t('bkngMgmt.event')}</option>
+              <option value="venue">{t('bkngMgmt.venue')}</option>
             </Form.Select>
           </Col>
           <Col md={4}>
             <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-              <option value="all">Filter by Status</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">{t('bkngMgmt.filterTitle')}</option>
+              <option value="confirmed">{t('bkngMgmt.filterConfirmed')}</option>
+              <option value="pending">{t('bkngMgmt.filterPending')}</option>
+              <option value="cancelled">{t('bkngMgmt.filterCancelled')}</option>
             </Form.Select>
           </Col>
           <Col md={4} className="text-end">
             <Button variant="outline-dark" size="sm" onClick={handleExportCSV}>
-              Export CSV
+              {t('bkngMgmt.exportButton')}
             </Button>
           </Col>
         </Row>
@@ -114,37 +116,37 @@ const BookingManagementTab = () => {
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>User</th>
-              <th>Type</th>
-              <th>Details</th>
-              <th>Status</th>
-              <th>Booked On</th>
-              <th>Actions</th>
+              <th>{t('bkngMgmt.user')}</th>
+              <th>{t('bkngMgmt.type')}</th>
+              <th>{t('bkngMgmt.details')}</th>
+              <th>{t('bkngMgmt.status')}</th>
+              <th>{t('bkngMgmt.bookedOn')}</th>
+              <th>{t('bkngMgmt.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {currentBookings.length === 0 ? (
-              <tr><td colSpan="6" className="text-center">No bookings found.</td></tr>
+              <tr><td colSpan="6" className="text-center">{t('bkngMgmt.title2')}</td></tr>
             ) : (
               currentBookings.map(b => (
                 <tr key={b._id}>
-                  <td>{b.user?.name || 'Unknown'}<br /><small>{b.user?.email}</small></td>
+                  <td>{b.user?.name || t('bkngMgmt.unknown')}<br /><small>{b.user?.email}</small></td>
                   <td>
                     <Badge bg={b.type === 'event' ? 'info' : 'secondary'}>
-                      {b.type.charAt(0).toUpperCase() + b.type.slice(1)}
+                      {t(`bkngMgmt.${b.type}`)}
                     </Badge>
                   </td>
                   <td>
                     {b.type === 'event' ? (
                       <>
-                        Event: {b.details?.event || '—'}<br />
-                        Seat: {b.details?.seat}
+                        {t('bkngMgmt.eventLabel')} {b.details?.event || '—'}<br />
+                        {t('bkngMgmt.seatLabel')} {b.details?.seat}
                       </>
                     ) : (
                       <>
-                        Venue: {b.details?.name}<br />
-                        Date: {b.details?.date}<br />
-                        Time: {Array.isArray(b.details?.slots)
+                        {t('bkngMgmt.venueLabel')} {b.details?.name}<br />
+                        {t('bkngMgmt.dateLabel')} {b.details?.date}<br />
+                        {t('bkngMgmt.timeLabel')} {Array.isArray(b.details?.slots)
                           ? b.details.slots.join(', ')
                           : b.details?.time}
                       </>
@@ -156,7 +158,7 @@ const BookingManagementTab = () => {
                         : b.status === 'pending' ? 'warning'
                         : 'danger'
                     }>
-                      {b.status}
+                      {t(`bkngMgmt.status.${b.status}`)}
                     </Badge>
                   </td>
                   <td>{new Date(b.createdAt).toLocaleString()}</td>
@@ -167,7 +169,7 @@ const BookingManagementTab = () => {
                         size="sm"
                         onClick={() => handleCancelBooking(b._id)}
                       >
-                        Cancel
+                        {t('bkngMgmt.cancelButton')}
                       </Button>
                     )}
                   </td>
@@ -177,9 +179,8 @@ const BookingManagementTab = () => {
           </tbody>
         </Table>
 
-        {/* Pagination Controls */}
         <div className="d-flex justify-content-between align-items-center mt-3">
-          <span>Total Bookings: {totalBookings}</span>
+          <span>{t('bkngMgmt.totalBookings')} {totalBookings}</span>
           <div>
             <Button
               variant="secondary"
@@ -188,7 +189,7 @@ const BookingManagementTab = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="me-2"
             >
-              ← Prev
+              {t('bkngMgmt.previous')}
             </Button>
             <Button
               variant="secondary"
@@ -196,7 +197,7 @@ const BookingManagementTab = () => {
               disabled={indexOfLast >= totalBookings}
               onClick={() => setCurrentPage(prev => prev + 1)}
             >
-              Next →
+               {t('bkngMgmt.next')}
             </Button>
           </div>
         </div>
