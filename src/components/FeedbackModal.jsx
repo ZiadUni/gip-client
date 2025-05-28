@@ -8,7 +8,7 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
 
   const handleSubmit = async () => {
@@ -66,8 +66,8 @@ const FeedbackModal = ({ show, onClose, bookingId, onSubmitted }) => {
 
   return (
     <Modal show={show} onHide={onClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{t('feedback.title')}</Modal.Title>
+      <Modal.Header closeButton className="d-flex justify-content-between align-items-center" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+        <Modal.Title className="flex-grow-1 text-center">{t('feedback.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body className="bg-light rounded shadow-sm p-3">
         {error && <Alert variant="danger">{error}</Alert>}

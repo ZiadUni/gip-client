@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, i18n } from 'react-i18next';
 
 const CancelReasonModal = ({ show, onClose, bookingId, onSubmitted }) => {
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleSubmit = async () => {
     if (!reason.trim()) {
@@ -45,9 +45,9 @@ const CancelReasonModal = ({ show, onClose, bookingId, onSubmitted }) => {
 
   return (
     <Modal show={show} onHide={onClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{t('cancelReason.title')}</Modal.Title>
-      </Modal.Header>
+      <Modal.Header closeButton className="d-flex justify-content-between align-items-center" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+        <Modal.Title className="flex-grow-1 text-center">{t('cancelReason.title')}</Modal.Title>
+    </Modal.Header>
       <Modal.Body className="bg-light rounded shadow-sm p-3">
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">{t('cancelReason.success')}</Alert>}

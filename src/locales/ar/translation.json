@@ -203,8 +203,8 @@
     "timeLabel": "الوقت:",
     "cancelButton": "إلغاء",
     "totalBookings": "إجمالي الحجوزات",
-    "previous": "← السابق",
-    "next": "التالي →"
+    "previous": "→  السابق",
+    "next": "التالي ←"   
   },
 
   "fdbckMgmt": {
