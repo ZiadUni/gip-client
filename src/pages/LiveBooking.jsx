@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Button, Card, Row, Col, Alert } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -17,6 +18,7 @@ const LiveBooking = () => {
   const [mySeat, setMySeat] = useState('');
   const [error, setError] = useState('');
   const [notifyMsg, setNotifyMsg] = useState('');
+  const { t } = useTranslation();
 
   const formatSlotRange = (timeValue) => {
     const slots = Array.isArray(timeValue)
@@ -73,7 +75,7 @@ const LiveBooking = () => {
   };
 
   const handleProceedToPayment = () => {
-    if (!selectedSeat) return setError('Please select a seat');
+    if (!selectedSeat) return setError(t('liveBook.error1'));
 
     navigate('/payment', {
       state: {
@@ -110,8 +112,8 @@ const LiveBooking = () => {
       });
 
       const data = await res.json();
-      if (!res.ok && res.status !== 409) throw new Error(data.error || 'Notify failed');
-      setNotifyMsg(data.message || 'Already subscribed for this seat');
+      if (!res.ok && res.status !== 409) throw new Error(data.error || t('liveBook.error2'));
+      setNotifyMsg(data.message || t('liveBook.error3'));
     } catch (err) {
       setNotifyMsg(err.message);
     }
@@ -129,13 +131,13 @@ const LiveBooking = () => {
     <div className="fade-in">
       <Container className="py-5 text-center">
       <div className="d-flex justify-content-start mb-3">
-        <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button>
+        <Button variant="secondary" onClick={() => navigate(-1)}>{t('liveBook.backButton')}</Button>
       </div>
-        <h2 className="text-brown mb-3">Book Your Ticket</h2>
+        <h2 className="text-brown mb-3">{t('liveBook.title')}</h2>
         <h5>{event?.name}</h5>
-        <p><strong>Date:</strong> {event?.date}</p>
-        <p><strong>Time:</strong> {formatSlotRange(event?.time)}</p>
-        <p><strong>Venue:</strong> {event?.venue || event?.name}</p>
+        <p><strong>{t('liveBook.date')}</strong> {event?.date}</p>
+        <p><strong>{t('liveBook.time')}</strong> {formatSlotRange(event?.time)}</p>
+        <p><strong>{t('liveBook.venue')}</strong> {event?.venue || event?.name}</p>
 
         <div className="d-flex flex-wrap justify-content-center gap-2 mt-4">
           {seats.map(seat => (
@@ -155,7 +157,7 @@ const LiveBooking = () => {
                   cursor: seat.status === 'available' ? 'pointer' : 'not-allowed',
                   border: mySeat === seat.id ? '2px solid white' : 'none'
                 }}
-                title={`Seat ${seat.id}`}
+                title={t('liveBook.seatLabel', { id: seat.id })}
               >
                 {seat.id}
               </div>
@@ -177,7 +179,7 @@ const LiveBooking = () => {
                     handleNotify(seat);
                   }}
                 >
-                  Notify Me
+                  {t('liveBook.notifyMeButton')}
                 </Button>
               )}
             </div>
@@ -186,19 +188,19 @@ const LiveBooking = () => {
 
         <div className="text-center mt-4">
           <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> Your Booking
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> {t('liveBook.yourBooking')}
           </span>
           <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0d6efd', marginRight: 5 }} /> Selected
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0d6efd', marginRight: 5 }} /> {t('liveBook.selected')}
           </span>
           <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> Available
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> {t('liveBook.available')}
           </span>
           <span className="me-3">
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> Booked
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> {t('liveBook.booked')}
           </span>
           <span>
-            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> Pending
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> {t('liveBook.pending')}
           </span>
         </div>
 
@@ -207,9 +209,9 @@ const LiveBooking = () => {
 
         {selectedSeat && (
           <div className="mt-4">
-            <p><strong>Selected Seat:</strong> {selectedSeat}</p>
+            <p><strong>{t('liveBook.selectedSeat')}</strong> {selectedSeat}</p>
             <Button className="bg-brown border-0" onClick={handleProceedToPayment}>
-              Proceed to Payment
+              {t('liveBook.proceedToPay')}
             </Button>
           </div>
         )}

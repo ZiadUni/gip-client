@@ -5,6 +5,7 @@ import {
   Card, Table, Button, Alert, Form, Row, Col, Image
 } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const VenueManagementTab = () => {
   const [venues, setVenues] = useState([]);
@@ -16,6 +17,7 @@ const VenueManagementTab = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const token = localStorage.getItem('token');
+  const { t } = useTranslation();
 
   const isValidImageUrl = (url) =>
     url && /\.(jpg|jpeg|png|webp|gif)$/i.test(url.trim());
@@ -43,7 +45,7 @@ const VenueManagementTab = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch venues');
+      if (!res.ok) throw new Error(data.error || t('venueMgmt.error1'));
       setVenues(data);
     } catch (err) {
       setError(err.message);
@@ -54,12 +56,12 @@ const VenueManagementTab = () => {
     const { image, date } = newVenue;
 
     if (!isValidImageUrl(image)) {
-      setError('Invalid image link. Must end in .jpg, .png, .webp, etc.');
+      setError(t('venueMgmt.error2'));
       return;
     }
 
     if (!isValidDate(date)) {
-      setError('Invalid date. Must not be in the past or more than 1 year ahead.');
+      setError(t('venueMgmt.error3'));
       return;
     }
 
@@ -90,7 +92,7 @@ const VenueManagementTab = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('Venue added');
+      setSuccess(t('venueMgmt.success1'));
       setNewVenue({
         name: '', date: '', capacity: '', availability: 'Available', price: '', image: ''
       });
@@ -101,7 +103,7 @@ const VenueManagementTab = () => {
   };
 
   const handleDeleteVenue = async (id) => {
-    if (!window.confirm('Delete this venue?')) return;
+    if (!window.confirm(t('venueMgmt.confirmDelete'))) return;
     try {
       const res = await apiFetch(`/venues/${id}`, {
         method: 'DELETE',
@@ -109,7 +111,7 @@ const VenueManagementTab = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setSuccess('Venue deleted');
+      setSuccess(t('venueMgmt.success2'));
       fetchVenues();
     } catch (err) {
       setError(err.message);
@@ -130,12 +132,12 @@ const VenueManagementTab = () => {
     const { image, date } = editVenueData;
 
     if (!isValidImageUrl(image)) {
-      setError('Invalid image link. Must end in .jpg, .png, .webp, etc.');
+      setError(t('venueMgmt.error4'));
       return;
     }
 
     if (!isValidDate(date)) {
-      setError('Invalid date. Must not be in the past or more than 1 year ahead.');
+      setError(t('venueMgmt.error5'));
       return;
     }
 
@@ -159,7 +161,7 @@ const VenueManagementTab = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('Venue updated');
+      setSuccess(t('venueMgmt.success3'));
       setEditVenueId(null);
       setEditVenueData({});
       fetchVenues();
@@ -173,13 +175,13 @@ const VenueManagementTab = () => {
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
       {success && <Alert variant="success" className="text-center">{success}</Alert>}
 
-      <h5 className="text-center mb-3">➕ Add New Venue</h5>
+      <h5 className="text-center mb-3">{t('venueMgmt.title')}</h5>
       <Card className="p-4 shadow-sm mb-4">
         <Row className="g-2">
           <Col md={4}>
             <Form.Control
               type="text"
-              placeholder="Name"
+              placeholder={t('venueMgmt.namePlaceholder')}
               value={newVenue.name}
               onChange={e => setNewVenue({ ...newVenue, name: e.target.value })}
             />
@@ -196,7 +198,7 @@ const VenueManagementTab = () => {
           <Col md={4}>
             <Form.Control
               type="number"
-              placeholder="Capacity"
+              placeholder={t('venueMgmt.capacityPlaceholder')}
               value={newVenue.capacity}
               onChange={e => setNewVenue({ ...newVenue, capacity: e.target.value })}
             />
@@ -206,14 +208,14 @@ const VenueManagementTab = () => {
               value={newVenue.availability}
               onChange={e => setNewVenue({ ...newVenue, availability: e.target.value })}
             >
-              <option value="Available">Available</option>
-              <option value="Unavailable">Unavailable</option>
+              <option value="Available">{t('venueMgmt.available')}</option>
+              <option value="Unavailable">{t('venueMgmt.unavailable')}</option>
             </Form.Select>
           </Col>
           <Col md={4}>
             <Form.Control
               type="text"
-              placeholder="Price"
+              placeholder={t('venueMgmt.pricePlaceholder')}
               value={newVenue.price}
               onChange={e => setNewVenue({ ...newVenue, price: e.target.value })}
             />
@@ -221,33 +223,33 @@ const VenueManagementTab = () => {
           <Col md={4}>
             <Form.Control
               type="text"
-              placeholder="Image Link"
+              placeholder={t('venueMgmt.imagePlaceholder')}
               value={newVenue.image}
               onChange={e => setNewVenue({ ...newVenue, image: e.target.value })}
             />
           </Col>
           <Col md={12}>
             <Button onClick={handleAddVenue} className="bg-brown w-100 mt-2">
-              Add Venue
+              {t('venueMgmt.addVenueButton')}
             </Button>
           </Col>
         </Row>
       </Card>
 
-      <h5 className="text-center mb-3">📋 All Venues</h5>
+      <h5 className="text-center mb-3">{t('venueMgmt.title2')}</h5>
       <Card className="p-4 shadow-sm">
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Capacity</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Image</th>
-              <th>Image URL</th>
-              <th>Actions</th>
+              <th>{t('venueMgmt.tableName')}</th>
+              <th>{t('venueMgmt.tableDate')}</th>
+              <th>{t('venueMgmt.tableTime')}</th>
+              <th>{t('venueMgmt.tableCapacity')}</th>
+              <th>{t('venueMgmt.tablePrice')}</th>
+              <th>{t('venueMgmt.tableStatus')}</th>
+              <th>{t('venueMgmt.tableImage')}</th>
+              <th>{t('venueMgmt.tableImageURL')}</th>
+              <th>{t('venueMgmt.tableActions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -276,23 +278,23 @@ const VenueManagementTab = () => {
                       <Form.Control value={editVenueData.image} onChange={e => setEditVenueData({ ...editVenueData, image: e.target.value })} />
                     </td>
                     <td>
-                      <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">Save</Button>
-                      <Button size="sm" variant="secondary" onClick={handleCancelEdit}>Cancel</Button>
+                      <Button size="sm" onClick={handleSaveEdit} className="me-2 bg-success">{t('venueMgmt.saveButton')}</Button>
+                      <Button size="sm" variant="secondary" onClick={handleCancelEdit}>{t('venueMgmt.cancelButton')}</Button>
                     </td>
                   </>
                 ) : (
                   <>
                     <td>{venue.name}</td>
                     <td>{formatDate(venue.date)}</td>
-                    <td>{venue.availability}</td>
+                    <td>{t(`venueMgmt.availability.${venue.availability}`)}</td>
                     <td>{venue.capacity}</td>
                     <td>{venue.price}</td>
-                    <td>{venue.status}</td>
+                    <td>{t(`venueMgmt.status.${venue.status}`)}</td>
                     <td>{venue.image && <Image src={venue.image} alt="venue" width="60" height="40" rounded />}</td>
                     <td>{venue.image}</td>
                     <td>
-                      <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>Edit</Button>
-                      <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(venue._id)}>Delete</Button>
+                      <Button size="sm" variant="info" className="me-2" onClick={() => handleEditVenue(venue)}>{t('venueMgmt.editButton')}</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleDeleteVenue(venue._id)}>{t('venueMgmt.deleteButton')}</Button>
                     </td>
                   </>
                 )}

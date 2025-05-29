@@ -284,6 +284,91 @@
     "userCounter": "Total Users:",
     "previousButton": "← Prev",
     "nextButton": "Next →"
+  },
+
+  "venueMgmt": {
+    "error1": "Failed to fetch venues",
+    "error2": "Invalid image link. Must end in .jpg, .png, .webp, etc.",
+    "error3": "Invalid date. Must not be in the past or more than 1 year ahead.",
+    "success1": "Venue added",
+    "confirmDelete": "Delete this venue?",
+    "success2": "Venue deleted",
+    "error4": "Invalid image link. Must end in .jpg, .png, .webp, etc.",
+    "error5": "Invalid date. Must not be in the past or more than 1 year ahead.",
+    "success3": "Venue updated",
+    "title": "➕ Add New Venue",
+    "namePlaceholder": "Name",
+    "capacityPlaceholder": "Capacity",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "pricePlaceholder": "Price",
+    "imagePlaceholder": "Image Link",
+    "addVenueButton": "Add Venue",
+    "title2": "📋 All Venues",
+    "tableName": "Name",
+    "tableDate": "Date",
+    "tableTime": "Time",
+    "tableCapacity": "Capacity",
+    "tablePrice": "Price",
+    "tableStatus": "Status",
+    "tableImage": "Image",
+    "tableImageURL": "Image URL",
+    "tableActions": "Actions",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "availability": {
+      "Available": "Available",
+      "Unavailable": "Unavailable"
+    },
+    "status": {
+      "Booked": "Booked",
+      "Available": "Available",
+      "Unavailable": "Unavailable"
+    }
+  },
+
+  "about": {
+    "title": "About Galala Innovation Park",
+    "subtitle": "Galala Innovation Park is a dynamic space designed to empower creativity, innovation, and sustainable development.",
+    "header1": "🎯 Our Vision",
+    "subheader1": "To become Egypt’s leading hub for tech innovation and collaboration, bridging academia and industry.",
+    "header2": "📌 Our Mission",
+    "subheader2": "To support startups and researchers with intuitive facility management systems and event platforms backed by analytics.",
+    "header3": "🔧 What We Offer",
+    "subheader3": "Live seat and venue booking",
+    "subheader4": "Data-driven performance metrics",
+    "subheader5": "Admin dashboards for employees",
+    "subheader6": "Support for innovation events and training",
+    "header4": "📞 Contact Us",
+    "subheader7": "info@gipark.com",
+    "subheader8": "+20 123-456-7890",
+    "subheader9": "Galala City, Egypt",
+    "email": "Email:",
+    "phone": "Phone:",
+    "location": "Location:",
+    "backButton": "← Back"
+  },
+
+  "liveBook": {
+    "error1": "Please select a seat",
+    "error2": "Notify failed",
+    "error3": "Already subscribed for this seat",
+    "backButton": "← Back",
+    "title": "Book Your Ticket",
+    "date": "Date:",
+    "time": "Time:",
+    "venue": "Venue:",
+    "seatLabel": "Seat",
+    "notifyMeButton": "Notify Me",
+    "yourBooking": "Your Booking",
+    "selected": "Selected",
+    "available": "Available",
+    "booked": "Booked",
+    "pending": "Pending",
+    "selectedSeat": "Selected Seat:",
+    "proceedToPay": "Proceed to Payment"
   }
 
 }

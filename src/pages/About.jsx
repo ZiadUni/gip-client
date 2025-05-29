@@ -3,8 +3,11 @@
 
 import React from 'react';
 import { Container, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="fade-in">
     <Container className="py-5" style={{ maxWidth: '900px' }}>
@@ -13,44 +16,44 @@ const About = () => {
           variant="secondary"
           onClick={() => navigate(-1)}
         >
-          ← Back
+          {t('about.backButton')}
         </Button>
       </div>      
-      <h1 className="text-brown text-center mb-4">About Galala Innovation Park</h1>
+      <h1 className="text-brown text-center mb-4">{t('about.title')}</h1>
       <p className="text-center mb-5">
-        Galala Innovation Park is a dynamic space designed to empower creativity, innovation, and sustainable development.
+        {t('about.subtitle')}
       </p>
 
       <section className="mb-4">
-        <h4 className="text-brown">🎯 Our Vision</h4>
+        <h4 className="text-brown">{t('about.header1')}</h4>
         <p>
-          To become Egypt’s leading hub for tech innovation and collaboration, bridging academia and industry.
+          {t('about.subheader1')}
         </p>
       </section>
 
       <section className="mb-4">
-        <h4 className="text-brown">📌 Our Mission</h4>
+        <h4 className="text-brown">{t('about.header2')}</h4>
         <p>
-          To support startups and researchers with intuitive facility management systems and event platforms backed by analytics.
+          {t('about.subheader2')}
         </p>
       </section>
 
       <section className="mb-4">
-        <h4 className="text-brown">🔧 What We Offer</h4>
+        <h4 className="text-brown">{t('about.header3')}</h4>
         <ul>
-          <li>Live seat and venue booking</li>
-          <li>Data-driven performance metrics</li>
-          <li>Admin dashboards for employees</li>
-          <li>Support for innovation events and training</li>
+          <li>{t('about.subheader3')}</li>
+          <li>{t('about.subheader4')}</li>
+          <li>{t('about.subheader5')}</li>
+          <li>{t('about.subheader6')}</li>
         </ul>
       </section>
 
       <section>
-        <h4 className="text-brown">📞 Contact Us</h4>
+        <h4 className="text-brown">{t('about.header4')}</h4>
         <p>
-          <strong>Email:</strong> info@gipark.com<br />
-          <strong>Phone:</strong> +20 123-456-7890<br />
-          <strong>Location:</strong> Galala City, Egypt
+          <strong>{t('about.email')}</strong> {t('about.subheader7')}<br />
+          <strong>{t('about.phone')}</strong> {t('about.subheader8')}<br />
+          <strong>{t('about.location')}</strong> {t('about.subheader9')}
         </p>
       </section>
     </Container>
