@@ -8,6 +8,7 @@ import {
 } from 'recharts';
 import { Accordion, Tabs, Tab, Button, Container } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = ["#623E2A", "#A1866F", "#CBB6A2", "#d9a66b", "#f0c987"];
 
@@ -19,6 +20,7 @@ const Metrics = () => {
   oneWeekAfter.setDate(today.getDate() + 7);
   const [startDate, setStartDate] = useState(oneWeekBefore.toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(oneWeekAfter.toISOString().split('T')[0]);
+  const { t } = useTranslation();
 
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('current');
@@ -38,7 +40,7 @@ const Metrics = () => {
       if (selectedVenue) url += `&venue=${encodeURIComponent(selectedVenue)}`;
       const res = await apiFetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Failed to fetch metrics');
+      if (!res.ok) throw new Error(json.error || t('metrics.error1'));
       setData(json.data);
       setLastRefreshed(Date.now());
     } catch (err) {
@@ -93,56 +95,56 @@ const Metrics = () => {
   const messages = [];
 
   if (trend.cancelled > 30) {
-    messages.push("⚠️ Cancellations are unusually high. Consider reviewing refund policies.");
+    messages.push(t('metrics.insight1'));
   }
 
   if (trend.revenue > 10) {
-    messages.push("💰 Revenue is growing. Focus on high-performing venues.");
+    messages.push(t('metrics.insight2'));
   }
 
   if (data?.venueUsage?.length === 1) {
-    messages.push(`🏷 Most bookings are concentrated in ${data.topVenue}. Consider promoting other venues.`);
+    messages.push(t('metrics.insight3', { venue: data.topVenue }));
   }
 
   if (data?.ticketsSold < 5) {
-    messages.push("📉 Very low booking volume. Consider promoting new events or reviewing demand.");
+    messages.push(t('metrics.insight4'));
   }
 
   if (trend.revenue < -10) {
-  messages.push("📉 Revenue is dropping. Evaluate marketing and pricing strategies.");
+  messages.push(t('metrics.insight5'));
 }
 
   const confirmed = data?.ticketType?.find(t => t.type === 'Confirmed')?.value || 0;
   const pending = data?.ticketType?.find(t => t.type === 'Pending')?.value || 0;
 
   if (confirmed < pending) {
-    messages.push("⌛ More bookings are pending than confirmed. Consider improving approval speed or confirmation flow.");
+    messages.push(t('metrics.insight6'));
   }
 
   const cancelled = data?.ticketType?.find(t => t.type === 'Cancelled')?.value || 0;
 
   if (confirmed > 0 && cancelled / confirmed > 0.5) {
-  messages.push("🔁 More than half of confirmed bookings were later cancelled. Investigate cancellation reasons.");
+  messages.push(t('metrics.insight7'));
   }
 
   if (data?.ticketsSold === 0) {
-  messages.push("📭 No bookings were made in the selected period. Consider running promotions.");
+  messages.push(t('metrics.insight8'));
   }
 
   if (data?.venueUsage?.length > 0) {
-  const topCount = data.venueUsage[0]?.bookings || 0;
-  const total = data.venueUsage.reduce((sum, v) => sum + v.bookings, 0);
+    const topCount = data.venueUsage[0]?.bookings || 0;
+    const total = data.venueUsage.reduce((sum, v) => sum + v.bookings, 0);
     if (topCount / total > 0.75) {
-      messages.push(`🏢 ${data.topVenue} accounts for over 75% of bookings. Consider diversifying usage.`);
+      messages.push(t('metrics.insight9', { venue: data.topVenue }));
     }
   }
 
   if (trend.confirmed >= 50) {
-  messages.push("📈 Confirmed bookings have surged by over 50%. Review system scalability or staffing.");
+  messages.push(t('metrics.insight10'));
   }
 
   if (trend.revenue === 0 && data?.totalRevenue > 0) {
-  messages.push("⏸️ Revenue has flatlined compared to the last snapshot. Investigate booking trends.");
+  messages.push(t('metrics.insight11'));
   }
 
   return messages;
@@ -174,10 +176,10 @@ const Metrics = () => {
       </Button>
     </div>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
-        <h2 style={{ textAlign: 'center' }}>📊 Innovation Park Analytics Dashboard</h2>
+        <h2 style={{ textAlign: 'center' }}>{t('metrics.title')}</h2>
 
         {error && <p className="text-danger text-center mt-3">{error}</p>}
-        {!data && !error && <p className="text-center mt-4">Loading metrics...</p>}
+        {!data && !error && <p className="text-center mt-4">{t('metrics.loading')}</p>}
 
         <div className="mb-3" style={{ display: 'flex', justifyContent: 'center' }}>
           <label style={{
@@ -195,17 +197,18 @@ const Metrics = () => {
                 if (e.target.checked) setLastRefreshed(Date.now());
               }}
             />
-            Auto-refresh every 20 seconds
+            {t('metrics.refreshButton')}
           </label>
         </div>
 
         {autoRefresh && lastRefreshed && (
-          <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
-            Last refreshed: {Math.floor((Date.now() - lastRefreshed) / 1000)} seconds ago
-          </p>
-        )}
+        <p className="text-muted text-center mb-3" style={{ fontSize: '14px' }}>
+          {t('metrics.lastRefreshed', {
+            seconds: Math.floor((Date.now() - lastRefreshed) / 1000)
+          })}
+        </p>
+      )}
 
-        {/* FILTER & EXPORT PANEL */}
         <Accordion defaultActiveKey={null} className="mb-4">
         <Accordion.Item
           eventKey="0"
@@ -216,7 +219,7 @@ const Metrics = () => {
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
           }}
         >
-            <Accordion.Header>🔧 Filter & Export Options</Accordion.Header>
+            <Accordion.Header>{t('metrics.optionsTitle')}</Accordion.Header>
             <Accordion.Body>
 
         <Tabs
@@ -225,25 +228,24 @@ const Metrics = () => {
           fill
           variant="pills"
         >
-                {/* FILTERS TAB */}
                 <Tab eventKey="filters" title="Filters">
-                  <h5 className="text-center mb-3">🕒 Time Range Filter</h5>
+                  <h5 className="text-center mb-3">{t('metrics.timeFilterTitle')}</h5>
                   <div className="text-center mb-3">
-                    <label><strong>Start Date:</strong></label>
+                    <label><strong>{t('metrics.timeFilterStart')}</strong></label>
                     <input
                       type="date"
                       value={startDate}
                       onChange={e => setStartDate(e.target.value)}
                       style={filterStyle}
                     />
-                    <label style={{ marginLeft: '20px' }}><strong>End Date:</strong></label>
+                    <label style={{ marginLeft: '20px' }}><strong>{t('metrics.timeFilterEnd')}</strong></label>
                     <input
                       type="date"
                       value={endDate}
                       max={new Date().toISOString().split('T')[0]}
                       onChange={e => {
                         if (new Date(e.target.value) > new Date()) {
-                          setError("End date can't be in the future.");
+                          setError(t('metrics.error2'));
                         } else {
                           setError('');
                           setEndDate(e.target.value);
@@ -253,35 +255,34 @@ const Metrics = () => {
                     />
                   </div>
 
-                  <h5 className="text-center">📋 Booking Filters</h5>
+                  <h5 className="text-center">{t('metrics.bookingFilterTitle')}</h5>
                   <div className="text-center mb-3">
-                    <label><strong>Status:</strong></label>
+                    <label><strong>{t('metrics.bookingFilterStatus')}</strong></label>
                     <select
                       value={statusFilter}
                       onChange={e => setStatusFilter(e.target.value)}
                       style={filterStyle}
                     >
-                      <option value="current">Current</option>
-                      <option value="past">Past</option>
-                      <option value="all">All</option>
+                      <option value="current">{t('metrics.bookingFilterCurrent')}</option>
+                      <option value="past">{t('metrics.bookingFilterPast')}</option>
+                      <option value="all">{t('metrics.bookingFilterAll')}</option>
                     </select>
 
-                    <label style={{ marginLeft: '30px' }}><strong>Booking Type:</strong></label>
+                    <label style={{ marginLeft: '30px' }}><strong>{t('metrics.typeFilterTitle')}</strong></label>
                     <select
                       value={typeFilter}
                       onChange={e => setTypeFilter(e.target.value)}
                       style={filterStyle}
                     >
-                      <option value="all">All</option>
-                      <option value="event">Event Only</option>
-                      <option value="venue">Venue Only</option>
+                      <option value="all">{t('metrics.typeFilterAll')}</option>
+                      <option value="event">{t('metrics.typeFilterEvent')}</option>
+                      <option value="venue">{t('metrics.typeFilterVenue')}</option>
                     </select>
                   </div>
                 </Tab>
 
-                {/* EXPORT TAB */}
                 <Tab eventKey="export" title="Export">
-                  <h5 className="text-center mb-3">📁 Export CSV</h5>
+                  <h5 className="text-center mb-3">{t('metrics.exportFilterTitle')}</h5>
                   {data && (
                     <div className="text-center d-flex flex-wrap justify-content-center gap-3">
                       <Button className="export-button" onClick={() =>
@@ -291,9 +292,9 @@ const Metrics = () => {
                           { Metric: 'Top Venue', Value: data.topVenue }
                         ], 'metric-summary')}>Export Summary CSV</Button>
 
-                      <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>Export Venue Usage CSV</Button>
-                      <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>Export Revenue Trend CSV</Button>
-                      <Button className="export-button" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>Export Ticket Types CSV</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>{t('exportFilterVenueButton')}</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>{t('exportFilterRevenueButton')}</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>{t('exportFilterTicketsButton')}</Button>
                     </div>
                   )}
                 </Tab>
@@ -303,59 +304,54 @@ const Metrics = () => {
           </Accordion.Item>
         </Accordion>
 
-        {/* Summary Boxes */}
-        {/* VENUE METRICS */}
-        <h4 className="text-center mt-4">📍 Venue Metrics</h4>
+        <h4 className="text-center mt-4">{t('metrics.title2')}</h4>
         <div style={grid}>
-          <MetricBox title="Total Venues Used" value={data?.venueUsage?.length || 0} />
-          <MetricBox title="Most Used Venue" value={data?.topVenue || '—'} />
+          <MetricBox title={t('metrics.boxTitle1')} value={data?.venueUsage?.length || 0} />
+          <MetricBox title={t('metrics.boxTitle2')} value={data?.topVenue || '—'} />
           <MetricBox
-            title="Avg Bookings per Venue"
+            title={t('metrics.boxTitle3')}
             value={Math.round((data?.ticketsSold || 0) / (data?.venueUsage?.length || 1))}
           />
         </div>
 
-        {/* TICKET METRICS */}
-        <h4 className="text-center mt-4">🎟 Ticket Metrics</h4>
+        <h4 className="text-center mt-4">{t('metrics.title3')}</h4>
         <div style={grid}>
           <MetricBox
-            title="Confirmed"
+            title={t('metrics.boxTitle4')}
             trend={trend.confirmed}
             value={data?.ticketType?.find(t => t.type === 'Confirmed')?.value || 0}
           />
           <MetricBox
-            title="Pending"
+            title={t('metrics.boxTitle5')}
             value={data?.ticketType?.find(t => t.type === 'Pending')?.value || 0}
           />
           <MetricBox
-            title="Cancelled"
+            title={t('metrics.boxTitle6')}
             value={data?.ticketType?.find(t => t.type === 'Cancelled')?.value || 0}
           />
         </div>
 
-        {/* OVERALL METRICS */}
-        <h4 className="text-center mt-4">📊 Overall Metrics</h4>
+        <h4 className="text-center mt-4">{t('metrics.title4')}</h4>
         <div style={grid}>
-          <MetricBox title="Tickets Sold" value={data?.ticketsSold || 0} />
+          <MetricBox title={t('metrics.boxTitle7')} value={data?.ticketsSold || 0} />
           <MetricBox
-            title="Total Revenue"
-            value={`EGP ${data?.totalRevenue?.toLocaleString() || '0'}`}
+            title={t('metrics.boxTitle8')}
+            value={`${t('metrics.currency')} ${data?.totalRevenue?.toLocaleString() || '0'}`}
           />
           <MetricBox
-            title="Revenue per Ticket"
-            value={`EGP ${Math.round((data?.totalRevenue || 0) / (data?.ticketsSold || 1))}`}
+            title={t('metrics.boxTitle9')}
+            value={`${t('metrics.currency')} ${Math.round((data?.totalRevenue || 0) / (data?.ticketsSold || 1))}`}
           />
         </div>
 
-        <h5 className="text-center mt-4">🧠 Smart Insights</h5>
+        <h5 className="text-center mt-4">{t('metrics.title5')}</h5>
         <ul className="text-center">
           {generateInsights().map((msg, i) => <li key={i}>{msg}</li>)}
         </ul>
 
-        {/* Venue Usage Chart */}
-        <h3 style={sectionHeader}>📍 Venue Usage</h3>
+        <h3 style={sectionHeader}>{t('Metrics.title6')}</h3>
         {data?.venueUsage?.length === 0 ? (
-          <p className="text-center text-muted">No venue usage data for this range.</p>
+          <p className="text-center text-muted">{t('metrics.error3')}</p>
         ) : data?.venueUsage?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -367,34 +363,56 @@ const Metrics = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload?.length) {
+                    return (
+                      <div className="custom-tooltip bg-light p-2 rounded shadow-sm">
+                        <strong>{payload[0].name}</strong><br />
+                        {t('metrics.bookingsLabel')}: {payload[0].value}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
               <Bar dataKey="bookings" fill="#623E2A" />
             </BarChart>
           </ResponsiveContainer>
         ) : null}
 
-        {/* Revenue Trend Chart */}
-        <h3 style={sectionHeader}>📈 Revenue Over Time</h3>
+        <h3 style={sectionHeader}>{t('metrics.title7')}</h3>
         {data?.revenueTrend?.length === 0 ? (
-          <p className="text-center text-muted">No revenue data for this range.</p>
+          <p className="text-center text-muted">{t('metrics.error4')}</p>
         ) : data?.revenueTrend?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={data.revenueTrend}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" label={{ value: 'Date', position: 'insideBottom', offset: -5 }} />
-              <YAxis label={{ value: 'Revenue (EGP)', angle: -90, position: 'insideLeft' }} />
-              <Tooltip />
+              <XAxis dataKey="day" label={{ value: t('metrics.ROTDate'), position: 'insideBottom', offset: -5 }} />
+              <YAxis label={{ value: t('metrics.ROTCurrency'), angle: -90, position: 'insideLeft' }} />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload?.length) {
+                    return (
+                      <div className="custom-tooltip bg-light p-2 rounded shadow-sm">
+                        <strong>{label}</strong><br />
+                        {t('metrics.revenueLabel')}: {payload[0].value}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
               <Line type="monotone" dataKey="revenue" stroke="#A1866F" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
         ) : null}
 
-        {/* Ticket Types Chart */}
-        <h3 style={sectionHeader}>🥧 Ticket Types</h3>
+        <h3 style={sectionHeader}>{t('metrics.title8')}</h3>
         {data?.ticketType?.length === 0 ? (
-          <p className="text-center text-muted">No ticket data available for this range.</p>
+          <p className="text-center text-muted">{t('metrics.error5')}</p>
         ) : data?.ticketType?.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
@@ -404,24 +422,35 @@ const Metrics = () => {
                 nameKey="type"
                 outerRadius={100}
                 label={({ type, percent, value }) =>
-                  `${type}: ${(percent * 100).toFixed(1)}% (${value})`
+                  `${t(`metrics.ticketType.${type}`)}: ${(percent * 100).toFixed(1)}% (${value})`
                 }
               >
                 {(data?.ticketType ?? []).map((entry, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload?.length) {
+                    const { name, value } = payload[0];
+                    return (
+                      <div className="custom-tooltip bg-light p-2 rounded shadow-sm">
+                        <strong>{t(`metrics.ticketType.${name}`)}</strong>: {value}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
         ) : null}
 
-        {/* Clear Drilldown Button */}
         {selectedVenue && (
           <div className="text-center mt-3">
             <Button variant="secondary" onClick={() => setSelectedVenue(null)}>
-              Clear Drilldown: {selectedVenue}
+              {t('metrics.clearDrilldownButton')}
             </Button>
           </div>
         )}
