@@ -395,9 +395,7 @@ const Metrics = () => {
                   value: t('metrics.ROTDate'),
                   position: 'insideBottom',
                   dy: 5,
-                  style: { fontSize: 8 }
                 }}
-                textAnchor="end"
                 interval={0}
               />
               <YAxis label={{ value: t('metrics.ROTCurrency'), angle: -90, position: 'insideLeft' }} />
