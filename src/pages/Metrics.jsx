@@ -292,9 +292,9 @@ const Metrics = () => {
                           { Metric: 'Top Venue', Value: data.topVenue }
                         ], 'metric-summary')}>{t('exportFilterSummaryButton')}</Button>
 
-                      <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>{t('exportFilterVenueButton')}</Button>
-                      <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>{t('exportFilterRevenueButton')}</Button>
-                      <Button className="export-button" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>{t('exportFilterTicketsButton')}</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>{t('metrics.exportFilterVenueButton')}</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>{t('metrics.exportFilterRevenueButton')}</Button>
+                      <Button className="export-button" onClick={() => exportToCSV(data.ticketType, 'ticket-types')}>{t('metrics.exportFilterTicketsButton')}</Button>
                     </div>
                   )}
                 </Tab>
@@ -362,7 +362,7 @@ const Metrics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
+              <YAxis label={{ value: t('metrics.bookingsLabel'), angle: -90, position: 'insideLeft' }} />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload?.length) {
@@ -390,7 +390,7 @@ const Metrics = () => {
               data={data.revenueTrend}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" label={{ value: t('metrics.ROTDate'), position: 'insideBottom', offset: -5 }} />
+              <XAxis dataKey="day" label={{ value: t('metrics.ROTDate'), position: 'insideBottom', dy: 20, style: { fontize: 12 }}} />
               <YAxis label={{ value: t('metrics.ROTCurrency'), angle: -90, position: 'insideLeft' }} />
               <Tooltip
                 content={({ active, payload, label }) => {
