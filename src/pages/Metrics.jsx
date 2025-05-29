@@ -290,7 +290,7 @@ const Metrics = () => {
                           { Metric: 'Tickets Sold', Value: data.ticketsSold },
                           { Metric: 'Total Revenue', Value: data.totalRevenue },
                           { Metric: 'Top Venue', Value: data.topVenue }
-                        ], 'metric-summary')}>{t('exportFilterSummaryButton')}</Button>
+                        ], 'metric-summary')}>{t('metrics.exportFilterSummaryButton')}</Button>
 
                       <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>{t('metrics.exportFilterVenueButton')}</Button>
                       <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>{t('metrics.exportFilterRevenueButton')}</Button>
@@ -362,7 +362,7 @@ const Metrics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <YAxis label={{ value: t('metrics.bookingsLabel'), angle: -90, position: 'insideLeft' }} />
+              <YAxis />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload?.length) {
@@ -390,7 +390,18 @@ const Metrics = () => {
               data={data.revenueTrend}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" label={{ value: t('metrics.ROTDate'), position: 'insideBottom', dy: 20, style: { fontize: 12 }}} />
+              <XAxis
+                dataKey="day"
+                label={{
+                  value: t('metrics.ROTDate'),
+                  position: 'insideBottom',
+                  dy: 10,
+                  style: { fontSize: 12 }
+                }}
+                angle={-15}
+                textAnchor="end"
+                interval={0}
+              />
               <YAxis label={{ value: t('metrics.ROTCurrency'), angle: -90, position: 'insideLeft' }} />
               <Tooltip
                 content={({ active, payload, label }) => {

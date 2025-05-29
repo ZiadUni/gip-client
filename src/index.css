@@ -38,7 +38,12 @@
 
   html[dir="rtl"] .custom-tabs .nav-item {
   text-align: center;
-}
+  }
+
+  html[dir="rtl"] .recharts-legend-item-text {
+    text-align: end;
+    direction: rtl;
+  }
 
   html, body, #root {
     height: 100%;
@@ -291,4 +296,9 @@ button:hover,
   color: #999;
   font-size: 14px;
   background-color: #f5f3f0;
+}
+
+.recharts-legend-item-text {
+  text-align: start;
+  direction: ltr;
 }
