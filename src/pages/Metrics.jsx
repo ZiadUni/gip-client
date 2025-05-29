@@ -433,7 +433,7 @@ const Metrics = () => {
                 data={data.ticketType}
                 dataKey="value"
                 nameKey="type"
-                outerRadius={100}
+                outerRadius={90}
                 label={({ type, percent, value }) =>
                   `${t(`metrics.ticketType.${type}`)}: ${(percent * 100).toFixed(1)}% (${value})`
                 }
