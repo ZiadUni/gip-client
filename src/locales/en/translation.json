@@ -234,6 +234,56 @@
     "unflag": "Unflag",
     "flag": "Flag",
     "deleteButton": "Delete"
+  },
+
+  "mgmtDash": {
+    "backButton": "← Back",
+    "title": "🛠️ Manager Dashboard",
+    "userMgmt": "User Management",
+    "venueMgmt": "Venue Management",
+    "bookingMgmt": "Booking Management",
+    "feedbackMgmt": "Feedback & Ratings"
+  },
+
+  "userMgmt": {
+    "error1": "Failed to fetch users",
+    "error2": "Approval failed",
+    "success1": "Approved organizer:",
+    "error3": "Deny failed",
+    "success2": "Denied organizer request from",
+    "error4": "Role update failed",
+    "success3": "Updated role for",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "error5": "Failed to delete user",
+    "success4": "User deleted successfully",
+    "title": "👥 Manage Users",
+    "searchPlaceholder": "Search by name or email",
+    "filterTitle": "All Roles",
+    "filterVisitor": "Visitor",
+    "filterOrganizer": "Organizer",
+    "filterStaff": "Staff",
+    "filter2Title": "All Organizer Requests",
+    "filter2Reqd": "Requested",
+    "filter2NotReqd": "Not Requested",
+    "title2": "📋 User List",
+    "exportButton": "Export CSV",
+    "tableName": "Name",
+    "tableEmail": "Email",
+    "tableRole": "Role",
+    "tableOrgReq": "Organizer Request",
+    "tableActions": "Actions",
+    "noUsers": "No users found.",
+    "roleVisitor": "Visitor",
+    "roleOrg": "Organizer",
+    "roleStaff": "Staff",
+    "reqOrgYes": "Yes",
+    "reqOrgNo": "No",
+    "approveButton": "Approve",
+    "denyButton": "Deny",
+    "deleteButton": "Delete",
+    "userCounter": "Total Users:",
+    "previousButton": "← Prev",
+    "nextButton": "Next →"
   }
 
 }

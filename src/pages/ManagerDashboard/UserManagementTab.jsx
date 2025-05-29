@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Table, Button, Alert, Form, Row, Col } from 'react-bootstrap';
 import { apiFetch } from '../../utils/api';
 import { unparse } from 'papaparse';
+import { useTranslation } from 'react-i18next';
 
 const UserManagementTab = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +16,7 @@ const UserManagementTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const token = localStorage.getItem('token');
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchUsers();
@@ -26,7 +28,7 @@ const UserManagementTab = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch users');
+      if (!res.ok) throw new Error(data.error || t('userMgmt.error1'));
       setUsers(data);
     } catch (err) {
       setError(err.message);
@@ -45,9 +47,9 @@ const UserManagementTab = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Approval failed');
+      if (!res.ok) throw new Error(data.error || t('userMgmt.error2'));
 
-      setSuccess(`Approved organizer: ${data.user.name}`);
+      setSuccess(`t('userMgmt.success1) ${data.user.name}`);
       fetchUsers();
     } catch (err) {
       setError(err.message);
@@ -66,9 +68,9 @@ const UserManagementTab = () => {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Deny failed');
+    if (!res.ok) throw new Error(data.error || t('userMgmt.error3'));
 
-    setSuccess(`Denied organizer request from ${data.user.name}`);
+    setSuccess(`t('userMgmt.success2) ${data.user.name}`);
     fetchUsers();
   } catch (err) {
     setError(err.message);
@@ -87,9 +89,9 @@ const UserManagementTab = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Role update failed');
+      if (!res.ok) throw new Error(data.error || t('userMgmt.error4'));
 
-      setSuccess(`Updated role for ${data.user.name}`);
+      setSuccess(`t(userMgmt.success3) ${data.user.name}`);
       fetchUsers();
     } catch (err) {
       setError(err.message);
@@ -97,7 +99,7 @@ const UserManagementTab = () => {
   };
 
   const handleDeleteUser = async (userId) => {
-    const confirm = window.confirm('Are you sure you want to delete this user?');
+    const confirm = window.confirm(t('userMgmt.confirmDelete'));
     if (!confirm) return;
 
     try {
@@ -109,9 +111,9 @@ const UserManagementTab = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete user');
+      if (!res.ok) throw new Error(data.error || t('userMgmt.error5'));
 
-      setSuccess('User deleted successfully');
+      setSuccess(t('userMgmt.success4'));
       fetchUsers();
     } catch (err) {
       setError(err.message);
@@ -160,7 +162,7 @@ const UserManagementTab = () => {
 
   return (
     <div>
-      <h4 className="text-center mb-3">👥 Manage Users</h4>
+      <h4 className="text-center mb-3">{t('userMgmt.title')}</h4>
 
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
       {success && <Alert variant="success" className="text-center">{success}</Alert>}
@@ -170,33 +172,33 @@ const UserManagementTab = () => {
           <Col md={4}>
             <Form.Control
               type="text"
-              placeholder="Search by name or email"
+              placeholder={t('userMgmt.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </Col>
           <Col md={4}>
             <Form.Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-              <option value="all">All Roles</option>
-              <option value="visitor">Visitor</option>
-              <option value="organizer">Organizer</option>
-              <option value="staff">Staff</option>
+              <option value="all">{t('userMgmt.filterTitle')}</option>
+              <option value="visitor">{t('userMgmt.filterVisitor')}</option>
+              <option value="organizer">{t('userMgmt.filterOrganizer')}</option>
+              <option value="staff">{t('userMgmt.filterStaff')}</option>
             </Form.Select>
           </Col>
           <Col md={4}>
             <Form.Select value={organizerFilter} onChange={(e) => setOrganizerFilter(e.target.value)}>
-              <option value="all">All Organizer Requests</option>
-              <option value="yes">Requested</option>
-              <option value="no">Not Requested</option>
+              <option value="all">{t('userMgmt.filter2Title')}</option>
+              <option value="yes">{t('userMgmt.filter2Reqd')}</option>
+              <option value="no">{t('userMgmt.filter2NotReqd')}</option>
             </Form.Select>
           </Col>
         </Row>
       </Card>
 
         <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="mb-0">📋 User List</h5>
+        <h5 className="mb-0">{t('userMgmt.title2')}</h5>
         <Button size="sm" variant="outline-dark" onClick={handleExportCSV}>
-            Export CSV
+            {t('userMgmt.exportButton')}
         </Button>
         </div>
 
@@ -204,16 +206,16 @@ const UserManagementTab = () => {
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Organizer Request</th>
-              <th>Actions</th>
+              <th>{t('userMgmt.tableName')}</th>
+              <th>{t('userMgmt.tableEmail')}</th>
+              <th>{t('userMgmt.tableRole')}</th>
+              <th>{t('userMgmt.tableOrgReq')}</th>
+              <th>{t('userMgmt.tableActions')}</th>
             </tr>
           </thead>
           <tbody>
             {currentUsers.length === 0 ? (
-              <tr><td colSpan="5" className="text-center">No users found.</td></tr>
+              <tr><td colSpan="5" className="text-center">{t('userMgmt.noUsers')}</td></tr>
             ) : (
               currentUsers.map(u => (
                 <tr key={u._id}>
@@ -225,25 +227,25 @@ const UserManagementTab = () => {
                       onChange={(e) => handleRoleChange(u._id, e.target.value)}
                       size="sm"
                     >
-                      <option value="visitor">Visitor</option>
-                      <option value="organizer">Organizer</option>
-                      <option value="staff">Staff</option>
+                      <option value="visitor">{t('userMgmt.roleVisitor')}</option>
+                      <option value="organizer">{t('userMgmt.roleOrg')}</option>
+                      <option value="staff">{t('userMgmt.roleStaff')}</option>
                     </Form.Select>
                   </td>
-                  <td>{u.organizerRequest ? 'Yes' : 'No'}</td>
+                  <td>{u.organizerRequest ? t('userMgmt.reqOrgYes') : t('userMgmt.reqOrgNo')}</td>
                   <td className="d-flex gap-2 flex-wrap">
                     {u.organizerRequest && u.role === 'visitor' && (
                       <Button size="sm" variant="success" onClick={() => approveOrganizer(u._id)}>
-                        Approve
+                        {t('userMgmt.approveButton')}
                       </Button>
                     )}
                     {u.organizerRequest && u.role === 'visitor' && (
                       <Button size="sm" variant="warning" onClick={() => denyOrganizerRequest(u._id)}>
-                        Deny
+                        {t('userMgmt.denyButton')}
                       </Button>
                     )}
                     <Button size="sm" variant="danger" onClick={() => handleDeleteUser(u._id)}>
-                      Delete
+                      {t('userMgmt.deleteButton')}
                     </Button>
                   </td>
                 </tr>
@@ -253,7 +255,7 @@ const UserManagementTab = () => {
         </Table>
 
         <div className="d-flex justify-content-between align-items-center mt-3">
-          <span>Total Users: {totalUsers}</span>
+          <span>{t('userMgmt.userCounter')} {totalUsers}</span>
           <div>
             <Button
               variant="secondary"
@@ -262,7 +264,7 @@ const UserManagementTab = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="me-2"
             >
-              ← Prev
+              {t('usermgmt.previousButton')}
             </Button>
             <Button
               variant="secondary"
@@ -270,7 +272,7 @@ const UserManagementTab = () => {
               disabled={indexOfLast >= totalUsers}
               onClick={() => setCurrentPage(prev => prev + 1)}
             >
-              Next →
+              {t('userMgmt.nextButton')}
             </Button>
           </div>
         </div>
