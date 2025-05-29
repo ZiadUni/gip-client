@@ -266,7 +266,6 @@ const VenueManagementTab = () => {
                         onChange={e => setEditVenueData({ ...editVenueData, date: e.target.value })}
                       />
                     </td>
-                    <td><Form.Control value={editVenueData.availability} onChange={e => setEditVenueData({ ...editVenueData, availability: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.status} onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })} /></td>
@@ -285,7 +284,6 @@ const VenueManagementTab = () => {
                   <>
                     <td>{venue.name}</td>
                     <td>{formatDate(venue.date)}</td>
-                    <td>{t(`venueMgmt.availability.${venue.availability}`)}</td>
                     <td>{venue.capacity}</td>
                     <td>{venue.price}</td>
                     <td>{t(`venueMgmt.status.${venue.status}`)}</td>
