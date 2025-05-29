@@ -264,7 +264,7 @@ const UserManagementTab = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="me-2"
             >
-              {t('usermgmt.previousButton')}
+              {t('userMgmt.previousButton')}
             </Button>
             <Button
               variant="secondary"
