@@ -172,7 +172,7 @@ const Metrics = () => {
        <Container className="py-5">
     <div className="d-flex justify-content-start mb-3">
       <Button variant="secondary" onClick={() => navigate(-1)}>
-        ← Back
+        {t('metrics.backButton')}
       </Button>
     </div>
       <div style={{ padding: '40px', maxWidth: '1200px', margin: 'auto' }}>
@@ -228,7 +228,7 @@ const Metrics = () => {
           fill
           variant="pills"
         >
-                <Tab eventKey="filters" title="Filters">
+                <Tab eventKey="filters" title={t('metrics.filterTabTitle')}>
                   <h5 className="text-center mb-3">{t('metrics.timeFilterTitle')}</h5>
                   <div className="text-center mb-3">
                     <label><strong>{t('metrics.timeFilterStart')}</strong></label>
@@ -281,7 +281,7 @@ const Metrics = () => {
                   </div>
                 </Tab>
 
-                <Tab eventKey="export" title="Export">
+                <Tab eventKey="export" title={t('metrics.exportTabTitle')}>
                   <h5 className="text-center mb-3">{t('metrics.exportFilterTitle')}</h5>
                   {data && (
                     <div className="text-center d-flex flex-wrap justify-content-center gap-3">
@@ -290,7 +290,7 @@ const Metrics = () => {
                           { Metric: 'Tickets Sold', Value: data.ticketsSold },
                           { Metric: 'Total Revenue', Value: data.totalRevenue },
                           { Metric: 'Top Venue', Value: data.topVenue }
-                        ], 'metric-summary')}>Export Summary CSV</Button>
+                        ], 'metric-summary')}>{t('exportFilterSummaryButton')}</Button>
 
                       <Button className="export-button" onClick={() => exportToCSV(data.venueUsage, 'venue-usage')}>{t('exportFilterVenueButton')}</Button>
                       <Button className="export-button" onClick={() => exportToCSV(data.revenueTrend, 'revenue-trend')}>{t('exportFilterRevenueButton')}</Button>
@@ -349,7 +349,7 @@ const Metrics = () => {
           {generateInsights().map((msg, i) => <li key={i}>{msg}</li>)}
         </ul>
 
-        <h3 style={sectionHeader}>{t('Metrics.title6')}</h3>
+        <h3 style={sectionHeader}>{t('metrics.title6')}</h3>
         {data?.venueUsage?.length === 0 ? (
           <p className="text-center text-muted">{t('metrics.error3')}</p>
         ) : data?.venueUsage?.length > 0 ? (
@@ -442,7 +442,9 @@ const Metrics = () => {
                   return null;
                 }}
               />
-              <Legend />
+              <Legend
+                formatter={(value) => t(`metrics.ticketType.${value}`)}
+              />
             </PieChart>
           </ResponsiveContainer>
         ) : null}
