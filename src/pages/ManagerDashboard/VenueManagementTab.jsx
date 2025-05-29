@@ -243,7 +243,6 @@ const VenueManagementTab = () => {
             <tr>
               <th>{t('venueMgmt.tableName')}</th>
               <th>{t('venueMgmt.tableDate')}</th>
-              <th>{t('venueMgmt.tableTime')}</th>
               <th>{t('venueMgmt.tableCapacity')}</th>
               <th>{t('venueMgmt.tablePrice')}</th>
               <th>{t('venueMgmt.tableStatus')}</th>

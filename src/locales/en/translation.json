@@ -307,7 +307,6 @@
     "title2": "📋 All Venues",
     "tableName": "Name",
     "tableDate": "Date",
-    "tableTime": "Time",
     "tableCapacity": "Capacity",
     "tablePrice": "Price",
     "tableStatus": "Status",
