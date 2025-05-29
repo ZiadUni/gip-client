@@ -361,6 +361,7 @@ const Metrics = () => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
+              <YAxis />
               <XAxis dataKey="name" />
               <Tooltip
                 content={({ active, payload }) => {
@@ -375,7 +376,12 @@ const Metrics = () => {
                   return null;
                 }}
               />
-              <Bar dataKey="bookings" fill="#623E2A" />
+              <Bar
+                dataKey="bookings"
+                fill="#623E2A"
+                name={t('metrics.bookingsLabel')}
+                isAnimationActive={false}
+              />
             </BarChart>
           </ResponsiveContainer>
         ) : null}
