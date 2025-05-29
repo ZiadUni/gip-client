@@ -362,7 +362,6 @@ const Metrics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <YAxis />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload?.length) {
@@ -395,10 +394,9 @@ const Metrics = () => {
                 label={{
                   value: t('metrics.ROTDate'),
                   position: 'insideBottom',
-                  dy: 10,
-                  style: { fontSize: 12 }
+                  dy: 5,
+                  style: { fontSize: 8 }
                 }}
-                angle={-15}
                 textAnchor="end"
                 interval={0}
               />
