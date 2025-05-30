@@ -95,7 +95,7 @@ const UserManagementTab = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t('userMgmt.error4'));
 
-      setSuccess(`t('userMgmt.success3') ${data.user.name}`);
+      setSuccess(`${t('userMgmt.success3')} ${data.user.name}`);
       fetchUsers();
     } catch (err) {
       setError(err.message);
