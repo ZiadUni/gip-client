@@ -53,7 +53,7 @@ const UserManagementTab = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t('userMgmt.error2'));
 
-      setSuccess(`t('userMgmt.success1) ${data.user.name}`);
+      setSuccess(`${t('userMgmt.success1')} ${data.user.name}`);
       fetchUsers();
     } catch (err) {
       setError(err.message);
@@ -74,7 +74,7 @@ const UserManagementTab = () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || t('userMgmt.error3'));
 
-    setSuccess(`t('userMgmt.success2) ${data.user.name}`);
+    setSuccess(`${t('userMgmt.success2')} ${data.user.name}`);
     fetchUsers();
   } catch (err) {
     setError(err.message);
