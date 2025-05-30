@@ -10,6 +10,7 @@ import { apiFetch } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import FeedbackModal from '../components/FeedbackModal';
 import CancelReasonModal from '../components/CancelReasonModal';
+import { useTranslation } from 'react-i18next';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -23,6 +24,7 @@ const MyBookings = () => {
   const navigate = useNavigate();
   const [showCancelReason, setShowCancelReason] = useState(false);
   const [cancelBookingId, setCancelBookingId] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchBookings();
@@ -40,7 +42,7 @@ const MyBookings = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch bookings');
+      if (!res.ok) throw new Error(data.error || t('myBooks.error1'));
 
       setBookings(data);
     } catch (err) {
@@ -50,7 +52,7 @@ const MyBookings = () => {
 
   const handleCancel = async id => {
   const token = localStorage.getItem('token');
-  const confirm = window.confirm('Are you sure you want to cancel this booking?');
+  const confirm = window.confirm(t('myBooks.cancelConfirm'));
   if (!confirm) return;
 
   try {
@@ -62,9 +64,9 @@ const MyBookings = () => {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Cancel failed');
+    if (!res.ok) throw new Error(data.error || t('myBooks.error2'));
 
-    setSuccess('Booking cancelled');
+    setSuccess(t('myBooks.cancelSuccess'));
     setCancelBookingId(id);
     setShowCancelReason(true);
     fetchBookings();
@@ -84,26 +86,26 @@ const MyBookings = () => {
         <Card className="h-100 shadow-sm">
           <Card.Body>
             <Card.Title className="text-capitalize d-flex justify-content-between align-items-center">
-              {booking.type === 'event' ? '🎟️ Event Booking' : '🏢 Venue Booking'}
+              {booking.type === 'event' ? t('myBooks.cardTitleEvent') : t('myBooks.cardTitleVenue')}
             </Card.Title>
-            <Card.Text><strong>Status:</strong> {booking.status}</Card.Text>
-            <Card.Text><strong>Booked on:</strong> {new Date(booking.createdAt).toLocaleString()}</Card.Text>
+            <Card.Text><strong>{t('myBooks.cardStatus')}</strong> {t(`status.${booking.status}`)}</Card.Text>
+            <Card.Text><strong>{t('myBooks.cardBookedOn')}</strong> {new Date(booking.createdAt).toLocaleString()}</Card.Text>
 
             {booking.type === 'event' && booking.details && (
               <>
-                <Card.Text><strong>Event:</strong> {booking.details.title}</Card.Text>
-                <Card.Text><strong>Seats:</strong> {booking.details.seats?.join(', ') || booking.details.seat}</Card.Text>
-                <Card.Text><strong>Date:</strong> {booking.details.date}</Card.Text>
-                <Card.Text><strong>Time:</strong> {booking.details.time}</Card.Text>
-                <Card.Text><strong>Venue:</strong> {booking.details.venue}</Card.Text>
+                <Card.Text><strong>{t('myBooks.eventCardEvent')}</strong> {booking.details.title}</Card.Text>
+                <Card.Text><strong>{t('myBooks.eventCardSeats')}</strong> {booking.details.seats?.join(', ') || booking.details.seat}</Card.Text>
+                <Card.Text><strong>{t('myBooks.eventCardDate')}</strong> {booking.details.date}</Card.Text>
+                <Card.Text><strong>{t('myBooks.eventCardTime')}</strong> {booking.details.time}</Card.Text>
+                <Card.Text><strong>{t('myBooks.eventCardVenue')}</strong> {booking.details.venue}</Card.Text>
               </>
             )}
 
             {booking.type === 'venue' && booking.details && (
               <>
-                <Card.Text><strong>Venue:</strong> {booking.details.name}</Card.Text>
-                <Card.Text><strong>Date:</strong> {booking.details.date}</Card.Text>
-                <Card.Text><strong>Time:</strong> {booking.details.time}</Card.Text>
+                <Card.Text><strong>{t('myBooks.venueCardVenue')}</strong> {booking.details.name}</Card.Text>
+                <Card.Text><strong>{t('myBooks.venueCardDate')}</strong> {booking.details.date}</Card.Text>
+                <Card.Text><strong>{t('myBooks.venueCardTime')}</strong> {booking.details.time}</Card.Text>
               </>
             )}
 
@@ -114,7 +116,7 @@ const MyBookings = () => {
                   size="sm"
                   onClick={() => handleCancel(booking._id)}
                 >
-                  Cancel Booking
+                  {t('myBooks.cancelButton')}
                 </Button>
               )}
               {booking.status === 'confirmed' && (
@@ -123,7 +125,7 @@ const MyBookings = () => {
                   size="sm"
                   onClick={() => handleOpenFeedback(booking._id)}
                 >
-                  Leave Feedback
+                  {t('myBooks.feedbackButton')}
                 </Button>
               )}
             </div>
@@ -153,21 +155,21 @@ const MyBookings = () => {
         onClick={() => navigate(-1)}
         className="mb-3"
       >
-        ← Back
+        {t('myBooks.backButton')}
       </Button>
-      <h2 className="text-center text-brown mb-4">📄 My Bookings</h2>
+      <h2 className="text-center text-brown mb-4">{t('myBooks.title')}</h2>
 
       {error && <Alert variant="danger" className="text-center">{error}</Alert>}
       {success && <Alert variant="success" className="text-center">{success}</Alert>}
-      {!error && bookings.length === 0 && <p className="text-center">No bookings yet.</p>}
+      {!error && bookings.length === 0 && <p className="text-center">{t('myBooks.noBookings')}</p>}
 
       <Row className="mb-4">
         <Col md={6}>
           <Form.Select value={filter} onChange={e => setFilter(e.target.value)}>
-            <option value="all">Filter by Status</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="pending">Pending</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="all">{t('myBooks.typeFilterTitle')}</option>
+            <option value="confirmed">{t('myBooks.typeFilterConfirmed')}</option>
+            <option value="pending">{t('myBooks.typeFilterPending')}</option>
+            <option value="cancelled">{t('myBooks.typeFilterCancelled')}</option>
           </Form.Select>
         </Col>
         <Col md={6}>
@@ -175,7 +177,7 @@ const MyBookings = () => {
             className="bg-brown border-0 w-100"
             onClick={() => setSortNewestFirst(!sortNewestFirst)}
           >
-            Sort: {sortNewestFirst ? 'Newest First' : 'Oldest First'}
+            {t('myBooks.dateFilterTitle')} {sortNewestFirst ? t('myBooks.dateFilterNew') : t('myBooks.dateFilterOld')}
           </Button>
         </Col>
       </Row>
@@ -186,12 +188,12 @@ const MyBookings = () => {
         className="mb-3 justify-content-center custom-tabs"
         fill
       >
-        <Tab eventKey="event" title="🎟 Event Bookings">
+        <Tab eventKey="event" title={t('myBooks.eventTab')}>
           <Row className="g-4">
             {getFilteredBookings('event').map(renderCard)}
           </Row>
         </Tab>
-        <Tab eventKey="venue" title="🏛 Venue Bookings">
+        <Tab eventKey="venue" title={t('myBooks.venueTab')}>
           <Row className="g-4">
             {getFilteredBookings('venue').map(renderCard)}
           </Row>

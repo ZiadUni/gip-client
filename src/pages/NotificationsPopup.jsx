@@ -4,17 +4,18 @@
 import React, { useEffect, useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const NotificationPopup = () => {
   const [notifications, setNotifications] = useState([]);
 
-  // Get/set from localStorage
   const getSeen = () => JSON.parse(localStorage.getItem('seenNotifications') || '[]');
   const addSeen = (id) => {
     const seen = getSeen();
     const updated = [...new Set([...seen, id])];
     localStorage.setItem('seenNotifications', JSON.stringify(updated));
   };
+  const { t } = useTranslation();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,7 +28,7 @@ const NotificationPopup = () => {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error('Failed to fetch notifications');
+        if (!res.ok) throw new Error(t('notifs.error1'));
 
         const seen = getSeen();
         const unseen = data.filter(n => !seen.includes(n._id));
@@ -53,7 +54,7 @@ const NotificationPopup = () => {
     const parts = itemId.split('__');
     if (parts.length === 3) {
       const [name, date, time] = parts;
-      return `${name} on ${date} at ${time}`;
+      return t('notifs.itemLabel', { name, date, time });
     }
     return itemId;
   };
@@ -74,13 +75,13 @@ const NotificationPopup = () => {
           onClose={() => handleClose(n._id)}
         >
           <Toast.Header>
-            <strong className="me-auto">🔔 Availability Alert</strong>
+            <strong className="me-auto">{t('notifs.title')}</strong>
           </Toast.Header>
           <Toast.Body style={{ color: '#333'}}>
             {n.type === 'event' ? (
-              <>🎟️ Seat <strong>#{n.details?.seat}</strong> for <strong>{formatItemLabel(n.itemId)}</strong> is now available!</>
+              <>{t('notifs.seat')} <strong>#{n.details?.seat}</strong> {t('notifs.for')} <strong>{formatItemLabel(n.itemId)}</strong> {t('notifs.seatAvailable')}</>
             ) : (
-              <>🏢 <strong>{n.details?.name}</strong> has a free slot at <strong>{n.details?.time}</strong>!</>
+              <>{t('notifs.venue')} <strong>{n.details?.name}</strong> {t('notifs.venueAvailable')} <strong>{n.details?.time}</strong>!</>
             )}
           </Toast.Body>
         </Toast>

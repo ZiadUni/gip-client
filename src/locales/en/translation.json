@@ -439,6 +439,55 @@
       "Pending": "Pending",
       "Cancelled": "Cancelled"
     }
+  },
+
+  "myBooks": {
+    "error1": "Failed to fetch bookings",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
+    "error2": "Cancel failed",
+    "cancelSuccess": "Booking cancelled",
+    "cardTitleEvent": "🎟️ Event Booking",
+    "cardTitleVenue": "🏢 Venue Booking",
+    "cardStatus": "Status:",
+    "cardBookedOn": "Booked on:",
+    "eventCardEvent": "Event:",
+    "eventCardSeats": "Seats:",
+    "eventCardDate": "Date:",
+    "eventCardTime": "Time:",
+    "eventCardVenue": "Venue:",
+    "venueCardVenue": "Venue:",
+    "venueCardDate": "Date:",
+    "venueCardTime": "Time:",
+    "cancelButton": "Cancel Booking",
+    "feedbackButton": "Leave Feedback",
+    "backButton": "← Back",
+    "title": "📄 My Bookings",
+    "noBookings": "No bookings yet.",
+    "typeFilterTitle": "Filter by Status",
+    "typeFilterConfirmed": "Confirmed",
+    "typeFilterPending": "Pending",
+    "typeFilterCancelled": "Cancelled",
+    "dateFilterTitle": "Sort:",
+    "dateFilterNew": "Newest First",
+    "dateFilterOld": "Oldest First",
+    "eventTab": "🎟 Event Bookings",
+    "venueTab": "🏛 Venue Bookings",
+    "status": {
+      "Confirmed": "Confirmed",
+      "Pending": "Pending",
+      "Cancelled": "Cancelled"
+    }
+  },
+
+  "notifs": {
+    "error1": "Failed to fetch notifications",
+    "itemLabel": "{{name}} on {{date}} at {{time}}",
+    "title": "🔔 Availability Alert",
+    "seat": "🎟️ Seat",
+    "for": "for",
+    "seatAvailable": "is now available!",
+    "venue": "🏢 Venue",
+    "venueAvailable": "has a free slot at"
   }
 
 }
