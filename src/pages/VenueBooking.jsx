@@ -1,111 +1,86 @@
 // VenueBooking.jsx - Lists venues for booking, each links to slot selection
 // Redirects visitors to home if accessed directly
 
-// pages/VenueBooking.jsx
-
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Spinner, Row, Col, Container } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import '../index.css';
 
-const VenueBooking = () => {
-  const { t, i18n } = useTranslation();
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+function VenueBooking() {
+  const [venues, setVenues] = useState([]);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchVenues = async () => {
       try {
-        const res = await fetch('/api/events/public');
-        const data = await res.json();
+        const lang = i18n.language || 'en';
+        const response = await fetch(`https://gip-backend.onrender.com/api/venues?lang=${lang}`);
 
-        const grouped = {};
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          throw new Error(`Unexpected response from /api/venues:\n${text.slice(0, 200)}`);
+        }
 
-        data.forEach((booking) => {
-          const key = booking.details.event;
-          if (!grouped[key]) {
-            grouped[key] = {
-              event: key,
-              venue: booking.details.name,
-              date: booking.details.date,
-              slots: new Set()
-            };
-          }
-
-          if (Array.isArray(booking.details.slots)) {
-            booking.details.slots.forEach((slot) => grouped[key].slots.add(slot));
-          } else {
-            grouped[key].slots.add(booking.details.time);
-          }
-        });
-
-        setEvents(Object.values(grouped).map((e) => ({
-          ...e,
-          slots: Array.from(e.slots)
-        })));
+        const data = await response.json();
+        setVenues(data);
       } catch (error) {
-        console.error('Failed to fetch events:', error);
-      } finally {
-        setLoading(false);
+        console.error('❌ Failed to fetch venues:', error);
       }
     };
+    
+    console.log('🔍 VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
+    fetchVenues();
+  }, [i18n.language]);
 
-    fetchEvents();
-  }, []);
-
-  const formatTimeRange = (slots) => {
-    const times = slots
-      .map((slot) => slot.split(' - '))
-      .flat()
-      .sort((a, b) => new Date(`1970/01/01 ${a}`) - new Date(`1970/01/01 ${b}`));
-    return `${times[0]} - ${times[times.length - 1]}`;
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Available':
+        return 'green';
+      case 'Booked':
+        return 'red';
+      case 'Unavailable':
+      default:
+        return 'gray';
+    }
   };
 
   return (
-    <Container className="mt-5">
-      <h2 className="text-center mb-4">{t('venueBook.title')}</h2>
-
-      {loading ? (
-        <div className="d-flex justify-content-center">
-          <Spinner animation="border" variant="primary" />
-        </div>
-      ) : events.length === 0 ? (
-        <p className="text-center">{t('venueBook.noVenues')}</p>
-      ) : (
-        <Row>
-          {events.map((event, idx) => (
-            <Col key={idx} md={6} lg={4} className="mb-4">
-              <Card className="h-100">
-                <Card.Img
-                  variant="top"
-                  src="https://via.placeholder.com/400x200?text=Event"
-                  style={{ objectFit: 'cover' }}
-                />
-                <Card.Body className="d-flex flex-column">
-                  <Card.Title>{event.event}</Card.Title>
-                  <Card.Text>
-                    <strong>{t('venueBook.date')}:</strong> {event.date}
-                    <br />
-                    <strong>{t('venueBook.time')}:</strong> {formatTimeRange(event.slots)}
-                    <br />
-                    <strong>{t('venueBook.venue')}:</strong> {event.venue}
-                  </Card.Text>
-                  <Button
-                    variant="primary"
-                    className="mt-auto"
-                    onClick={() => navigate(`/live-booking/${event.event}`)}
-                  >
-                    {t('tickets.bookButton')}
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
-    </Container>
+    <div className="page-container">
+      <h2 className="text-center mb-4">{t('venues.title')}</h2>
+      <div className="d-flex flex-wrap justify-content-center">
+        {venues.length === 0 ? (
+          <p>{t('venues.noVenues')}</p>
+        ) : (
+          venues.map((venue) => (
+            <Card key={venue._id} className="m-3 venue-card">
+              <Card.Img variant="top" src={venue.image} alt={venue.name} />
+              <Card.Body>
+                <Card.Title>{venue.name}</Card.Title>
+                <Card.Text>
+                  {t('venues.cardDate')} {venue.date}<br />
+                  {t('venues.cardCapacity')} {venue.capacity} {t('venues.people')}<br />
+                  {t('venues.cardPrice')} ${venue.price}<br />
+                  {t('venues.cardStatus')} <span style={{ color: getStatusColor(venue.status), fontWeight: 'bold' }}>
+                    {t(`venues.status.${venue.status}`)}
+                  </span>
+                </Card.Text>
+                <Button
+                  variant="primary"
+                  disabled={venue.status !== 'Available'}
+                  onClick={() => navigate(`/venue-booking/${venue._id}`)}
+                >
+                  {t('venues.bookButton')}
+                </Button>
+              </Card.Body>
+            </Card>
+          ))
+        )}
+      </div>
+    </div>
   );
-};
+}
 
 export default VenueBooking;
