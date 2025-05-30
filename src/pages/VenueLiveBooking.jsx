@@ -8,6 +8,10 @@ import { apiFetch } from '../utils/api';
 import { useTranslation } from 'react-i18next';
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+useEffect(() => {
+  document.title = `GIP - ${t('titles.venueLiveBook')}`;
+}, [t]);
+
 const VenueLiveBooking = () => {
   const [slots, setSlots] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -58,10 +62,6 @@ useEffect(() => {
         console.error('Fetch availability error:', err);
       }
     };
-
-useEffect(() => {
-  document.title = `GIP - ${t('titles.venueLiveBook')}`;
-}, [t]);
 
     fetchAvailability();
     const interval = setInterval(fetchAvailability, 4000);
