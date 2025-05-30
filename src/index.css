@@ -327,16 +327,17 @@ button:hover,
   max-width: 80px;
 }
 
-.toast-container-rtl {
-  position: fixed !important;
-  top: 130px !important;
-  right: 1rem !important;
-  left: auto !important;
-  direction: rtl;
-  text-align: right;
+.toast-rtl .toast-header {
+  flex-direction: row-reverse !important;
+  justify-content: flex-end !important;
 }
 
-.toast-container-ltr {
-  direction: ltr;
-  text-align: left;
+.toast-rtl .toast-body {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.toast-ltr .toast-body {
+  direction: ltr !important;
+  text-align: left !important;
 }
