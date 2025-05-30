@@ -80,7 +80,7 @@ const VenueBooking = () => {
                     <Card.Text><strong>{t('venues.cardCapacity')}</strong> {slot.capacity} {t('venues.people')}</Card.Text>
                     <Card.Text>
                       <strong>{t('venues.cardStatus')}</strong>{' '}
-                      <span className={slot.status === 'Available' ? 'text-success' : 'text-danger'}>
+                      <span className={['Available', 'متاحة'].includes(slot.status) ? 'text-success' : 'text-danger'}>
                         {slot.status}
                       </span>
                     </Card.Text>
