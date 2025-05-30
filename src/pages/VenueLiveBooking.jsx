@@ -8,10 +8,6 @@ import { apiFetch } from '../utils/api';
 import { useTranslation } from 'react-i18next';
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-useEffect(() => {
-  document.title = `GIP - ${t('titles.venueLiveBook')}`;
-}, [t]);
-
 const VenueLiveBooking = () => {
   const [slots, setSlots] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -25,9 +21,13 @@ const VenueLiveBooking = () => {
   const selectedVenue = location.state?.slot;
   const { t } = useTranslation();
 
-useEffect(() => {
-  if (!location.state?.slot) navigate('/venue-booking');
-  if (user.role === 'visitor') navigate('/');
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.venueLiveBook')}`;
+  }, [t]);
+
+  useEffect(() => {
+    if (!location.state?.slot) navigate('/venue-booking');
+    if (user.role === 'visitor') navigate('/');
 
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
@@ -50,14 +50,14 @@ useEffect(() => {
         const match = bookings.find(
           b => b.itemId === `${selectedVenue.name}__${selectedVenue.date}` && b.status === 'confirmed'
         );
-          if (match) {
-            if (Array.isArray(match.details.slots)) {
-              setMySlotTimes(match.details.slots);
-            } else if (typeof match.details.time === 'string') {
-              const parts = match.details.time.split(' - ');
-              setMySlotTimes([match.details.time, parts[0] && parts[1] ? `${parts[0]} - ${parts[1]}` : match.details.time]);
-            }
+        if (match) {
+          if (Array.isArray(match.details.slots)) {
+            setMySlotTimes(match.details.slots);
+          } else if (typeof match.details.time === 'string') {
+            const parts = match.details.time.split(' - ');
+            setMySlotTimes([match.details.time, parts[0] && parts[1] ? `${parts[0]} - ${parts[1]}` : match.details.time]);
           }
+        }
       } catch (err) {
         console.error('Fetch availability error:', err);
       }
@@ -81,31 +81,31 @@ useEffect(() => {
     );
   };
 
-const handleProceed = () => {
-  const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
+  const handleProceed = () => {
+    const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
 
-  if (!eventName.trim()) {
-    return setError(t('venueBook.errro1'));
-  }
-  if (!selectedSlots.length || !selectedVenue) {
-    return setError(t('venueBook.error2'));
-  }
-
-  const items = selectedSlots.map(slot => ({
-    ...selectedVenue,
-    time: slot.time,
-    event: eventName,
-    slots: [slot.time],
-    venueId: selectedVenue._id
-  }));
-
-  navigate('/payment', {
-    state: {
-      type: 'venue',
-      items
+    if (!eventName.trim()) {
+      return setError(t('venueBook.errro1'));
     }
-  });
-};
+    if (!selectedSlots.length || !selectedVenue) {
+      return setError(t('venueBook.error2'));
+    }
+
+    const items = selectedSlots.map(slot => ({
+      ...selectedVenue,
+      time: slot.time,
+      event: eventName,
+      slots: [slot.time],
+      venueId: selectedVenue._id
+    }));
+
+    navigate('/payment', {
+      state: {
+        type: 'venue',
+        items
+      }
+    });
+  };
 
   const handleNotify = async (slot) => {
     const token = localStorage.getItem('token');
@@ -138,25 +138,25 @@ const handleProceed = () => {
     }
   };
 
-    const getColor = (status, isSelected, time) => {
-      const normalizedTime = (time || '').trim();
-      const isMine = mySlotTimes.some(t => t.trim() === normalizedTime);
+  const getColor = (status, isSelected, time) => {
+    const normalizedTime = (time || '').trim();
+    const isMine = mySlotTimes.some(t => t.trim() === normalizedTime);
 
-      if (status === 'booked') return '#dc3545';
-      if (status === 'pending') return '#0dcaf0';
-      if (isMine) return '#198754';
-      if (isSelected) return '#0d6efd';
-      return '#adb5bd';
-    };
+    if (status === 'booked') return '#dc3545';
+    if (status === 'pending') return '#0dcaf0';
+    if (isMine) return '#198754';
+    if (isSelected) return '#0d6efd';
+    return '#adb5bd';
+  };
 
   return (
     <div className="fade-in">
       <Container className="py-5 text-center">
-      <div className="d-flex justify-content-start mb-3">
-        <Button variant="secondary" onClick={() => navigate(-1)}>
-          {t('venueBook.backButton')}
-        </Button>
-      </div>
+        <div className="d-flex justify-content-start mb-3">
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            {t('venueBook.backButton')}
+          </Button>
+        </div>
         <h2 className="text-brown mb-3">{t('venueBook.title')}</h2>
         {selectedVenue && (
           <div className="mb-4">
@@ -215,22 +215,22 @@ const handleProceed = () => {
         </Row>
 
         <div className="text-center mt-4">
-        <span className="me-3">
-          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> {t('venueBook.legendYourBooking')}
-        </span>
-        <span className="me-3">
-          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0d6efd', marginRight: 5 }} /> {t('venueBook.legendSelected')}
-        </span>
-        <span className="me-3">
-          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> {t('venueBook.legendAvailable')}
-        </span>
-        <span className="me-3">
-          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> {t('venueBook.legendBooked')}
-        </span>
-        <span>
-          <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> {t('venueBook.legendPending')}
-        </span>
-      </div>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#198754', marginRight: 5 }} /> {t('venueBook.legendYourBooking')}
+          </span>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0d6efd', marginRight: 5 }} /> {t('venueBook.legendSelected')}
+          </span>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#adb5bd', marginRight: 5 }} /> {t('venueBook.legendAvailable')}
+          </span>
+          <span className="me-3">
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#dc3545', marginRight: 5 }} /> {t('venueBook.legendBooked')}
+          </span>
+          <span>
+            <span style={{ display: 'inline-block', width: 20, height: 20, backgroundColor: '#0dcaf0', marginRight: 5 }} /> {t('venueBook.legendPending')}
+          </span>
+        </div>
 
         {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
         {success && <Alert variant="success" className="mt-4">{success}</Alert>}
