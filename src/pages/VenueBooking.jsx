@@ -80,7 +80,12 @@ const VenueBooking = () => {
                     <Card.Text><strong>{t('venues.cardCapacity')}</strong> {slot.capacity} {t('venues.people')}</Card.Text>
                     <Card.Text>
                       <strong>{t('venues.cardStatus')}</strong>{' '}
-                      <span className={['Available', 'متاح'].includes(slot.status) ? 'text-success' : 'text-danger'}>
+                      <span className={
+                        ['Available', 'متاح'].includes(slot.status) ? 'text-success' :
+                        ['Booked', 'محجوز'].includes(slot.status) ? 'text-danger' :
+                        ['Unavailable', 'غير متاح'].includes(slot.status) ? 'text-secondary' :
+                        ''
+                      }>
                         {slot.status}
                       </span>
                     </Card.Text>
