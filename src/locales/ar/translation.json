@@ -505,7 +505,7 @@
     "bookButton": "احجز الأن"
   },
 
-  "venue": {
+  "venues": {
     "backButton": "→ الرجوع",
     "title": "قائمة القاعات",
     "cardDate": "التاريخ:",
