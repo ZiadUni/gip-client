@@ -193,7 +193,7 @@ const VenueLiveBooking = () => {
                 >
                   <Card.Body>
                     <Card.Title>{slot.time}</Card.Title>
-                    <Card.Text>{t('venueBook.slotStatus')} {t(`venues.status.${slot.status.charAt(0).toUpperCase() + slot.status.slice(1)}`)}</Card.Text>
+                    <Card.Text>{slot.status}</Card.Text>
                     {slot.status !== 'available' && (
                       <Button
                         variant="light"
