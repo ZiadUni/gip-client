@@ -61,9 +61,9 @@ const NotificationPopup = () => {
 
   return (
     <ToastContainer
-      className={`p-3 toast-container-ltr`}
-      position="top-start"
-      style={{ zIndex: 9999, top: '130px' }}
+      className={`p-3 ${document.dir === 'rtl' ? 'toast-container-rtl' : 'toast-container-ltr'}`}
+      position={document.dir === 'rtl' ? 'top-start' : 'top-end'}
+      style={{ zIndex: 9999, top: '160px' }} // lower the position
     >
       {notifications.map(n => (
         <Toast
