@@ -25,10 +25,6 @@ useEffect(() => {
   if (!location.state?.slot) navigate('/venue-booking');
   if (user.role === 'visitor') navigate('/');
 
-useEffect(() => {
-  document.title = `GIP - ${t('titles.venueLiveBook')}`;
-}, [t]);
-
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
       const token = localStorage.getItem('token');
@@ -62,6 +58,10 @@ useEffect(() => {
         console.error('Fetch availability error:', err);
       }
     };
+
+useEffect(() => {
+  document.title = `GIP - ${t('titles.venueLiveBook')}`;
+}, [t]);
 
     fetchAvailability();
     const interval = setInterval(fetchAvailability, 4000);
