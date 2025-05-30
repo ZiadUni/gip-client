@@ -8,6 +8,10 @@ import { useTranslation } from 'react-i18next';
 const About = () => {
   const { t } = useTranslation();
   
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.about')}`;
+  }, [t]);
+
   return (
     <div className="fade-in">
     <Container className="py-5" style={{ maxWidth: '900px' }}>

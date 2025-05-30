@@ -30,6 +30,10 @@ const MyBookings = () => {
     fetchBookings();
   }, []);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.myBookings')}`;
+  }, [t]);
+
   const fetchBookings = async () => {
     const token = localStorage.getItem('token');
 

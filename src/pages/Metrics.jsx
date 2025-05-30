@@ -79,6 +79,10 @@ const Metrics = () => {
   }
 }, [data]);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.metrics')}`;
+  }, [t]);
+
   const getTrend = (nowList, type, lastList) => {
     const now = nowList?.find(t => t.type === type)?.value || 0;
     const last = lastList?.find(t => t.type === type)?.value || 0;

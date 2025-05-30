@@ -544,6 +544,23 @@
     "legendPending": "Pending",
     "selectedSlot": "Selected Slots:",
     "proceedPayment": "Proceed to Payment"
+  },
+
+  "titles": {
+    "mgmtDashboard": "Management Dashboard",
+    "about": "About Us",
+    "bookConfirm": "Booking Confirmation",
+    "home": "Home",
+    "liveBook": "Live Booking",
+    "login": "Login",
+    "metrics": "Metrics",
+    "myBookings": "My Bookings",
+    "notFound": "Not Found",
+    "payment": "Payment",
+    "register": "Register",
+    "tickets": "Ticket Booking",
+    "venueBook": "Venue Booking",
+    "venueLiveBook": "Venue Live Booking"
   }
 
 }

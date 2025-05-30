@@ -67,6 +67,10 @@ const LiveBooking = () => {
     return () => clearInterval(interval);
   }, [event]);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.liveBook')}`;
+  }, [t]);
+  
   const handleClick = (seat) => {
     if (seat.status !== 'available') return;
     setError('');

@@ -20,6 +20,10 @@ const VenueBooking = () => {
   }, [user, navigate]);
 
   useEffect(() => {
+    document.title = `GIP - ${t('titles.venueBook')}`;
+  }, [t]);  
+
+  useEffect(() => {
     const fetchVenues = async () => {
       try {
         const token = localStorage.getItem('token');

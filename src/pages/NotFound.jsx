@@ -8,6 +8,10 @@ import { useTranslation } from 'react-i18next';
 const NotFound = () => {
     const { t } = useTranslation();
   
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.notFound')}`;
+  }, [t]);
+
   return (
     <Container className="text-center py-5">
       <h1 className="display-4 text-brown">404</h1>

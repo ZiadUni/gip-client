@@ -18,6 +18,10 @@ const BookingManagementTab = () => {
     fetchBookings();
   }, []);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.mgmtDashboard')}`;
+  }, [t]);
+
   const fetchBookings = async () => {
     try {
       const res = await apiFetch('/admin/bookings', {

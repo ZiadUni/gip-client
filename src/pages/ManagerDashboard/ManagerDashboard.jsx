@@ -14,6 +14,10 @@ const ManagerDashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.mgmtDashboard')}`;
+  }, [t]);
+
   return (
     <Container className="py-5">
       <div className="d-flex justify-content-start mb-3">

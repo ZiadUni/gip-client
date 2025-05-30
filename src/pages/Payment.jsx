@@ -30,6 +30,10 @@ const Payment = () => {
   
   const { t } = useTranslation();
 
+    useEffect(() => {
+    document.title = `GIP - ${t('titles.payment')}`;
+  }, [t]);
+
   const totalPrice = type === 'venue'
     ? booking.reduce((sum, b) => sum + Number(String(b.price).replace('$', '')), 0)
     : 100;

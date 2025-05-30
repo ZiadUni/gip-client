@@ -13,6 +13,10 @@ const TicketBooking = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
+    document.title = `GIP - ${t('titles.tickets')}`;
+  }, [t]);  
+
+  useEffect(() => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem('token');

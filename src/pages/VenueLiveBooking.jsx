@@ -25,6 +25,10 @@ const VenueLiveBooking = () => {
     if (!location.state?.slot) navigate('/venue-booking');
     if (user.role === 'visitor') navigate('/');
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.venueLiveBook')}`;
+  }, [t]);    
+
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
       const token = localStorage.getItem('token');

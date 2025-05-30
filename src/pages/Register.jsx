@@ -22,6 +22,10 @@ const Register = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { t } = useTranslation();
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.register')}`;
+  }, [t]);  
+
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');

@@ -21,6 +21,10 @@ const BookingConfirmation = () => {
     else navigate('/venue-booking');
   };
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.bookConfirm')}`;
+  }, [t]);
+
   return (
     <div className="fade-in">
       <Container className="py-5" style={{ maxWidth: '700px' }}>

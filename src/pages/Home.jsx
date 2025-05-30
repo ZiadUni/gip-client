@@ -11,6 +11,10 @@ const Home = () => {
   const isVisitor = user.role === 'visitor';
   const { t } = useTranslation();
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.home')}`;
+  }, [t]);
+  
   return (
     <div className="fade-in">
       <div style={container}>

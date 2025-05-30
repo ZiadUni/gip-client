@@ -30,8 +30,7 @@
     "about": "معلومات عنا",
     "myBookings": "حجوزاتي",
     "managerPanel": "لوحة المدير"
-    }
-,
+    },
 
   "sidebar": {
     "home": "الرئيسية",
@@ -545,6 +544,23 @@
     "legendPending": "قيد الحجز",
     "selectedSlot": "الفترات الزمنية التي اخترتها:",
     "proceedPayment": "الذهاب للدفع"
+  },
+
+  "titles": {
+    "mgmtDashboard": "اللوحة الإدارية",
+    "about": "معلومات عنا",
+    "bookConfirm": "تأكيد الحجز",
+    "home": "الرئيسية",
+    "liveBook": "الحجز المباشر",
+    "login": "تسجيل الدخول",
+    "metrics": "التحليلات",
+    "myBookings": "حجوزاتي",
+    "notFound": "غير موجودة",
+    "payment": "الدفع",
+    "register": "إنشاء حساب",
+    "tickets": "حجز التذاكر",
+    "venueBook": "حجز القاعات",
+    "venueLiveBook": "الحجز المباشر"
   }
   
 }

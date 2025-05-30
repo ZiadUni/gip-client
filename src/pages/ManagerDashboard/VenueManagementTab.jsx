@@ -39,6 +39,10 @@ const VenueManagementTab = () => {
     fetchVenues();
   }, []);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.mgmtDashboard')}`;
+  }, [t]);
+
   const fetchVenues = async () => {
     try {
       const res = await apiFetch('/venues', {

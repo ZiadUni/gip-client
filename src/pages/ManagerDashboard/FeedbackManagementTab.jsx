@@ -17,6 +17,10 @@ const FeedbackManagementTab = () => {
     fetchFeedback();
   }, []);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.mgmtDashboard')}`;
+  }, [t]);
+
   const fetchFeedback = async () => {
     try {
       const res = await apiFetch('/feedback', {

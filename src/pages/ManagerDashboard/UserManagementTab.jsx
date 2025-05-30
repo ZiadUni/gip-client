@@ -22,6 +22,10 @@ const UserManagementTab = () => {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.mgmtDashboard')}`;
+  }, [t]);
+
   const fetchUsers = async () => {
     try {
       const res = await apiFetch('/users', {

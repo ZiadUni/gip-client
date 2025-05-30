@@ -54,6 +54,10 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    document.title = `GIP - ${t('titles.login')}`;
+  }, [t]);
+
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
       <Card style={{ width: '100%', maxWidth: '400px' }} className="p-4 shadow-sm">
