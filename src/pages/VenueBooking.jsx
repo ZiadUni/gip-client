@@ -17,11 +17,17 @@ function VenueBooking() {
       try {
         const lang = i18n.language || 'en';
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/venues?lang=${lang}`);
-        const data = await response.json();
 
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          throw new Error(`Unexpected response from /api/venues:\n${text.slice(0, 200)}`);
+        }
+
+        const data = await response.json();
         setVenues(data);
       } catch (error) {
-        console.error('Failed to fetch venues:', error);
+        console.error('❌ Failed to fetch venues:', error);
       }
     };
 
