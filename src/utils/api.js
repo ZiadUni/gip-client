@@ -7,21 +7,14 @@ export const apiFetch = async (endpoint, options = {}) => {
   const lang = i18n.language || 'en';
 
   const separator = endpoint.includes('?') ? '&' : '?';
-  const fullEndpoint = endpoint.replace(/^\/+/, ''); // remove starting slashes
+  const fullEndpoint = endpoint.replace(/^\/+/, '');
   const url = `${API_BASE_URL}/${fullEndpoint}${separator}lang=${lang}`;
 
-  const response = await fetch(url, {
+  return fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...(options.headers || {})
     }
   });
-
-  if (!response.ok) {
-    throw new Error(`API error ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data;
 };
