@@ -85,7 +85,7 @@ const VenueLiveBooking = () => {
     const selectedSlots = slots.filter(s => selectedIds.includes(s.id));
 
     if (!eventName.trim()) {
-      return setError(t('venueBook.errro1'));
+      return setError(t('venueBook.error1'));
     }
     if (!selectedSlots.length || !selectedVenue) {
       return setError(t('venueBook.error2'));
