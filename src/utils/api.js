@@ -5,7 +5,7 @@ const API_BASE_URL = 'https://gip-backend.onrender.com/api';
 const api = async (endpoint, options = {}) => {
   const lang = i18n.language || 'en';
   const separator = endpoint.includes('?') ? '&' : '?';
-  const url = `${API_BASE_URL}${endpoint}${separator}lang=${lang}`;
+  const url = `${API_BASE_URL}/${endpoint.replace(/^\/+/, '')}${separator}lang=${lang}`;
 
   const res = await fetch(url, {
     ...options,
