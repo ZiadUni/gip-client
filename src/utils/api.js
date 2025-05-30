@@ -19,4 +19,4 @@ const api = async (endpoint, options = {}) => {
   return { status: res.status, data };
 };
 
-export default api;
+export const apiFetch = api;
