@@ -46,6 +46,7 @@
   }
 
   html[dir="rtl"] .toast-header {
+    flex-direction: row-reverse;
     justify-content: flex-end;
   }
 
@@ -324,4 +325,13 @@ button:hover,
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 80px;
+}
+
+.toast-container-rtl {
+  position: fixed !important;
+  top: 130px !important;
+  right: 1rem !important;
+  left: auto !important;
+  direction: rtl;
+  text-align: right;
 }
