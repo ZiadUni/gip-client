@@ -15,7 +15,8 @@ const NotificationPopup = () => {
     const updated = [...new Set([...seen, id])];
     localStorage.setItem('seenNotifications', JSON.stringify(updated));
   };
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const direction = i18n.dir();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -61,15 +62,15 @@ const NotificationPopup = () => {
 
   return (
     <ToastContainer
+      position={direction === 'rtl' ? 'top-start' : 'top-end'}
       className={`p-3`}
-      position={document.dir === 'rtl' ? 'top-start' : 'top-end'}
       style={{
         zIndex: 9999,
-        top: '220px',
-        left: document.dir === 'rtl' ? '1rem' : 'auto',
-        right: document.dir === 'ltr' ? '1rem' : 'auto',
-        direction: document.dir === 'rtl' ? 'rtl' : 'ltr',
-        textAlign: document.dir === 'rtl' ? 'right' : 'left'
+        top: '200px', // move toast lower
+        insetInlineStart: direction === 'rtl' ? '1rem' : 'auto',
+        insetInlineEnd: direction === 'ltr' ? '1rem' : 'auto',
+        direction: direction,
+        textAlign: direction === 'rtl' ? 'right' : 'left'
       }}
     >
       {notifications.map(n => (
