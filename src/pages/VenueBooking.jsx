@@ -5,11 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const VenueBooking = () => {
   const [venues, setVenues] = useState([]);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user.role === 'visitor') {
@@ -51,10 +53,10 @@ const VenueBooking = () => {
           variant="secondary"
           onClick={() => navigate(-1)}
         >
-          ← Back
+          {t('venues.backButton')}
         </Button>
       </div>
-        <h2 className="text-center text-brown mb-4">Available Venues</h2>
+        <h2 className="text-center text-brown mb-4">{t('venues.title')}</h2>
         <Row className="g-4">
           {venues
             .filter(v => v.availability?.toLowerCase().trim() === 'available')
@@ -70,22 +72,22 @@ const VenueBooking = () => {
                   />
                   <Card.Body>
                     <Card.Title>{slot.name}</Card.Title>
-                    <Card.Text><strong>Date:</strong> {new Date(slot.date).toLocaleDateString('en-GB')}</Card.Text>
-                    <Card.Text><strong>Capacity:</strong> {slot.capacity} People</Card.Text>
+                    <Card.Text><strong>{t('venue.cardDate')}</strong> {new Date(slot.date).toLocaleDateString('en-GB')}</Card.Text>
+                    <Card.Text><strong>{t('venue.cardCapacity')}</strong> {slot.capacity} People</Card.Text>
                     <Card.Text>
-                      <strong>Booking Status:</strong>{' '}
+                      <strong>{t('venue.cardStatus')}</strong>{' '}
                       <span className={slot.status === 'Available' ? 'text-success' : 'text-danger'}>
-                        {slot.status}
+                        {t(`status.${slot.status}`)}
                       </span>
                     </Card.Text>
-                    <Card.Text><strong>Price:</strong> {slot.price}</Card.Text>
+                    <Card.Text><strong>{t('venue.cardPrice')}</strong> {slot.price}</Card.Text>
                   </Card.Body>
                   <Card.Footer>
                     <Button
                       className="w-100 bg-brown border-0"
                       onClick={() => handleBook(slot)}
                     >
-                      Book Now
+                      {t('venue.bookButton')}
                     </Button>
                   </Card.Footer>
                 </Card>
@@ -94,7 +96,7 @@ const VenueBooking = () => {
 
           {venues.filter(v => v.availability === 'Available').length === 0 && (
             <Col>
-              <p className="text-center text-muted">No venues available.</p>
+              <p className="text-center text-muted">{t('venue.noVenues')}</p>
             </Col>
           )}
         </Row>

@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';
+import { useTranslation } from 'react-i18next';
 
 const TicketBooking = () => {
   const [groupedEvents, setGroupedEvents] = useState([]);
   const [availabilityMap, setAvailabilityMap] = useState({});
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -46,7 +48,7 @@ const TicketBooking = () => {
 
         const result = Object.values(grouped).map(e => ({
           ...e,
-          times: [...new Set(e.times)].sort() // Ensure no duplicates and sorted
+          times: [...new Set(e.times)].sort()
         }));
 
         setGroupedEvents(result);
@@ -102,13 +104,13 @@ const TicketBooking = () => {
       <Container className="py-5">
         <div className="d-flex justify-content-start mb-3">
           <Button variant="secondary" onClick={() => navigate(-1)}>
-            ← Back
+            {t('tickets.backButton')}
           </Button>
         </div>
-        <h2 className="text-center text-brown mb-4">Available Events</h2>
+        <h2 className="text-center text-brown mb-4">{t('tickets.title')}</h2>
 
         {groupedEvents.length === 0 ? (
-          <p className="text-center text-muted">No events available.</p>
+          <p className="text-center text-muted">{t('tickets.noEvents')}</p>
         ) : (
           <Row className="g-4">
             {groupedEvents
@@ -126,11 +128,11 @@ const TicketBooking = () => {
                     )}
                     <Card.Body>
                       <Card.Title>{event.event}</Card.Title>
-                      <Card.Text><strong>Date:</strong> {event.date}</Card.Text>
-                      <Card.Text><strong>Time:</strong> {formatTimeRange(event.times)}</Card.Text>
-                      <Card.Text><strong>Venue:</strong> {event.name}</Card.Text>
+                      <Card.Text><strong>{t('tickets.cardDate')}</strong> {event.date}</Card.Text>
+                      <Card.Text><strong>{t('tickets.cardTime')}</strong> {formatTimeRange(event.times)}</Card.Text>
+                      <Card.Text><strong>{t('tickets.cardVenue')}</strong> {event.name}</Card.Text>
                       <Card.Text>
-                        <strong>Availability Status:</strong>{' '}
+                        <strong>{t('tickets.cardStatus')}</strong>{' '}
                         {availabilityMap[event._id] ? (
                           <span className={
                             availabilityMap[event._id].booked >= availabilityMap[event._id].capacity
@@ -138,11 +140,11 @@ const TicketBooking = () => {
                               : 'text-success'
                           }>
                             {availabilityMap[event._id].booked >= availabilityMap[event._id].capacity
-                              ? 'Fully Booked'
-                              : 'Available'}
+                              ? t('tickets.cardStatusBooked')
+                              : t('tickets.cardStatusAvailable')}
                           </span>
                         ) : (
-                          <span className="text-muted">Loading...</span>
+                          <span className="text-muted">{t('tickets.loading')}</span>
                         )}
                       </Card.Text>
                     </Card.Body>
@@ -151,7 +153,7 @@ const TicketBooking = () => {
                         className="w-100 bg-brown border-0"
                         onClick={() => handleBook(event)}
                       >
-                        Book Now
+                        {t('tickets.bookButton')}
                       </Button>
                     </Card.Footer>
                   </Card>

@@ -488,6 +488,36 @@
     "seatAvailable": "is now available!",
     "venue": "🏢 Venue",
     "venueAvailable": "has a free slot at"
+  },
+
+  "tickets": {
+    "backButton": "← Back",
+    "title": "Available Events",
+    "noEvents": "No events available.",
+    "cardDate": "Date:",
+    "cardTime": "Time:",
+    "cardVenue": "Venue:",
+    "cardStatus": "Availability Status:",
+    "cardStatusBooked": "Fully Booked",
+    "cardStatusAvailable": "Available",
+    "loading": "Loading...",
+    "bookButton": "Book Now"
+  },
+
+  "venue": {
+    "backButton": "← Back",
+    "title": "Available Venues",
+    "cardDate": "Date:",
+    "cardCapacity": "Capacity:",
+    "cardStatus": "Booking Status:",
+    "cardPrice": "Price:",
+    "bookButton": "Book Now",
+    "noVenues": "No venues available.",
+    "status": {
+      "Available": "Available",
+      "Unavailable": "Unavailable",
+      "Booked": "Booked"
+    }
   }
 
 }
