@@ -21,13 +21,13 @@ const VenueLiveBooking = () => {
   const selectedVenue = location.state?.slot;
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (!location.state?.slot) navigate('/venue-booking');
-    if (user.role === 'visitor') navigate('/');  
+useEffect(() => {
+  if (!location.state?.slot) navigate('/venue-booking');
+  if (user.role === 'visitor') navigate('/');
 
 useEffect(() => {
   document.title = `GIP - ${t('titles.venueLiveBook')}`;
-}, [t]);  
+}, [t]);
 
     const fetchAvailability = async () => {
       if (!selectedVenue?.name || !selectedVenue?.date) return;
