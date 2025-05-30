@@ -1,7 +1,7 @@
 // BookingConfirmation.jsx - Displays a summary after successful booking/payment
 // Renders user’s booking data passed via router
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Card, Button } from 'react-bootstrap';
 import useRouteGuard from '../hooks/useRouteGuard';

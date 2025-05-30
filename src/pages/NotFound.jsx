@@ -1,6 +1,6 @@
 // NotFound.jsx - 404 page displayed for unknown routes
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';

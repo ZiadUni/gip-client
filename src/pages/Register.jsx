@@ -1,7 +1,7 @@
 // Register.jsx - Handles user registration form and validation
 // Includes optional checkbox for requesting organizer role
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Card, Container, Alert, ProgressBar, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/api';

@@ -1,7 +1,7 @@
 // About.jsx - Describes the project, team, and contact details
 // Static content page showing about info
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 

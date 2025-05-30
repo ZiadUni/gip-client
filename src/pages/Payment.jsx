@@ -1,7 +1,7 @@
 // Payment.jsx
 // Accepts mock card input for booking confirmation and forwards the booking data to the confirmation page
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert, Card, Modal, Spinner, InputGroup } from 'react-bootstrap';
 import { apiFetch } from '../utils/api';

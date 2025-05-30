@@ -1,7 +1,7 @@
 // Login.jsx
 // Handles user login by collecting credentials and sending a POST request to the backend
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Card, Container, Alert, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/api';
