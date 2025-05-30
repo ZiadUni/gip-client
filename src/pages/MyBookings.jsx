@@ -88,7 +88,7 @@ const MyBookings = () => {
             <Card.Title className="text-capitalize d-flex justify-content-between align-items-center">
               {booking.type === 'event' ? t('myBooks.cardTitleEvent') : t('myBooks.cardTitleVenue')}
             </Card.Title>
-            <Card.Text><strong>{t('myBooks.cardStatus')}</strong> {t(`status.${booking.status}`)}</Card.Text>
+            <Card.Text><strong>{t('myBooks.cardStatus')}</strong> {t(`myBooks.status.${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}`)}</Card.Text>
             <Card.Text><strong>{t('myBooks.cardBookedOn')}</strong> {new Date(booking.createdAt).toLocaleString()}</Card.Text>
 
             {booking.type === 'event' && booking.details && (
