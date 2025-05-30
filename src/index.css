@@ -45,6 +45,15 @@
     direction: rtl;
   }
 
+  html[dir="rtl"] .toast-header {
+    justify-content: flex-end;
+  }
+
+  html[dir="rtl"] .toast-body {
+    direction: rtl;
+    text-align: right;
+  }
+
   html, body, #root {
     height: 100%;
     font-family: 'Segoe UI', sans-serif;
