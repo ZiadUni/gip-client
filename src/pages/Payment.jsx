@@ -177,7 +177,7 @@ const Payment = () => {
     <div className="fade-in">
       <Container className="py-5" style={{ maxWidth: '600px' }}>
         <div className="d-flex justify-content-start mb-3">
-          <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button>
+          <Button variant="secondary" onClick={() => navigate(-1)}>{t('payment.backButton')}</Button>
         </div>
         <Card className="p-4 shadow-sm">
           <h3 className="text-center text-brown mb-4">{t('payment.title')}</h3>

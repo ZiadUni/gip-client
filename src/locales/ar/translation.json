@@ -102,6 +102,7 @@
   },
   
   "payment": {
+    "backButton":"→ الرجوع",
     "visa": "فيزا",
     "mastercard": "ماستركارد",
     "error1": "برجاء ملئ جميع الحقول.",
@@ -520,6 +521,30 @@
       "Unavailable": "غير متاحة",
       "Booked": "محجوزة"
     }
+  },
+
+  "venueBook": {
+    "error1": "من فضلك ادخل اسم للفعالية.",
+    "error2": "من فضلك قم باختيار على الأقل فترة زمنية واحدة.",
+    "error3": "فشل اشتراك الإشعارات.",
+    "error4": "انت بالفعل مشترك في الاشعارات لهذه الفترة الزمنية.",
+    "backButton": "→ الرجوع",
+    "title": "حجز القاعات",
+    "detailsDate": "التاريخ:",
+    "detailsCapacity": "السعة:",
+    "detailsAvailability": "الحالة:",
+    "detailsPrice": "السعر:",
+    "eventName": "اسم الفعالية",
+    "eventNamePlaceholder": "من فضلك ادخل اسم للفعالية",
+    "slotStatus": "الحالة:",
+    "notifyButton": "اشتراك الإشعارات",
+    "legendYourBooking": "الإشتراك الخاص بك",
+    "legendSelected": "أختيارك",
+    "legendAvailable": "متاح",
+    "legendBooked": "محجوز",
+    "legendPending": "قيد الحجز",
+    "selectedSlot": "الفترات الزمنية التي اخترتها:",
+    "proceedPayment": "الذهاب للدفع"
   }
   
 }

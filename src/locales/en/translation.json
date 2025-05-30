@@ -101,6 +101,7 @@
   },
 
   "payment": {
+    "backButton": "← Back",
     "visa": "Visa",
     "mastercard": "Mastercard",
     "error1": "All fields are required.",
@@ -519,6 +520,30 @@
       "Unavailable": "Unavailable",
       "Booked": "Booked"
     }
+  },
+
+  "venueBook": {
+    "error1": "Please enter an event name.",
+    "error2": "Please select at least one slot.",
+    "error3": "Notify failed",
+    "error4": "Already subscribed for this slot",
+    "backButton": "← Back",
+    "title": "Live Venue Slot Booking",
+    "detailsDate": "Date:",
+    "detailsCapacity": "Capacity:",
+    "detailsAvailability": "Availability:",
+    "detailsPrice": "Price:",
+    "eventName": "Event Name",
+    "eventNamePlaceholder": "Enter the event name",
+    "slotStatus": "Status:",
+    "notifyButton": "Notify Me",
+    "legendYourBooking": "Your Booking",
+    "legendSelected": "Selected",
+    "legendAvailable": "Available",
+    "legendBooked": "Booked",
+    "legendPending": "Pending",
+    "selectedSlot": "Selected Slots:",
+    "proceedPayment": "Proceed to Payment"
   }
 
 }
