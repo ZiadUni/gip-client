@@ -64,7 +64,7 @@ const NotificationPopup = () => {
     <ToastContainer
       position={direction === 'rtl' ? 'top-start' : 'top-end'}
       className={`p-3 toast-${direction}`}
-      style={{ zIndex: 9999, marginTop: '200px' }}
+      style={{ zIndex: 9999, marginTop: '125px' }}
     >
       {notifications.map(n => (
         <Toast

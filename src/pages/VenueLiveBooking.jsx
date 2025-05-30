@@ -9,7 +9,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
 
 const VenueLiveBooking = () => {
   const [slots, setSlots] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]); // multiple selections
+  const [selectedIds, setSelectedIds] = useState([]);
   const [mySlotTimes, setMySlotTimes] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
