@@ -30,7 +30,6 @@ function VenueBooking() {
         console.error('❌ Failed to fetch venues:', error);
       }
     };
-
     
     console.log('🔍 VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
     fetchVenues();
