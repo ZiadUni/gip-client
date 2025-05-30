@@ -46,13 +46,13 @@
   }
 
   html[dir="rtl"] .toast-header {
-    flex-direction: row-reverse;
-    justify-content: flex-end;
+    flex-direction: row-reverse !important;
+    justify-content: flex-end !important;
   }
 
   html[dir="rtl"] .toast-body {
-    direction: rtl;
-    text-align: right;
+    direction: rtl !important;
+    text-align: right !important;
   }
 
   html, body, #root {
@@ -334,4 +334,9 @@ button:hover,
   left: auto !important;
   direction: rtl;
   text-align: right;
+}
+
+.toast-container-ltr {
+  direction: ltr;
+  text-align: left;
 }
