@@ -272,7 +272,14 @@ const VenueManagementTab = () => {
                     </td>
                     <td><Form.Control value={editVenueData.capacity} onChange={e => setEditVenueData({ ...editVenueData, capacity: e.target.value })} /></td>
                     <td><Form.Control value={editVenueData.price} onChange={e => setEditVenueData({ ...editVenueData, price: e.target.value })} /></td>
-                    <td><Form.Control value={editVenueData.status} onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })} /></td>
+                    <td><Form.Select
+                          value={editVenueData.status}
+                          onChange={e => setEditVenueData({ ...editVenueData, status: e.target.value })}
+                        >
+                          <option value="Available">{t('venueMgmt.status.Available')}</option>
+                          <option value="Booked">{t('venueMgmt.status.Booked')}</option>
+                          <option value="Unavailable">{t('venueMgmt.status.Unavailable')}</option>
+                        </Form.Select></td>
                     <td>
                       <Image src={editVenueData.image} alt="preview" width="60" height="40" rounded />
                     </td>

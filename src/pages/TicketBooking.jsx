@@ -19,12 +19,7 @@ const TicketBooking = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await apiFetch('/bookings', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const res = await apiFetch('/events/public');
         const data = await res.json();
         if (!res.ok) throw new Error();
 

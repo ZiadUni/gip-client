@@ -2,116 +2,78 @@
 // Redirects visitors to home if accessed directly
 
 import React, { useEffect, useState } from 'react';
+import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Container, Row, Col } from 'react-bootstrap';
-import { apiFetch } from '../utils/api';
 import { useTranslation } from 'react-i18next';
+import '../index.css';
 
-const VenueBooking = () => {
+function VenueBooking() {
   const [venues, setVenues] = useState([]);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    if (user.role === 'visitor') {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    document.title = `GIP - ${t('titles.venueBook')}`;
-  }, [t]);  
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await apiFetch('/venues', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const lang = i18n.language || 'en';
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/venues?lang=${lang}`);
+        const data = await response.json();
 
-        const data = await res.json();
-        if (res.ok) {
-          setVenues(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch venues:', err);
+        setVenues(data);
+      } catch (error) {
+        console.error('Failed to fetch venues:', error);
       }
     };
 
     fetchVenues();
-  }, []);
+  }, [i18n.language]);
 
-  const handleBook = (slot) => {
-    navigate('/VenueLiveBooking', { state: { slot } });
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Available':
+        return 'green';
+      case 'Booked':
+        return 'red';
+      case 'Unavailable':
+      default:
+        return 'gray';
+    }
   };
 
   return (
-    <div className="fade-in">
-      <Container className="py-5">
-      <div className="d-flex justify-content-start mb-3">
-        <Button
-          variant="secondary"
-          onClick={() => navigate(-1)}
-        >
-          {t('venues.backButton')}
-        </Button>
+    <div className="page-container">
+      <h2 className="text-center mb-4">{t('venues.title')}</h2>
+      <div className="d-flex flex-wrap justify-content-center">
+        {venues.length === 0 ? (
+          <p>{t('venues.noVenues')}</p>
+        ) : (
+          venues.map((venue) => (
+            <Card key={venue._id} className="m-3 venue-card">
+              <Card.Img variant="top" src={venue.image} alt={venue.name} />
+              <Card.Body>
+                <Card.Title>{venue.name}</Card.Title>
+                <Card.Text>
+                  {t('venues.cardDate')} {venue.date}<br />
+                  {t('venues.cardCapacity')} {venue.capacity} {t('venues.people')}<br />
+                  {t('venues.cardPrice')} ${venue.price}<br />
+                  {t('venues.cardStatus')} <span style={{ color: getStatusColor(venue.status), fontWeight: 'bold' }}>
+                    {t(`venues.status.${venue.status}`)}
+                  </span>
+                </Card.Text>
+                <Button
+                  variant="primary"
+                  disabled={venue.status !== 'Available'}
+                  onClick={() => navigate(`/venue-booking/${venue._id}`)}
+                >
+                  {t('venues.bookButton')}
+                </Button>
+              </Card.Body>
+            </Card>
+          ))
+        )}
       </div>
-        <h2 className="text-center text-brown mb-4">{t('venues.title')}</h2>
-        <Row className="g-4">
-          {venues
-            .filter(v => v.availability?.toLowerCase().trim() === 'available')
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map(slot => (
-              <Col md={6} lg={4} key={slot._id}>
-                <Card className="h-100 shadow-sm">
-                  <Card.Img
-                    variant="top"
-                    src={slot.image}
-                    alt={slot.name}
-                    style={{ height: '200px', objectFit: 'cover' }}
-                  />
-                  <Card.Body>
-                    <Card.Title>{slot.name}</Card.Title>
-                    <Card.Text><strong>{t('venues.cardDate')}</strong> {new Date(slot.date).toLocaleDateString('en-GB')}</Card.Text>
-                    <Card.Text><strong>{t('venues.cardCapacity')}</strong> {slot.capacity} {t('venues.people')}</Card.Text>
-                    <Card.Text>
-                      <strong>{t('venues.cardStatus')}</strong>{' '}
-                      <span className={
-                        ['Available', 'متاح'].includes(slot.status) ? 'text-success' :
-                        ['Booked', 'محجوز'].includes(slot.status) ? 'text-danger' :
-                        ['Unavailable', 'غير متاح'].includes(slot.status) ? 'text-secondary' :
-                        ''
-                      }>
-                        {slot.status}
-                      </span>
-                    </Card.Text>
-                    <Card.Text><strong>{t('venues.cardPrice')}</strong> {slot.price}</Card.Text>
-                  </Card.Body>
-                  <Card.Footer>
-                    <Button
-                      className="w-100 bg-brown border-0"
-                      onClick={() => handleBook(slot)}
-                    >
-                      {t('venues.bookButton')}
-                    </Button>
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))}
-
-          {venues.filter(v => v.availability === 'Available').length === 0 && (
-            <Col>
-              <p className="text-center text-muted">{t('venues.noVenues')}</p>
-            </Col>
-          )}
-        </Row>
-      </Container>
     </div>
   );
-};
+}
 
 export default VenueBooking;
