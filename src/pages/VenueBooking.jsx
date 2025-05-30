@@ -16,7 +16,7 @@ function VenueBooking() {
     const fetchVenues = async () => {
       try {
         const lang = i18n.language || 'en';
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/venues?lang=${lang}`);
+        const response = await fetch(`/api/venues?lang=${lang}`);
 
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
