@@ -431,7 +431,7 @@
     "revenueLabel": "Revenue",
     "title8": "🥧 Ticket Types",
     "error5": "No ticket data available for this range.",
-    "clearDrillDownButton": "Clear Drilldown: {selectedVenue}",
+    "clearDrillDownButton": "Clear Drilldowns",
     "backButton": "← Back",
     "filterTabTitle": "Filters",
     "exportTabTitle": "Export",
