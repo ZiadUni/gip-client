@@ -32,7 +32,7 @@ const VenueBooking = () => {
   }, [t]);
 
   const handleBookNow = (venue) => {
-    navigate('/venuelivebooking', { state: { venue } });
+    navigate('/venuelivebooking', { state: { slot: venue } });
   };
 
   if (loading) {
@@ -60,17 +60,17 @@ const VenueBooking = () => {
               <Card.Body>
                 <Card.Title className="text-brown">{venue.name}</Card.Title>
                 <Card.Text>
-                  <strong>{t('venueBooking.date')}:</strong> {venue.date}<br />
-                  <strong>{t('venueBooking.capacity')}:</strong> {venue.capacity}<br />
-                  <strong>{t('venueBooking.price')}:</strong> ${venue.price?.toString().replace(/^\$+/, '')}<br />
-                  <strong>{t('venueBooking.status')}:</strong> {t(`venues.${venue.status?.toLowerCase() || 'available'}`)}
+                  <strong>{t('venueBooking.cardDate')}</strong> {venue.date}<br />
+                  <strong>{t('venueBooking.cardCapacity')}</strong> {venue.capacity} {t('venueBooking.people')}<br />
+                  <strong>{t('venueBooking.cardPrice')}</strong> ${venue.price?.toString().replace(/^\$+/, '')}<br />
+                  <strong>{t('venueBooking.cardStatus')}</strong> {t(`venueBooking.status.${venue.status || 'Available'}`)}
                 </Card.Text>
                 <Button
-                  variant="primary"
+                  className="bg-brown border-0"
                   onClick={() => handleBookNow(venue)}
                   disabled={venue.status === 'Booked'}
                 >
-                  {t('venueBooking.bookNow')}
+                  {t('venueBooking.bookButton')}
                 </Button>
               </Card.Body>
             </Card>
