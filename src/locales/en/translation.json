@@ -431,7 +431,6 @@
     "revenueLabel": "Revenue",
     "title8": "🥧 Ticket Types",
     "error5": "No ticket data available for this range.",
-    "unknown": "Unknown",
     "clearDrillDownButton": "Clear Drilldowns",
     "backButton": "← Back",
     "filterTabTitle": "Filters",
@@ -439,7 +438,8 @@
     "ticketType": {
       "Confirmed": "Confirmed",
       "Pending": "Pending",
-      "Cancelled": "Cancelled"
+      "Cancelled": "Cancelled",
+      "undefined": "None"
     }
   },
 
