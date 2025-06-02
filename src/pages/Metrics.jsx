@@ -469,7 +469,7 @@ const Metrics = () => {
         {selectedVenue && (
           <div className="text-center mt-3">
             <Button variant="secondary" onClick={() => setSelectedVenue(null)}>
-              {t('metrics.clearDrilldownButton')}
+              {t('metrics.clearDrillDownButton')}
             </Button>
           </div>
         )}
