@@ -431,6 +431,7 @@
     "revenueLabel": "Revenue",
     "title8": "🥧 Ticket Types",
     "error5": "No ticket data available for this range.",
+    "unknown": "Unknown",
     "clearDrillDownButton": "Clear Drilldowns",
     "backButton": "← Back",
     "filterTabTitle": "Filters",

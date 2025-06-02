@@ -439,7 +439,7 @@ const Metrics = () => {
                 nameKey="type"
                 outerRadius={90}
                 label={({ type, percent, value }) =>
-                  `${t(`metrics.ticketType.${type}`)}: ${(percent * 100).toFixed(1)}% (${value})`
+                  `${t(`metrics.ticketType.${type || t('metrics.unknown')}`)}: ${(percent * 100).toFixed(1)}% (${value})`
                 }
               >
                 {(data?.ticketType ?? []).map((entry, index) => (
@@ -452,7 +452,7 @@ const Metrics = () => {
                     const { name, value } = payload[0];
                     return (
                       <div className="custom-tooltip bg-light p-2 rounded shadow-sm">
-                        <strong>{t(`metrics.ticketType.${name}`)}</strong>: {value}
+                        <strong>{t(`metrics.ticketType.${name || t('metrics.unknown')}`)}</strong>: {value}
                       </div>
                     );
                   }
@@ -460,7 +460,7 @@ const Metrics = () => {
                 }}
               />
               <Legend
-                formatter={(value) => t(`metrics.ticketType.${value}`)}
+                formatter={(value) => t(`metrics.ticketType.${value || t('metrics.unknown')}`)}
               />
             </PieChart>
           </ResponsiveContainer>
