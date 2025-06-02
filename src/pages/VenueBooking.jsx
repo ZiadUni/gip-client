@@ -2,85 +2,83 @@
 // Redirects visitors to home if accessed directly
 
 import React, { useEffect, useState } from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import '../index.css';
+import { apiFetch } from '../utils/api';
 
-function VenueBooking() {
+const VenueBooking = () => {
   const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
 
   useEffect(() => {
+    document.title = `GIP - ${t('titles.venueBooking')}`;
+
     const fetchVenues = async () => {
       try {
-        const lang = i18n.language || 'en';
-        const response = await fetch(`https://gip-backend.onrender.com/api/venues?lang=${lang}`);
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text();
-          throw new Error(`Unexpected response from /api/venues:\n${text.slice(0, 200)}`);
-        }
-
-        const data = await response.json();
+        const res = await apiFetch('/venues');
+        const data = await res.json();
         setVenues(data);
-      } catch (error) {
-        console.error('❌ Failed to fetch venues:', error);
+      } catch (err) {
+        console.error('Failed to fetch venues:', err);
+      } finally {
+        setLoading(false);
       }
     };
-    
-    console.log('🔍 VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
-    fetchVenues();
-  }, [i18n.language]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Available':
-        return 'green';
-      case 'Booked':
-        return 'red';
-      case 'Unavailable':
-      default:
-        return 'gray';
-    }
+    fetchVenues();
+  }, [t]);
+
+  const handleBookNow = (venue) => {
+    navigate('/venuelivebooking', { state: { venue } });
   };
 
+  if (loading) {
+    return (
+      <Container className="text-center my-5">
+        <Spinner animation="border" variant="primary" />
+        <p>loading</p>
+      </Container>
+    );
+  }
+
   return (
-    <div className="page-container">
-      <h2 className="text-center mb-4">{t('venues.title')}</h2>
-      <div className="d-flex flex-wrap justify-content-center">
-        {venues.length === 0 ? (
-          <p>{t('venues.noVenues')}</p>
-        ) : (
-          venues.map((venue) => (
-            <Card key={venue._id} className="m-3 venue-card">
-              <Card.Img variant="top" src={venue.image} alt={venue.name} />
+    <Container className="py-4">
+      <h2 className="mb-4 text-start text-brown">{t('venueBooking.title')}</h2>
+      <Row className="g-4">
+        {venues.map((venue) => (
+          <Col key={venue._id} xs={12} md={6} lg={4}>
+            <Card className="h-100 shadow-sm">
+              <Card.Img
+                variant="top"
+                src={venue.image}
+                alt={venue.name}
+                style={{ maxHeight: '200px', objectFit: 'cover' }}
+              />
               <Card.Body>
-                <Card.Title>{venue.name}</Card.Title>
+                <Card.Title className="text-brown">{venue.name}</Card.Title>
                 <Card.Text>
-                  {t('venues.cardDate')} {venue.date}<br />
-                  {t('venues.cardCapacity')} {venue.capacity} {t('venues.people')}<br />
-                  {t('venues.cardPrice')} ${venue.price}<br />
-                  {t('venues.cardStatus')} <span style={{ color: getStatusColor(venue.status), fontWeight: 'bold' }}>
-                    {t(`venues.status.${venue.status}`)}
-                  </span>
+                  <strong>{t('venueBooking.date')}:</strong> {venue.date}<br />
+                  <strong>{t('venueBooking.capacity')}:</strong> {venue.capacity}<br />
+                  <strong>{t('venueBooking.price')}:</strong> ${venue.price?.toString().replace(/^\$+/, '')}<br />
+                  <strong>{t('venueBooking.status')}:</strong> {t(`venues.${venue.status?.toLowerCase() || 'available'}`)}
                 </Card.Text>
                 <Button
                   variant="primary"
-                  disabled={venue.status !== 'Available'}
-                  onClick={() => navigate(`/venue-booking/${venue._id}`)}
+                  onClick={() => handleBookNow(venue)}
+                  disabled={venue.status === 'Booked'}
                 >
-                  {t('venues.bookButton')}
+                  {t('venueBooking.bookNow')}
                 </Button>
               </Card.Body>
             </Card>
-          ))
-        )}
-      </div>
-    </div>
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
-}
+};
 
 export default VenueBooking;
