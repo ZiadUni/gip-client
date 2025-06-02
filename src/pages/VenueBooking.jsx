@@ -14,7 +14,7 @@ const VenueBooking = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = `GIP - ${t('titles.venueBooking')}`;
+    document.title = `GIP - ${t('titles.venueBook')}`;
 
     const fetchVenues = async () => {
       try {
@@ -39,7 +39,7 @@ const VenueBooking = () => {
     return (
       <Container className="text-center my-5">
         <Spinner animation="border" variant="primary" />
-        <p>loading</p>
+        <p>{t('venueBooking.loading')}</p>
       </Container>
     );
   }

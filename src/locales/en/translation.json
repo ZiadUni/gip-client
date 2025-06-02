@@ -505,7 +505,7 @@
     "bookButton": "Book Now"
   },
 
-  "venues": {
+  "venueBooking": {
     "backButton": "← Back",
     "title": "Available Venues",
     "cardDate": "Date:",
@@ -515,6 +515,7 @@
     "bookButton": "Book Now",
     "noVenues": "No venues available.",
     "people": "People",
+    "loading": "Loading...",
     "status": {
       "Available": "Available",
       "Unavailable": "Unavailable",

@@ -505,7 +505,7 @@
     "bookButton": "احجز الأن"
   },
 
-  "venues": {
+  "venueBooking": {
     "backButton": "→ الرجوع",
     "title": "قائمة القاعات",
     "cardDate": "التاريخ:",
@@ -515,6 +515,7 @@
     "bookButton": "احجز الأن",
     "noVenues": "لا يوجد قاعات متوفرة.",
     "people": "أشخاص",
+    "loading": "يتم التحميل...",
     "status": {
       "Available": "متاحة",
       "Unavailable": "غير متاحة",
