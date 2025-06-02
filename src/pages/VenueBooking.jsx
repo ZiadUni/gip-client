@@ -76,7 +76,7 @@ const VenueBooking = () => {
                   <Button
                     className="bg-brown border-0"
                     onClick={() => handleBookNow(venue)}
-                    disabled={isBooked}
+                    disabled={false}
                   >
                     {t('venueBooking.bookButton')}
                   </Button>
